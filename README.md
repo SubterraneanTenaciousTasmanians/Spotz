@@ -1,10 +1,10 @@
-# Project Name
-> Pithy project description
+# Spotz
+> An app that protects the user by providing parking rules based on location.
 ## Team
 
-  - __Product Owner__: teamMember
-  - __Scrum Master__: teamMember
-  - __Development Team Members__: teamMember, teamMember
+  - __Product Owner__: Sola Harrison
+  - __Scrum Master__: Daniel Kim
+  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer
 
 ## Table of Contents
 
