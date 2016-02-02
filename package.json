@@ -1,0 +1,22 @@
+{
+  "name": "spotz",
+  "version": "0.0.1",
+  "description": "Putting the king in the Parking",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BugsBananaSlugs/Spotz.git"
+  },
+  "keywords": [
+    "parking"
+  ],
+  "author": "BugsBananaSlugs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BugsBananaSlugs/Spotz/issues"
+  },
+  "homepage": "https://github.com/BugsBananaSlugs/Spotz#readme"
+}
