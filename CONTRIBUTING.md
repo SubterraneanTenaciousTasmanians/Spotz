@@ -149,6 +149,10 @@ Thanks for contributing!
    new, testable behavior.
 1. Your pull request is comprised of a single ([squashed][]) commit.
 
+###Workflow
+
+![alt text](http://i.imgur.com/p0e4tQK.png)
+
 ## Checklist:
 
 This is just to help you organize your process
