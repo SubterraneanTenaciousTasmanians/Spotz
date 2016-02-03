@@ -2,7 +2,7 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var path = require('path');
 var morgan = require('morgan');
-var db = require('./db.js')
+var db = require('./db.js');
 var port = process.env.PORT || 3000;
 
 var app = express();
