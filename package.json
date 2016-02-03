@@ -2,9 +2,12 @@
   "name": "spotz",
   "version": "0.0.1",
   "description": "Putting the king in the Parking",
-  "main": "index.js",
+  "main": "server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "5.3.1"
   },
   "repository": {
     "type": "git",
@@ -18,5 +21,15 @@
   "bugs": {
     "url": "https://github.com/BugsBananaSlugs/Spotz/issues"
   },
-  "homepage": "https://github.com/BugsBananaSlugs/Spotz#readme"
+  "homepage": "https://github.com/BugsBananaSlugs/Spotz#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "devDependencies": {
+    "body-parser": "^1.14.2",
+    "morgan": "^1.6.1",
+    "node": "0.0.0",
+    "nodemon": "^1.8.1",
+    "path": "^0.12.7"
+  }
 }
