@@ -25,13 +25,13 @@
   },
   "homepage": "https://github.com/BugsBananaSlugs/Spotz#readme",
   "dependencies": {
-    "express": "^4.13.4"
-  },
-  "devDependencies": {
+    "express": "^4.13.4",
     "body-parser": "^1.14.2",
     "morgan": "^1.6.1",
-    "node": "0.0.0",
-    "nodemon": "^1.8.1",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "node": "0.0.0",
+    "nodemon": "^1.8.1"
   }
 }
