@@ -1,4 +1,5 @@
 var path = require('path');
+
 var knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -37,13 +38,14 @@ db.knex.schema.hasTable('streetSweeping').then(function (exists) {
       //  table.increments('id').primary();
       table.integer('Rte');
       table.string('Street Name');
-      table.integer('Address');
-      table.string('Day of');
+      table.integer('Address From');
+      table.integer('Address To');
+      table.string('Day of Month');
       table.string('AM/PM');
       table.string('Side');
       table.string('From');
       table.string('To');
-      table.integer('Opt-');
+      table.integer('Opt-out');
     }).then(function (table) {
      console.log('Created Table', table);
    });
