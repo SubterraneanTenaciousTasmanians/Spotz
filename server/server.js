@@ -9,6 +9,8 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var port = process.env.PORT || 3000;
 
+var user = require('./db/controllers/user.js');
+
 var app = express();
 app.use(morgan('combined'));
 app.use(express.static(__dirname + '/../client/'));
@@ -28,14 +30,20 @@ var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
  * Serializing user id to save the user's session
  */
 passport.serializeUser(function (user, done) {
-  done(null, null);
+  if (user.id) {
+    done(null, user.id);
+  } else {
+    done(null, user);
+  }
 });
 
 passport.deserializeUser(function (id, done) {
   /*MySQL query for User.findById(id, function(err, user) {
     done(err, user);
   });*/
-  done(null, null);
+  user.read({ id: id }, function (err, user) {
+    done(err, user);
+  });
 });
 /**
  * Sign in with facebook
@@ -50,6 +58,10 @@ passport.use(new FacebookStrategy({
   /*if(req.user){
     MySQL query for User.fineOne
   }*/
+  if (req.user) {
+    user.read();
+  }
+
   done();
 }));
 /**
