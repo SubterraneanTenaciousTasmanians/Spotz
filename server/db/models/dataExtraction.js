@@ -1,5 +1,5 @@
 var fs = require('fs');
-var db = require('./db.js');
+var db = require('./../db.js');
 
 fs.readFile('../streetSweepingH-Z.json', 'utf8', function (err, data) {
   console.log('the data', data);
