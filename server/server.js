@@ -4,7 +4,7 @@ var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
 var passport = require('passport');
-var db = require('./db.js');
+var db = require('./db/db.js');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var port = process.env.PORT || 3000;
@@ -13,7 +13,7 @@ var app = express();
 app.use(morgan('combined'));
 app.use(express.static(__dirname + '/../client/'));
 app.use(bodyparser.json());
-
+app.use(passport.initialize());
 /**
  * environment file for developing under a local server
  * comment out before deployment
@@ -75,16 +75,16 @@ app.get('/auth/google', passport.authenticate('google', { scope: 'profile email'
 app.get('/auth/google/callback',
   passport.authenticate('google', { scope: 'profile email', failureRedirect: '/' }),
   function (req, res) {
-    res.redirect(req.session.returnTo || '/');
+    res.redirect('/login');
   });
 /**
  * Redirect to Facebook Signin
  */
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+app.get('/auth/facebook', passport.authenticate('facebook'));
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   function (req, res) {
-    res.redirect('/');
+    res.redirect('/login');
   });
 
 app.listen(port);

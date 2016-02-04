@@ -1,6 +1,5 @@
 var path = require('path');
 
-
 var knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -17,7 +16,10 @@ db.knex.schema.hasTable('users').then(function (exists) {
   if (!exists) {
     db.knex.schema.createTable('users', function (user) {
      user.increments('id').primary();
-     user.string('username', 255);
+     user.string('username').unique();
+     user.string('password');
+     user.string('googleId').unique();
+     user.string('facebookId').unique();
    }).then(function (table) {
      console.log('Created Table', table);
    });
@@ -48,10 +50,6 @@ db.knex.schema.hasTable('streetSweeping').then(function (exists) {
      console.log('Created Table', table);
    });
   }
-});
-
-db.sweeping = db.Model.extend({
-  tableName: 'streetSweeping',
 });
 
 // var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
