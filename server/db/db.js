@@ -50,14 +50,6 @@ db.knex.schema.hasTable('streetSweeping').then(function (exists) {
   }
 });
 
-db.sweeping = db.Model.extend({
-  tableName: 'streetSweeping',
-});
-
-db.User = db.Model.extend({
-  tableName: 'Users',
-});
-
 // var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
 
 // new db.sweeping(dummyData).save().then(function () {
