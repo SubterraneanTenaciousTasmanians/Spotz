@@ -25,10 +25,7 @@
   "homepage": "https://github.com/BugsBananaSlugs/Spotz#readme",
   "dependencies": {
     "body-parser": "^1.14.2",
-<<<<<<< HEAD
     "csvtojson": "^0.5.2",
-=======
->>>>>>> e8286f4ee2f64a6a3197fb267fa6a1ee1b84b81a
     "express": "^4.13.4",
     "morgan": "^1.6.1",
     "node-env-file": "^0.1.8",
