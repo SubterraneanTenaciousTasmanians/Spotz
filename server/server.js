@@ -19,6 +19,8 @@ app.use(bodyparser.json());
  */
 env(__dirname + '/.env');
 
+
+
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
 var FACEBOOK_CLIENT_ID = process.env.FACEBOOKCLIENTID;
