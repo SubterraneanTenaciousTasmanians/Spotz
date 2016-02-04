@@ -10,7 +10,7 @@ var port = process.env.PORT || 3000;
 
 var app = express();
 app.use(morgan('combined'));
-app.use(express.static(__dirname + '/../'));
+app.use(express.static(__dirname + '/../client/'));
 app.use(bodyparser.json());
 
 /**
@@ -18,6 +18,7 @@ app.use(bodyparser.json());
  * comment out before deployment
  */
 env(__dirname + '/.env');
+
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
 var FACEBOOK_CLIENT_ID = process.env.FACEBOOKCLIENTID;
