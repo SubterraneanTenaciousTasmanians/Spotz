@@ -4,6 +4,7 @@ var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
 var passport = require('passport');
+var db = require('./db.js');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var port = process.env.PORT || 3000;
