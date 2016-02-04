@@ -13,7 +13,7 @@ gulp.task('webserver', function () {
   });
 });
 
-gulp.tast('test', function () {
+gulp.task('test', function () {
   return gulp.src('spec/test.js')
     .pipe(jshint('.jshintrc'))
     .pipe(notify({ message: 'All Tests Have Passed Woohoo!!!' }));
