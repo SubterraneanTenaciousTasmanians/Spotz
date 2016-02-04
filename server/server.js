@@ -81,7 +81,7 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', '
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   function (req, res) {
-    res.redirect(req.session.returnTo || '/');
+    res.redirect('/');
   });
 
 app.listen(port);
