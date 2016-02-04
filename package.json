@@ -4,8 +4,7 @@
   "description": "Putting the king in the Parking",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/server.js"
   },
   "engines": {
     "node": "5.4.1",
