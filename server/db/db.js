@@ -15,7 +15,10 @@ db.knex.schema.hasTable('users').then(function (exists) {
   if (!exists) {
     db.knex.schema.createTable('users', function (user) {
      user.increments('id').primary();
-     user.string('username', 255);
+     user.string('username');
+     user.string('password');
+     user.string('googleId');
+     user.string('facebookId');
    }).then(function (table) {
      console.log('Created Table', table);
    });
@@ -51,7 +54,11 @@ db.sweeping = db.Model.extend({
   tableName: 'streetSweeping',
 });
 
-var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
+db.users = db.Model.extend({
+  tableName: 'Users',
+});
+
+// var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
 
 // new db.sweeping(dummyData).save().then(function () {
 //   console.log('yay');
