@@ -32,7 +32,8 @@
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.0",
     "passport-google-oauth": "^0.2.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "sequelize": "^3.19.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

@@ -15,10 +15,10 @@ db.knex.schema.hasTable('users').then(function (exists) {
   if (!exists) {
     db.knex.schema.createTable('users', function (user) {
      user.increments('id').primary();
-     user.string('username');
+     user.string('username').unique();
      user.string('password');
-     user.string('googleId');
-     user.string('facebookId');
+     user.string('googleId').unique();
+     user.string('facebookId').unique();
    }).then(function (table) {
      console.log('Created Table', table);
    });
@@ -54,7 +54,7 @@ db.sweeping = db.Model.extend({
   tableName: 'streetSweeping',
 });
 
-db.users = db.Model.extend({
+db.User = db.Model.extend({
   tableName: 'Users',
 });
 
