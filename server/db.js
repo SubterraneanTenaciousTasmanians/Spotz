@@ -1,4 +1,6 @@
 var path = require('path');
+
+
 var knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -34,13 +36,14 @@ db.knex.schema.hasTable('streetSweeping').then(function (exists) {
       //  table.increments('id').primary();
       table.integer('Rte');
       table.string('Street Name');
-      table.integer('Address');
-      table.string('Day of');
+      table.integer('Address From');
+      table.integer('Address To');
+      table.string('Day of Month');
       table.string('AM/PM');
       table.string('Side');
       table.string('From');
       table.string('To');
-      table.integer('Opt-');
+      table.integer('Opt-out');
     }).then(function (table) {
      console.log('Created Table', table);
    });
@@ -51,7 +54,7 @@ db.sweeping = db.Model.extend({
   tableName: 'streetSweeping',
 });
 
-var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
+// var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
 
 // new db.sweeping(dummyData).save().then(function () {
 //   console.log('yay');
