@@ -22,32 +22,40 @@ db.knex.schema.hasTable('users').then(function (exists) {
   }
 });
 
+// NOTE: we will have to change this most likely
+//  streetSegment.number('segmentStartXCoordinate', 255);
+//  streetSegment.number('segmentStartYCoordinates', 255);
+//  streetSegment.number('segmentEndXCoordinates', 255);
+//  streetSegment.number('segmentEndYCoordinates', 255);
+
 db.knex.schema.hasTable('streetSweeping').then(function (exists) {
   if (!exists) {
-    db.knex.schema.createTable('streetSweeping', function (streetSegment) {
-     streetSegment.increments('id').primary();
-     streetSegment.number('Rte', 255);
-     streetSegment.string('Street Name', 255);
-
-     // street address number.
-     streetSegment.number('Address', 255);
-     streetSegment.string('Day of', 255);
-     streetSegment.string('AM/PM', 255);
-     streetSegment.string('Side', 1);
-     streetSegment.string('From', 255);
-     streetSegment.string('To', 255);
-     streetSegment.string('Opt-', 255);
-
-     // NOTE: we will have to change this most likely
-     streetSegment.number('segmentStartXCoordinate', 255);
-     streetSegment.number('segmentStartYCoordinates', 255);
-     streetSegment.number('segmentEndXCoordinates', 255);
-     streetSegment.number('segmentEndYCoordinates', 255);
-   }).then(function (table) {
+    db.knex.schema.createTable('streetSweeping', function (table) {
+      //  table.increments('id').primary();
+      table.integer('Rte');
+      table.string('Street Name');
+      table.integer('Address');
+      table.string('Day of');
+      table.string('AM/PM');
+      table.string('Side');
+      table.string('From');
+      table.string('To');
+      table.integer('Opt-');
+    }).then(function (table) {
      console.log('Created Table', table);
    });
   }
 });
+
+db.sweeping = db.Model.extend({
+  tableName: 'streetSweeping',
+});
+
+var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
+
+// new db.sweeping(dummyData).save().then(function () {
+//   console.log('yay');
+// });
 
 module.exports = db;
 
