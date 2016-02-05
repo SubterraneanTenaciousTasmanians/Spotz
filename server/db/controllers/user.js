@@ -10,11 +10,17 @@ module.exports = {
 
   read: function (userinfo) {
     return new db.User(userinfo).fetch().then(function (model) {
-      console.log(model, 'user has been found');
-      return model;
-    }).catch(function (err) {
-      console.log(err, 'user does not exist');
+      if (!model) {
+        console.log('user does not exist');
+        return model;
+      } else {
+        console.log(model, 'user has been found');
+        return model;
+      }
     });
+
+    // .catch(function (err) {
+    // });
   },
 
   //NOTE: Update function does not work, need to be fixed
