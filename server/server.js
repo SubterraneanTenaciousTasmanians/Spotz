@@ -29,6 +29,7 @@ app.use(passport.session());
 app.use(cookieParser());
 app.use(express.static(__dirname + '/../client/'));
 
+User.delete({ username: 'qwe' });
 /*
  *Subrouters
  */
@@ -44,8 +45,6 @@ app.use('/auth/google', assignTokenGoogle);
  * comment out before deployment
  */
 env(__dirname + '/.env');
-
-
 
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
