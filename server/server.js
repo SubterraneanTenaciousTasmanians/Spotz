@@ -10,7 +10,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var cookieParser = require('cookie-parser');
 
 var db = require('./db/db.js');
-var User = require('./db/controllers/user.js');
+var User = require('./db/user.js');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var assignTokenGoogle = require('./routers/assignTokenGoogle.js');
 var verifyToken = require('./routers/verifyToken');

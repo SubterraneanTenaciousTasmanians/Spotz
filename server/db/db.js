@@ -1,4 +1,4 @@
-var path = require('path');
+'use strict';
 
 var knex = require('knex')({
   client: 'mysql',
@@ -12,6 +12,56 @@ var knex = require('knex')({
 });
 var db = require('bookshelf')(knex);
 
+db.knex.schema.hasTable('worldGrid').then(function (exists) {
+  if (exists) {
+    console.log('worldGrid exists');
+    return;
+  }
+
+  db.knex.schema.createTable('worldGrid', function (grid) {
+    grid.increments('id').primary();
+    grid.integer('xIndex');
+    grid.integer('yIndex');
+  }).then(function (table) {
+    console.log('created worldGrid table', table);
+  });
+});
+
+
+db.knex.schema.hasTable('permitZones').then(function (exists) {
+  if (exists) {
+    console.log('permitZones exists');
+    return;
+  }
+
+  db.knex.schema.createTable('permitZones', function (zone) {
+    zone.increments('id').primary();
+    zone.integer('worldGrid_fk');
+    zone.text('boundary', 'mediumtext');
+    zone.integer('permitRule_fk');
+  }).then(function (table) {
+    console.log('created permitZones table', table);
+  });
+});
+
+db.knex.schema.hasTable('permitRules').then(function (exists) {
+  if (exists) {
+    console.log('permitRules exists');
+    return;
+  }
+
+  db.knex.schema.createTable('permitpermitRules', function (rule) {
+    rule.increments('id').primary();
+    rule.string('permit_code');
+    rule.string('days');
+    rule.string('time_limit');
+    rule.time('startTime');
+    rule.time('endTime');
+  }).then(function (table) {
+    console.log('created permitZones table', table);
+  });
+});
+
 db.knex.schema.hasTable('users').then(function (exists) {
   if (!exists) {
     db.knex.schema.createTable('users', function (user) {
@@ -23,7 +73,7 @@ db.knex.schema.hasTable('users').then(function (exists) {
    }).then(function (table) {
      console.log('Created Table', table);
    });
-  }
+ }
 });
 
 // NOTE: we will have to change this most likely
