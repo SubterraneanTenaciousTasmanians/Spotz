@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var bodyparser = require('body-parser');
 var path = require('path');
@@ -9,15 +11,23 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var cookieParser = require('cookie-parser');
 
-var db = require('./db/db.js');
+var ParkingDB = require('./db/parking.js');
 var User = require('./db/user.js');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var assignTokenGoogle = require('./routers/assignTokenGoogle.js');
 var verifyToken = require('./routers/verifyToken');
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8080;
+
 
 var app = express();
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 /*
  *Global Middlewares
  */
@@ -38,6 +48,18 @@ app.use(express.static(__dirname + '/../client/'));
 // app.use('/api', verifyToken);
 app.use('/auth', assignTokenSignin);
 app.use('/auth/google', assignTokenGoogle);
+
+app.get('/zones/:xCoord/:yCoord', function (req, res) {
+  ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
+    res.status(200).send(data);
+  });
+});
+
+app.post('/zones', function (req, res) {
+  ParkingDB.savePermitZones(req.body).then(function (data) {
+    res.status(201).send(data);
+  });
+});
 
 /**
  * environment file for developing under a local server
