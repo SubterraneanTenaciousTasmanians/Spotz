@@ -1,6 +1,10 @@
 'use strict';
 
-var knex = require('knex')({
+var knex = require('knex');
+var bookShelf = require('bookshelf');
+var parkingDB = require('./parking.js');
+
+knex = knex({
   client: 'mysql',
   connection: {
     host: 'localhost',
@@ -10,24 +14,30 @@ var knex = require('knex')({
     charset: 'utf8',
   },
 });
-var bookShelf = require('bookshelf')(knex);
+
+bookShelf = bookShelf(knex);
+module.exports = bookShelf;
+
 bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
-  if (exists) { return; }
+  if (exists) {
+    return console.log('worldGrid table already exists');
+  }
 
   return bookShelf.knex.schema.createTable('worldGrid', function (grid) {
-    console.log('creating world grid');
+    console.log('creating NEW world grid');
     grid.increments('id').primary();
     grid.integer('xIndex');
     grid.integer('yIndex');
   });
 })
 .then(function () {
-  console.log('created worldGrid table');
   return bookShelf.knex.schema.hasTable('permitZones').then(function (exists) {
-    if (exists) { return; }
+    if (exists) {
+      return console.log('permitZones table already exists');
+    }
 
     return bookShelf.knex.schema.createTable('permitZones', function (zone) {
-      console.log('creating permit zones');
+      console.log('creating NEW permit zones');
       zone.increments('id').primary();
       zone.text('boundary', 'mediumtext');
       zone.integer('permitRule_fk');
@@ -35,19 +45,19 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
   });
 })
 .then(function () {
-  console.log('created permitZones table');
-  return bookShelf.knex.schema.hasTable('permitZones_worldGrid').then(function (exists) {
-    if (exists) { return; }
+  return bookShelf.knex.schema.hasTable('permitzones_worldgrid').then(function (exists) {
+    if (exists) {
+      return console.log('permitzones_worldgrid table already exists');
+    }
 
-    return bookShelf.knex.schema.createTable('worldGrid_permitZones', function (table) {
-      console.log('creating join table zones', table);
+    return bookShelf.knex.schema.createTable('permitZones_worldGrid', function (table) {
+      console.log('creating NEW join table zones');
       table.integer('worldGrid_id').unsigned().references('worldGrid.id');
-      table.integer('permitZones_id').unsigned().references('permitZones.id');
+      table.integer('permitZone_id').unsigned().references('permitZones.id');
     });
   });
 })
 .then(function () {
-  console.log('created worldGrid_permitZones join table');
   return bookShelf.knex.schema.createTableIfNotExists('permitRules', function (rule) {
     rule.increments('id').primary();
     rule.string('permit_code');
@@ -57,8 +67,11 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
     rule.time('endTime');
   });
 })
-.then(function (table) {
+.then(function () {
   console.log('created permitZones table');
+  return parkingDB.importParkingZone('/zoneData/berkeley.json', function () {
+    console.log('data loaded!!');
+  });
 });
 
 bookShelf.knex.schema.hasTable('users').then(function (exists) {
@@ -100,13 +113,3 @@ bookShelf.knex.schema.hasTable('streetSweeping').then(function (exists) {
    });
   }
 });
-
-// var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
-
-// new bookShelf.sweeping(dummyData).save().then(function () {
-//   console.log('yay');
-// });
-
-module.exports = bookShelf;
-
-// Status;
