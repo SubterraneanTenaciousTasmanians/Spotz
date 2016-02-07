@@ -1,4 +1,4 @@
-var path = require('path');
+'use strict';
 
 var knex = require('knex')({
   client: 'mysql',
@@ -10,11 +10,60 @@ var knex = require('knex')({
     charset: 'utf8',
   },
 });
-var db = require('bookshelf')(knex);
+var bookShelf = require('bookshelf')(knex);
+bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
+  if (exists) { return; }
 
-db.knex.schema.hasTable('users').then(function (exists) {
+  return bookShelf.knex.schema.createTable('worldGrid', function (grid) {
+    console.log('creating world grid');
+    grid.increments('id').primary();
+    grid.integer('xIndex');
+    grid.integer('yIndex');
+  });
+})
+.then(function () {
+  console.log('created worldGrid table');
+  return bookShelf.knex.schema.hasTable('permitZones').then(function (exists) {
+    if (exists) { return; }
+
+    return bookShelf.knex.schema.createTable('permitZones', function (zone) {
+      console.log('creating permit zones');
+      zone.increments('id').primary();
+      zone.text('boundary', 'mediumtext');
+      zone.integer('permitRule_fk');
+    });
+  });
+})
+.then(function () {
+  console.log('created permitZones table');
+  return bookShelf.knex.schema.hasTable('permitZones_worldGrid').then(function (exists) {
+    if (exists) { return; }
+
+    return bookShelf.knex.schema.createTable('worldGrid_permitZones', function (table) {
+      console.log('creating join table zones', table);
+      table.integer('worldGrid_id').unsigned().references('worldGrid.id');
+      table.integer('permitZones_id').unsigned().references('permitZones.id');
+    });
+  });
+})
+.then(function () {
+  console.log('created worldGrid_permitZones join table');
+  return bookShelf.knex.schema.createTableIfNotExists('permitRules', function (rule) {
+    rule.increments('id').primary();
+    rule.string('permit_code');
+    rule.string('days');
+    rule.string('time_limit');
+    rule.time('startTime');
+    rule.time('endTime');
+  });
+})
+.then(function (table) {
+  console.log('created permitZones table');
+});
+
+bookShelf.knex.schema.hasTable('users').then(function (exists) {
   if (!exists) {
-    db.knex.schema.createTable('users', function (user) {
+    bookShelf.knex.schema.createTable('users', function (user) {
      user.increments('id').primary();
      user.string('username').unique();
      user.string('password');
@@ -32,9 +81,9 @@ db.knex.schema.hasTable('users').then(function (exists) {
 //  streetSegment.number('segmentEndXCoordinates', 255);
 //  streetSegment.number('segmentEndYCoordinates', 255);
 
-db.knex.schema.hasTable('streetSweeping').then(function (exists) {
+bookShelf.knex.schema.hasTable('streetSweeping').then(function (exists) {
   if (!exists) {
-    db.knex.schema.createTable('streetSweeping', function (table) {
+    bookShelf.knex.schema.createTable('streetSweeping', function (table) {
       //  table.increments('id').primary();
       table.integer('Rte');
       table.string('Street Name');
@@ -54,10 +103,10 @@ db.knex.schema.hasTable('streetSweeping').then(function (exists) {
 
 // var dummyData = { Rte:61, 'Street Name':'Acroft Ct', Address:1498, 'Day of':'1st Fri', 'AM/PM':'AM', Side:'S', From:'Acton', To:'Terminus', 'Opt-':'' };
 
-// new db.sweeping(dummyData).save().then(function () {
+// new bookShelf.sweeping(dummyData).save().then(function () {
 //   console.log('yay');
 // });
 
-module.exports = db;
+module.exports = bookShelf;
 
 // Status;
