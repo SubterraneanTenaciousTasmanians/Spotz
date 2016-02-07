@@ -5,14 +5,17 @@ var bodyparser = require('body-parser');
 var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
+
+//DATA BASE
+var ParkingDB = require('./db/parking.js');
+var User = require('./db/user.js');
+
+//LOGIN
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var cookieParser = require('cookie-parser');
-
-var ParkingDB = require('./db/parking.js');
-var User = require('./db/user.js');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var assignTokenGoogle = require('./routers/assignTokenGoogle.js');
 var verifyToken = require('./routers/verifyToken');
@@ -22,9 +25,10 @@ var port = process.env.PORT || 8080;
 
 var app = express();
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//CORS
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
@@ -32,12 +36,13 @@ app.use(function(req, res, next) {
  *Global Middlewares
  */
 app.use(morgan('combined'));
+app.use(express.static(__dirname + '/../client/'));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
-app.use(express.static(__dirname + '/../client/'));
 
 /*
  *Subrouters
