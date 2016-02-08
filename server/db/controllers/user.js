@@ -35,6 +35,5 @@ module.exports = {
         console.log(model, 'user has been deleted');
       });
     });
-
   },
 };

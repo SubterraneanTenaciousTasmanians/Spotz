@@ -29,7 +29,6 @@ app.use(passport.session());
 app.use(cookieParser());
 app.use(express.static(__dirname + '/../client/'));
 
-User.delete({ username: 'qwe' });
 /*
  *Subrouters
  */
