@@ -55,6 +55,7 @@ app.use('/auth', assignTokenSignin);
 app.use('/auth/google', assignTokenGoogle);
 
 app.get('/zones/:xCoord/:yCoord', function (req, res) {
+  console.log('received request for', req.params.xCoord, req.params.yCoord);
   ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
     res.status(200).send(data);
   });

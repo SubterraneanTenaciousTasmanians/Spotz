@@ -105,9 +105,14 @@ exports.grabRelatedPolygons = function (worldGridObj) {
    attrs:{name:"ted"}
   }
   */
-
+  console.log('finding all polygons where', worldGridObj.attrs);
   return worldGridObj.table.where(worldGridObj.attrs).fetch({ withRelated: ['permitZones.worldGrid'] })  //application specific
   .then(function (worldGridCollection) {
+    if (!worldGridCollection) {
+      console.log('nothing to return');
+      return null;
+    }
+
     return worldGridCollection.related('permitZones');
   });
 };

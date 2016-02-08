@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="spotz">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Parking</title>
+    <link rel="stylesheet" href="map/map.css">
+    <link rel="stylesheet" href="main.css">
   </head>
   <body>
-    <div><input placeholder='username'></div>
-    <div><input placeholder='password'></div>
-    <button>Sign In</button>
-    <button>Sign Up</button>
-    <a href="//localhost:3000/auth/google/callback"><img src="./assets/images/googleButton.png" /></a>
-    <a href="//localhost:3000/auth/facebook/callback"><img src="./assets/images/facebookButton.png" /></a>
+    <div ui-view class="app-wrapper"></div>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="config.js"></script>
+    <script src="map/mapService.js"></script>
+    <script src="map/mapCtrl.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
