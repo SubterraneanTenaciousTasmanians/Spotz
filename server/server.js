@@ -54,14 +54,17 @@ app.use(cookieParser());
 app.use('/auth', assignTokenSignin);
 app.use('/auth/google', assignTokenGoogle);
 
+// using x,y Google Maps coordinates, find and return all the permit zones for that area
 app.get('/zones/:xCoord/:yCoord', function (req, res) {
   ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
     res.status(200).send(data);
   });
 });
 
+// Add new parking zones from the front end when a post request to /zones is made
+// this should be an an admin only feature
 app.post('/zones', function (req, res) {
-  ParkingDB.savePermitZones(req.body).then(function (data) {
+  ParkingDB.savePermitZones(req.body).then(function (data) {  //function is in parking.js)
     res.status(201).send(data);
   });
 });
