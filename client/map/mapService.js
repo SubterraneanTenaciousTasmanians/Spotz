@@ -32,12 +32,9 @@ angular.module('MapServices', ['AdminServices'])
 
   factory.fetchParkingZones = function (coordinates) {
 
-    var center = factory.map.getCenter();
-    console.log('getting parking zones, here is the center', center.lat(), center.lng());
-
     $http({
       method:'GET',
-      url:'http://localhost:8080/zones/' + center.lng() + '/' + center.lat(),
+      url:'http://localhost:8080/zones/' + coordinates[0] + '/' + coordinates[1],
     })
     .success(function (data) {
       console.log('got em', data);
@@ -112,14 +109,17 @@ angular.module('MapServices', ['AdminServices'])
         topRightX = factory.map.getBounds().getNorthEast().lng();
         bottomLeftY = factory.map.getBounds().getSouthWest().lat();
         bottomLeftX = factory.map.getBounds().getSouthWest().lng();
+        var stepX = 0.018;
+        var stepY = 0.016;
 
         console.log('titles loaded', [topRightX, topRightY], [bottomLeftX, bottomLeftY]);
 
-        var curLine = Math.ceil(bottomLeftX / 0.018) * 0.018;
+        var curLine = Math.ceil(bottomLeftX / stepX) * stepX;
+        var f;
         while (curLine < topRightX) {
           //line
           console.log('painting line', [curLine, topRightY], [curLine, bottomLeftY]);
-          var f = {
+          f = {
             type: 'Feature',
             properties:{},
             geometry:{
@@ -130,14 +130,14 @@ angular.module('MapServices', ['AdminServices'])
 
           //data format line = [ [point 1], [point 2], ....]
           factory.map.data.addGeoJson(f);
-          curLine = curLine + 0.018;
+          curLine = curLine + stepX;
         }
 
-        curLine = Math.ceil(bottomLeftY / 0.029) * 0.029;
+        curLine = Math.ceil(bottomLeftY / stepY) * stepY;
         while (curLine < topRightY) {
           //line
           console.log('painting line', [topRightX, curLine], [bottomLeftX, curLine]);
-          var f = {
+          f = {
             type: 'Feature',
             properties:{},
             geometry:{
@@ -148,7 +148,7 @@ angular.module('MapServices', ['AdminServices'])
 
           //data format line = [ [point 1], [point 2], ....]
           factory.map.data.addGeoJson(f);
-          curLine = curLine + 0.029;
+          curLine = curLine + stepY;
         }
 
       });
@@ -162,46 +162,7 @@ angular.module('MapServices', ['AdminServices'])
       factory.map.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         console.log(coordinates);
-
-        street.push(coordinates);
-        streets.push(coordinates);
-
-        if (street.length === 2) {
-          //show the segment
-          console.log(JSON.stringify(street));
-
-          //line
-          var f = {
-            type: 'Feature',
-            properties:{},
-            geometry:{
-              type:'LineString',
-              coordinates: street.slice(),
-            },
-          };
-
-          //data format line = [ [point 1], [point 2], ....]
-          factory.map.data.addGeoJson(f);
-
-          //polygon
-          var copy = streets.slice();
-          copy.push(streets[0].slice());    //add endpoint
-          console.log(copy);
-
-          var p = {
-            type: 'Feature',
-            properties:{},
-            geometry:{
-              type: 'Polygon',
-              coordinates: [copy],
-            },
-          };
-
-          // data format polygon = [ [line 1], [line 2], ....]
-          factory.map.data.addGeoJson(p);
-          street = [];
-        }
-
+        factory.fetchParkingZones(coordinates);
       });
 
       callback(factory.map);

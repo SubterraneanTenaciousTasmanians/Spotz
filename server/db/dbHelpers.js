@@ -1,7 +1,7 @@
 'use strict';
 
 var stepX = 0.018;
-var stepY = 0.029;
+var stepY = 0.016;
 
 var exports = {};
 module.exports = exports;
