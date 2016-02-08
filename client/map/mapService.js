@@ -2,7 +2,7 @@
 
 angular.module('MapServices', ['AdminServices'])
 
-.factory('MapFactory', ['$http', '$window', '$timeout', 'KeyFacory', function ($http, $window, $timeout, KeyFacory) {
+.factory('MapFactory', ['$http', '$window', '$timeout', 'KeyFactory', function ($http, $window, $timeout, KeyFactory) {
 
   var factory = {};
   var street = [];
@@ -98,7 +98,7 @@ angular.module('MapServices', ['AdminServices'])
     console.log('setting up the map...');
 
     //jsonp
-    $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFacory.map + '&callback=JSON_CALLBACK')
+    $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFactory.map + '&callback=JSON_CALLBACK')
     .success(function () {
 
       console.log('creating map');
