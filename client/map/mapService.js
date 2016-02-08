@@ -109,6 +109,8 @@ angular.module('MapServices', ['AdminServices'])
         topRightX = factory.map.getBounds().getNorthEast().lng();
         bottomLeftY = factory.map.getBounds().getSouthWest().lat();
         bottomLeftX = factory.map.getBounds().getSouthWest().lng();
+
+        //display gridlines
         var stepX = 0.018;
         var stepY = 0.016;
 
