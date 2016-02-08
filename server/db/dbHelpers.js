@@ -8,12 +8,12 @@
 // we are using the following formulas to translate the google coordinates into our grid location
 
 // (360deg / 40,000km) * 2km = 0.018 degrees (East/West)
-// (180 deg / 12,400km) * 2km = 0.029 degrees (North/South)
+// (180 deg / 20,000km) * 2km = 0.018 degrees (North/South)
 
 // Thus every 0.018 degrees in the east/west direction and
 // every 0.029 degrees in north/south direction will represent one grid square of our world grid
 var stepX = 0.018;
-var stepY = 0.029;
+var stepY = 0.018;
 
 var exports = {};
 module.exports = exports;
@@ -132,9 +132,13 @@ exports.grabRelatedPolygons = function (worldGridObj) {
 
   // Using the coordinates of a worldgrid square, find that square in the
   // permitzones.worldGrid join table and return the permit zones that match that worldgrid square
-
   return worldGridObj.table.where(worldGridObj.attrs).fetch({ withRelated: ['permitZones.worldGrid'] })  //application specific
   .then(function (worldGridCollection) {
+    if (!worldGridCollection) {
+      console.log('nothing to return');
+      return null;
+    }
+
     return worldGridCollection.related('permitZones');
   });
 };
