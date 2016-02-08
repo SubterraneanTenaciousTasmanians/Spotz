@@ -1,9 +1,10 @@
 'use strict';
 
-var knex = require('knex');
-var bookShelf = require('bookshelf');
-var parkingDB = require('./parking.js');
+var knex = require('knex');  //knex mySql queries
+var bookShelf = require('bookshelf');  //ORM
+var parkingDB = require('./parking.js');  // models and functions for permitzone parking 
 
+//set the knex configuration and database connection
 knex = knex({
   client: 'mysql',
   connection: {
@@ -18,6 +19,7 @@ knex = knex({
 bookShelf = bookShelf(knex);
 module.exports = bookShelf;
 
+// Create the worldGrid Schema/table  (every grid has an X and Y coordinate)
 bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
   if (exists) {
     return console.log('worldGrid table already exists');
@@ -25,11 +27,13 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
 
   return bookShelf.knex.schema.createTable('worldGrid', function (grid) {
     console.log('creating NEW world grid');
-    grid.increments('id').primary();
+    grid.increments('id').primary();  //auto incremented primary key
     grid.integer('xIndex');
     grid.integer('yIndex');
   });
 })
+
+// Create the permitZones schema/table
 .then(function () {
   return bookShelf.knex.schema.hasTable('permitZones').then(function (exists) {
     if (exists) {
@@ -39,11 +43,13 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
     return bookShelf.knex.schema.createTable('permitZones', function (zone) {
       console.log('creating NEW permit zones');
       zone.increments('id').primary();
-      zone.text('boundary', 'mediumtext');
-      zone.integer('permitRule_fk');
+      zone.text('boundary', 'mediumtext');  //strigified list of all coordinate points that make up a permit zone
+      zone.integer('permitRule_fk');  //foreign key for the rule that applies to a permit zone
     });
   });
 })
+
+// Create the permitZones/worldgrid join table
 .then(function () {
   return bookShelf.knex.schema.hasTable('permitzones_worldgrid').then(function (exists) {
     if (exists) {
@@ -57,6 +63,8 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
     });
   });
 })
+
+// Create the permitRule schema/table
 .then(function () {
   return bookShelf.knex.schema.createTableIfNotExists('permitRules', function (rule) {
     rule.increments('id').primary();
@@ -67,6 +75,10 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
     rule.time('endTime');
   });
 })
+
+// ***
+// Import Permit Zone info (using the function defined in parking.js)
+// ***
 .then(function () {
   console.log('created permitZones table');
   return parkingDB.importParkingZone('/zoneData/berkeley.json', function () {
@@ -74,6 +86,7 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
   });
 });
 
+// Create the user schema/table
 bookShelf.knex.schema.hasTable('users').then(function (exists) {
   if (!exists) {
     bookShelf.knex.schema.createTable('users', function (user) {
@@ -94,6 +107,7 @@ bookShelf.knex.schema.hasTable('users').then(function (exists) {
 //  streetSegment.number('segmentEndXCoordinates', 255);
 //  streetSegment.number('segmentEndYCoordinates', 255);
 
+// Create the streetSweeping schema/table
 bookShelf.knex.schema.hasTable('streetSweeping').then(function (exists) {
   if (!exists) {
     bookShelf.knex.schema.createTable('streetSweeping', function (table) {

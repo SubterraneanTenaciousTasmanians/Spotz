@@ -112,7 +112,7 @@ angular.module('MapServices', ['AdminServices'])
 
         //display gridlines
         var stepX = 0.018;
-        var stepY = 0.016;
+        var stepY = 0.018;
 
         console.log('titles loaded', [topRightX, topRightY], [bottomLeftX, bottomLeftY]);
 
