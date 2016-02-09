@@ -7,7 +7,7 @@ var morgan = require('morgan');
 var env = require('node-env-file');
 
 //when deployed comment the line below
-env(__dirname + '/.env');
+// env(__dirname + '/.env');
 
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
