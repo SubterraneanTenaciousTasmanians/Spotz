@@ -2,18 +2,19 @@
 
 var knex = require('knex');  //knex mySql queries
 var bookShelf = require('bookshelf');  //ORM
-var parkingDB = require('./parking.js');  // models and functions for permitzone parking 
+var parkingDB = require('./parking.js');  // models and functions for permitzone parking
 
 //set the knex configuration and database connection
 knex = knex({
   client: 'mysql',
-  connection: {
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'spotz',
-    charset: 'utf8',
-  },
+  connection: 'mysql://ukjbcm00kji44z7v:upnzxdyympc831p1@tviw6wn55xwxejwj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/j2is21k9qoaqxll1'
+  // {
+  //   host: 'localhost',
+  //   user: 'root',
+  //   password: '',
+  //   database: 'spotz',
+  //   charset: 'utf8',
+  // },
 });
 
 bookShelf = bookShelf(knex);
