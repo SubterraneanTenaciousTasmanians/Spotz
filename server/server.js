@@ -16,7 +16,7 @@ var cookieParser = require('cookie-parser');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var verifyToken = require('./routers/verifyToken');
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 
 var app = express();
 

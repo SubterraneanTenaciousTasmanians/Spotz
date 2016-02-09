@@ -1,5 +1,5 @@
 var db = require('../db.js');
-
+var User = require('../models/user.js');
 //accessing functions
 module.exports = {
   create: function (userinfo) {

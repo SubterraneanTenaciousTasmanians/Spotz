@@ -17,6 +17,7 @@ var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
 var FACEBOOK_CLIENT_ID = process.env.FACEBOOKCLIENTID;
 var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
+var JWT_SECRET = process.env.JWTSECRET;
 
 assignToken.post('/signin', function (req, res) {
   User.read({ username: req.body.username }).then(function (model) {
@@ -26,7 +27,7 @@ assignToken.post('/signin', function (req, res) {
       if (model.attributes.password !== req.body.password) {
         res.json({ success: false, message: 'Authentication failed. Invalid Password' });
       } else {
-        var token = jwt.sign({ _id: model.attributes.id }, 'SuperSecret', { algorithm: 'HS256', expiresIn: 7200 }, function (token) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
           res.json({ success: true, message: 'Here is your token', token: token });
         });
@@ -39,7 +40,7 @@ assignToken.post('/signup', function (req, res) {
   console.log('SEND FROM BACKEND ', req.body);
   User.create(req.body).then(function (model) {
     User.read({ username: req.body.username }).then(function (model) {
-      var token = jwt.sign({ _id: model.attributes.id }, 'SuperSecret', { algorithm: 'HS256', expiresIn: 7200 }, function (token) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
         console.log('Here is the token', token);
         res.json({ success: true, message: 'Here is your token', token: token });
       });
@@ -115,9 +116,10 @@ assignToken.get('/google/callback',
       if (!model) {
         res.json({ success: false, message: 'Authentication failed. User not found' });
       } else if (model) {
-        var token = jwt.sign({ _id: model.attributes.id }, 'SuperSecret', { algorithm: 'HS256', expiresIn: 7200 }, function (token) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
-          res.json({ success: true, message: 'Here is your token', token: token });
+          res.cookie('credentials', 1, { success: true, message: 'Here is your token', token: token });
+          res.redirect('/');
         });
       }
     });
@@ -138,7 +140,7 @@ assignToken.get('/facebook/callback',
       if (!model) {
         res.json({ success: false, message: 'Authentication failed. User not found' });
       } else if (model) {
-        var token = jwt.sign({ _id: model.attributes.id }, 'SuperSecret', { algorithm: 'HS256', expiresIn: 7200 }, function (token) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
           res.json({ success: true, message: 'Here is your token', token: token });
         });
