@@ -67,27 +67,25 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
-<<<<<<< HEAD
+
 app.post('/api/photo', function (req,res) {
   console.log('reqbody: ', req.body)
   res.status(200).send(req.body)
-=======
+});
+
+
 app.post('/api/rule/:polyId', function (req, res) {
   console.log('processing rules for ', req.params.polyId);
   ParkingDB.saveRule(req.params.polyId, req.body).then(function (data) {  //function is in parking.js)
     res.status(201).send(data);
   });
->>>>>>> 4fce032037e3aca1fb124c025bcffd78e3614a77
 });
 
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
-<<<<<<< HEAD
 // env(__dirname + '/.env');
-console.log(port);  
-=======
+console.log(port);
 
->>>>>>> 4fce032037e3aca1fb124c025bcffd78e3614a77
 app.listen(port);
