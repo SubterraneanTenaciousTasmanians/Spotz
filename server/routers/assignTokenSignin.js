@@ -5,7 +5,7 @@ var assignToken = express.Router();
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
+var Bcrypt = require('bcrypt');
 var env = require('node-env-file');
 /**
  * environment file for developing under a local server
@@ -20,18 +20,21 @@ var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
 var JWT_SECRET = process.env.JWTSECRET;
 
 assignToken.post('/signin', function (req, res) {
+  console.log("REQUEST DOT BODY ", req.body)
   User.read({ username: req.body.username }).then(function (model) {
     if (!model) {
       res.json({ success: false, message: 'Authentication failed. User not found' });
     } else if (model) {
-      if (model.attributes.password !== req.body.password) {
-        res.json({ success: false, message: 'Authentication failed. Invalid Password' });
-      } else {
-        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-          console.log('Here is the token', token);
-          res.json({ success: true, message: 'Here is your token', token: token });
-        });
-      }
+      Bcrypt.compare(req.body.password, model.attributes.password, function (err, result) {
+        if (!result) {
+          res.json({ success: false, message: 'Authentication failed. Invalid Password' });
+        } else {
+          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+            console.log('Here is the token', token);
+            res.json({ success: true, message: 'Here is your token', token: token });
+          });
+        }
+      })
     }
   });
 });
@@ -118,7 +121,7 @@ assignToken.get('/google/callback',
       } else if (model) {
         var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
-          res.cookie('credentials', 1, { success: true, message: 'Here is your token', token: token });
+          res.cookie('credentials', token);
           res.redirect('/');
         });
       }
@@ -142,7 +145,8 @@ assignToken.get('/facebook/callback',
       } else if (model) {
         var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
-          res.json({ success: true, message: 'Here is your token', token: token });
+          res.cookie('credentials', token);
+          res.redirect('/');
         });
       }
     });

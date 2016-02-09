@@ -17,7 +17,7 @@ var User = require('./db/controllers/user.js');
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
-var verifyToken = require('./routers/verifyToken');
+var verifyToken = require('./routers/verifyToken.js');
 
 var port = process.env.PORT || 3000;
 
@@ -48,35 +48,7 @@ app.use(cookieParser());
 
 //Every request with the beginning endpoint of its assigned URL
 //gets ran through the subrouter first
-// app.use('/api', verifyToken);
 app.use('/auth', assignTokenSignin);
-
-// using x,y Google Maps coordinates, find and return all the permit zones for that area
-app.get('/api/zones/:xCoord/:yCoord', function (req, res) {
-  console.log('received request for', req.params.xCoord, req.params.yCoord);
-  ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
-    res.status(200).send(data);
-  });
-});
-
-// Add new parking zones from the front end when a post request to /zones is made
-// this should be an an admin only feature
-app.post('/api/zones', function (req, res) {
-  ParkingDB.savePermitZones(req.body).then(function (data) {  //function is in parking.js)
-    res.status(201).send(data);
-  });
-});
-
-app.post('/api/rule/:polyId', function (req, res) {
-  console.log('processing rules for ', req.params.polyId);
-  ParkingDB.saveRule(req.params.polyId, req.body).then(function (data) {  //function is in parking.js)
-    res.status(201).send(data);
-  });
-});
-
-/**
- * environment file for developing under a local server
- * comment out before deployment
- */
+app.use('/api', verifyToken);
 
 app.listen(port);

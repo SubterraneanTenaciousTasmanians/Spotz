@@ -10,5 +10,9 @@ angular.module('LoginService', [])
     return $http.post('/auth/signin', userinfo);
   };
 
+  authentication.verifyToken = function (token) {
+    return $http.post('/api/verify', { token: token });
+  };
+
   return authentication;
 }])

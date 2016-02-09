@@ -1,9 +1,24 @@
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', 'MapFactory', function ($scope, MapFactory) {
+.controller('mapCtrl', ['$scope', '$cookies', 'MapFactory', function ($scope, $cookies, MapFactory) {
+  $scope.checkCredentials = function () {
+    var token = $cookies.get('credentials');
+    if (token.length) {
+      LoginFactory.verifyToken(token).then(function (response) {
+        if (!response.data.success) {
+          $state.go('login');
+        }
+      });
+    }
+  };
+
+  $scope.checkCredentials();
 
   MapFactory.init(function (map) {
     var center = map.getCenter();
+
+    //Verifying token
+    var token = $cookies.get('credentials');
 
     MapFactory.loadColors(function () {
       MapFactory.fetchParkingZones([center.lng(), center.lat()]);
@@ -27,12 +42,9 @@ angular.module('spotz.map', ['MapServices'])
     map.data.addListener('click', function (event) {
       console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
 
-      MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
+      MapFactory.sendRule(event.feature.getProperty('id').toString(), { token: token, rule: $scope.rule })
       .then(function () {
-        console.log('changing color', $scope.rule.color);
-        //event.feature.css($scope.color);
         event.feature.setProperty('color', $scope.rule.color);
-
       });
     });
   });

@@ -1,5 +1,5 @@
 //var SERVER_URL = 'https://spotz.herokuapp.com';
-var SERVER_URL = 'http://localhost:8080';
+var SERVER_URL = 'http://localhost:3000';
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -178,10 +178,10 @@ angular.module('MapServices', ['AdminServices'])
         strokeWeight: 5,
       });
 
-      factory.map.data.addListener('click', function (event) {
+      factory.map.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         console.log(coordinates);
-        //factory.fetchParkingZones(coordinates);
+        factory.fetchParkingZones(coordinates);
       });
 
       callback(factory.map);
