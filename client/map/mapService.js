@@ -1,4 +1,5 @@
-
+//var SERVER_URL = 'https://spotz.herokuapp.com';
+var SERVER_URL = 'http://localhost:8080';
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -20,7 +21,7 @@ angular.module('MapServices', ['AdminServices'])
   factory.loadColors = function (callback) {
     return $http({
       method:'GET',
-      url:'https://spotz.herokuapp.com/map/colors.json',
+      url: SERVER_URL + '/map/colors.json',
     })
     .success(function (data) {
       console.log('colors loaded!', data);
@@ -34,7 +35,7 @@ angular.module('MapServices', ['AdminServices'])
 
     $http({
       method:'GET',
-      url:'https://spotz.herokuapp.com/zones/' + coordinates[0] + '/' + coordinates[1],
+      url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1],
     })
     .success(function (data) {
       console.log('got em', data);
@@ -97,7 +98,7 @@ angular.module('MapServices', ['AdminServices'])
     //send off the request to store the data
     return $http({
       method:'POST',
-      url:'http://localhost:8080/rule/' + id,
+      url: SERVER_URL + '/api/rule/' + id,
       data: rule,
     })
     .success(function () {
@@ -179,7 +180,6 @@ angular.module('MapServices', ['AdminServices'])
 
       factory.map.data.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
-        clkEvent = event;
         console.log(coordinates);
         //factory.fetchParkingZones(coordinates);
       });
