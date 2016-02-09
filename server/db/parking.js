@@ -9,23 +9,46 @@ module.exports = db;
 //create model from worldGrid table/schema (in db.js)
 var WorldGrid = bookShelf.Model.extend({
   tableName: 'worldGrid',
-  permitZones: function () {   // creates the association (relationship): worldGrid belongs to many PermitZones
-    return this.belongsToMany(PermitZones);
-  },
-});
-
-//create model from permitZone table/schema (in db.js)
-var PermitZones = bookShelf.Model.extend({
-  tableName: 'permitZones',
-  worldGrid: function () {  // creates the association (relationship): permitZone belongs to many WorldGrid
-    return this.belongsToMany(WorldGrid);
+  zones: function () {   // creates the association (relationship): worldGrid belongs to many zones
+    return this.belongsToMany(Zones);
   },
 });
 
 //create model from permitRules table/schema (in db.js)
-var PermitRules = bookShelf.Model.extend({
-  tableName: 'permitRules',
+var Rules = bookShelf.Model.extend({
+  tableName: 'rules',
+  zones: function () {  // creates the association (relationship): rules belongs to many zones
+    return this.belongsToMany(Zones);
+  },
 });
+
+//create model from permitZone table/schema (in db.js)
+var Zones = bookShelf.Model.extend({
+  tableName: 'zones',
+  worldGrid: function () {  // creates the association (relationship): zones belongs to many WorldGrid
+    return this.belongsToMany(WorldGrid);
+  },
+
+  rules: function () {  // creates the association (relationship): zones belongs to many rules
+    return this.belongsToMany(Rules);
+  },
+});
+
+
+
+db.saveRule = function (zoneId, ruleAttrs) {
+  var ruleObj = {
+    table: Rules,
+    attrs: ruleAttrs,
+  };
+  return Zones.where({ id: zoneId }).fetch().then(function (zoneAttrs) {
+    var zoneObj = {
+      table: Zones,
+      attrs: zoneAttrs,
+    };
+    return helper.saveAndJoin(zoneObj, ruleObj, 'zones');
+  });
+};
 
 // Based on the google coordinates, find the corresponding WorldGrid square
 // then find the permit zones that are part of that WorldGrid Square
@@ -86,7 +109,7 @@ db.savePermitZones = function (zoneArray) {
             },
           },
           {
-            table: PermitZones,
+            table: Zones,
             attrs: {
               boundary:JSON.stringify(shapes),
             },
@@ -107,7 +130,7 @@ db.savePermitZones = function (zoneArray) {
 
   //save tuples into database
   //console.log('adding this to db >>>>>', JSON.stringify(tuplesToJoin));
-  return helper.saveAndJoinTuples(tuplesArray);
+  return helper.saveAndJoinTuples(tuplesArray, 'worldGrid');
 };
 
 // read all of the permitzone data from the file and save the data to the permitzone schema/table

@@ -70,6 +70,13 @@ app.post('/zones', function (req, res) {
   });
 });
 
+app.post('/rule/:polyId', function (req, res) {
+  console.log('processing rules for ', req.params.polyId);
+  ParkingDB.saveRule(req.params.polyId, req.body).then(function (data) {  //function is in parking.js)
+    res.status(201).send(data);
+  });
+});
+
 /**
  * environment file for developing under a local server
  * comment out before deployment

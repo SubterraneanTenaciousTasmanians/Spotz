@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -39,10 +39,12 @@ angular.module('MapServices', ['AdminServices'])
     .success(function (data) {
       console.log('got em', data);
 
-      data.forEach(function (poly) {
+      data.forEach(function (poly, i) {
         var p = {
           type: 'Feature',
           properties:{
+            index: i,
+            id: poly.id,
             parkingCode:poly.parkingCode,
           },
           geometry:{
@@ -51,6 +53,7 @@ angular.module('MapServices', ['AdminServices'])
           },
         };
         factory.map.data.addGeoJson(p);
+
       });
 
       var parkingColor = {};
@@ -82,9 +85,24 @@ angular.module('MapServices', ['AdminServices'])
       });
 
       factory.map.data.addListener('mouseover', function (event) {
-        infowindow.setContent(event.feature.R.parkingCode, event);
+        infowindow.setContent(event.feature.getProperty('id').toString(), event);
         infowindow.setPosition(event.latLng);
         infowindow.open(factory.map);
+      });
+
+      factory.map.data.addListener('click', function (event) {
+        //get form data from html
+        var form = '123';
+
+        //send off the request to store the data
+        return $http({
+          method:'POST',
+          url:'http://localhost:8080/rule/' + event.feature.getProperty('id').toString(),
+          data: { color: 'test' },
+        })
+        .success(function () {
+          //color the space to something
+        });
       });
 
     });
@@ -161,10 +179,11 @@ angular.module('MapServices', ['AdminServices'])
         strokeWeight: 5,
       });
 
-      factory.map.addListener('click', function (event) {
+      factory.map.data.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
+        clkEvent = event;
         console.log(coordinates);
-        factory.fetchParkingZones(coordinates);
+        //factory.fetchParkingZones(coordinates);
       });
 
       callback(factory.map);
