@@ -1,5 +1,11 @@
-var db = require('./../models/user.js');
+var db = require('./db.js');
 
+//model from schema
+db.User = db.Model.extend({
+  tableName: 'users',
+});
+
+//accessing functions
 module.exports = {
   create: function (userinfo) {
     return new db.User(userinfo).save().then(function (model) {
@@ -18,26 +24,22 @@ module.exports = {
         return model;
       }
     });
-
-    // .catch(function (err) {
-    // });
   },
 
-  //NOTE: Update function does not work, need to be fixed
   update: function (userinfo) {
-    return new db.User({ username: userinfo.username })
-      .save({ password: userinfo.password }, { patch: true })
+    db.knex('users')
+      .where({ username: userinfo.username })
+      .update({ password:userinfo.password })
       .then(function (model) {
-      console.log(model, 'has been updated');
-    });
+        console.log('Model has been updated');
+      });
   },
 
   delete: function (userinfo) {
-    this.read(userinfo).then(function (model) {
+    return this.read(userinfo).then(function (model) {
       new db.User({ id: model.id }).destroy().then(function (model) {
         console.log(model, 'user has been deleted');
       });
     });
-
   },
 };

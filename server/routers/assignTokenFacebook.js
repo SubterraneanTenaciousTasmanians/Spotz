@@ -1,6 +1,6 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
-var User = require('./../db/controllers/user.js');
+var User = require('./../db/user.js');
 var assignToken = express.Router();
 
 assignTokenFacebook.use('/facebook', function (req, res) {
