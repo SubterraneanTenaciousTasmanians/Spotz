@@ -1,5 +1,5 @@
-//var SERVER_URL = 'https://spotz.herokuapp.com';
-var SERVER_URL = 'http://localhost:8080';
+var SERVER_URL = 'https://spotz.herokuapp.com';
+// var SERVER_URL = 'http://localhost:8080';
 
 angular.module('MapServices', ['AdminServices'])
 
