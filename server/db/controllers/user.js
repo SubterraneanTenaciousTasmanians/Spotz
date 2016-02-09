@@ -1,9 +1,4 @@
-var db = require('./db.js');
-
-//model from schema
-db.User = db.Model.extend({
-  tableName: 'users',
-});
+var db = require('../db.js');
 
 //accessing functions
 module.exports = {
