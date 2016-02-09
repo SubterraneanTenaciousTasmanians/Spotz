@@ -6,6 +6,9 @@ var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
 
+//when deployed comment the line below
+env(__dirname + '/.env');
+
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
 var User = require('./db/controllers/user.js');
@@ -64,10 +67,16 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
+app.post('/api/rule/:polyId', function (req, res) {
+  console.log('processing rules for ', req.params.polyId);
+  ParkingDB.saveRule(req.params.polyId, req.body).then(function (data) {  //function is in parking.js)
+    res.status(201).send(data);
+  });
+});
+
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
-// env(__dirname + '/.env');
 
 app.listen(port);
