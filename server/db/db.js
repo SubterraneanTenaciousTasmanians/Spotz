@@ -7,7 +7,7 @@ var parkingDB = require('./parking.js');  // models and functions for permitzone
 //set the knex configuration and database connection
 knex = knex({
   client: 'mysql',
-  connection: 'mysql://ukjbcm00kji44z7v:upnzxdyympc831p1@tviw6wn55xwxejwj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/j2is21k9qoaqxll1'
+  connection: 'mysql://gkn9c464zuvrbjzi:ge4ag5faxx2u7qwq@tviw6wn55xwxejwj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/tg9n3grabvea7rjw',
   // {
   //   host: 'localhost',
   //   user: 'root',
