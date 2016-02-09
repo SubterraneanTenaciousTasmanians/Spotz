@@ -35,7 +35,7 @@ angular.module('MapServices', ['AdminServices'])
 
     $http({
       method:'GET',
-      url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1],
+      url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + coordinates[2],
     })
     .success(function (data) {
       console.log('got em', data);

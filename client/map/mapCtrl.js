@@ -1,6 +1,6 @@
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', '$cookies', 'MapFactory', function ($scope, $cookies, MapFactory) {
+.controller('mapCtrl', ['$scope', '$cookies', 'MapFactory', 'LoginFactory', function ($scope, $cookies, MapFactory, LoginFactory) {
   $scope.checkCredentials = function () {
     var token = $cookies.get('credentials');
     if (token.length) {
@@ -21,7 +21,7 @@ angular.module('spotz.map', ['MapServices'])
     var token = $cookies.get('credentials');
 
     MapFactory.loadColors(function () {
-      MapFactory.fetchParkingZones([center.lng(), center.lat()]);
+      MapFactory.fetchParkingZones([center.lng(), center.lat(), token]);
     });
 
     map.data.setStyle(function (feature) {

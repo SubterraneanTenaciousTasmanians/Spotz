@@ -14,14 +14,21 @@ env(__dirname + '/../.env');
 var JWT_SECRET = process.env.JWTSECRET;
 
 verifyToken.post('/verify', function (req, res, next) {
-  var token = req.body.token;
+});
+
+// using x,y Google Maps coordinates, find and return all the permit zones for that area
+verifyToken.get('/zones/:xCoord/:yCoord/:token', function (req, res) {
+  console.log('received request for', req.params.xCoord, req.params.yCoord, 'TOKEN ', req.params.token);
+  var token = req.params.token;
   if (token) {
     jwt.verify(token, JWT_SECRET, { algorithm: 'HS256' }, function (err, decoded) {
       if (err) {
         res.status(401).json({ success: false, message: 'your token has expired' });
       } else {
-        // next();
-        res.status(200).json({ success: true, message: 'your token has been verified' });
+        console.log("TOKEN HAS BEEN VERIFIED FOR GETTING ZONES");
+        ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
+          res.status(200).send(data);
+        });
       }
     });
   } else {
@@ -30,14 +37,6 @@ verifyToken.post('/verify', function (req, res, next) {
       message: 'No token was provided',
     });
   }
-});
-
-// using x,y Google Maps coordinates, find and return all the permit zones for that area
-verifyToken.get('/zones/:xCoord/:yCoord', function (req, res) {
-  console.log('received request for', req.params.xCoord, req.params.yCoord);
-  ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
-    res.status(200).send(data);
-  });
 });
 
 // Add new parking zones from the front end when a post request to /zones is made
