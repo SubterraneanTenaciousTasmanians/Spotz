@@ -85,15 +85,16 @@ exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2) {
 
   return exports.createIfNotExists(obj1)  // Function defined above
   .then(function (obj1Result) {
-    if (obj1Result.exists) { firstAlreadyExisted = true; }
+    if (obj1Result.alreadyExists) { firstAlreadyExisted = true; }
 
     tempObj1Result = obj1Result.model;
     return exports.createIfNotExists(obj2);
   })
   .then(function (obj2Result) {
-    if (obj2Result.exists) { secondAlreadyExisted = true; }
+    if (obj2Result.alreadyExists) { secondAlreadyExisted = true; }
 
     if (!firstAlreadyExisted || !secondAlreadyExisted) {  // Either one didn't already exist
+      console.log('joining both things', firstAlreadyExisted, secondAlreadyExisted);
       obj2Result.model[joinMethodNameForObj2]().attach(tempObj1Result); // Join them in the join table
     }
   });

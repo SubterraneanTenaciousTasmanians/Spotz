@@ -84,13 +84,13 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
 
 // Create the zones/rules join table
 .then(function () {
-  return bookShelf.knex.schema.hasTable('zones_rules').then(function (exists) {
+  return bookShelf.knex.schema.hasTable('rules_zones').then(function (exists) {
     if (exists) {
-      return console.log('zones_rules table already exists');
+      return console.log('rules_zones table already exists');
     }
 
-    return bookShelf.knex.schema.createTable('zones_rules', function (table) {
-      console.log('creating NEW join table zones_rules');
+    return bookShelf.knex.schema.createTable('rules_zones', function (table) {
+      console.log('creating NEW join table rules_zones');
       table.integer('zone_id').unsigned().references('zones.id');
       table.integer('rule_id').unsigned().references('rules.id');
     });

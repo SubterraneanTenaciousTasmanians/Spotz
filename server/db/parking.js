@@ -44,8 +44,9 @@ db.saveRule = function (zoneId, ruleAttrs) {
   return Zones.where({ id: zoneId }).fetch().then(function (zoneAttrs) {
     var zoneObj = {
       table: Zones,
-      attrs: zoneAttrs,
+      attrs: zoneAttrs.attributes,
     };
+    console.log('attaching rule to', zoneAttrs.attributes);
     return helper.saveAndJoin(zoneObj, ruleObj, 'zones');
   });
 };
