@@ -94,7 +94,6 @@ exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2) {
     if (obj2Result.alreadyExists) { secondAlreadyExisted = true; }
 
     if (!firstAlreadyExisted || !secondAlreadyExisted) {  // Either one didn't already exist
-      console.log('joining both things', firstAlreadyExisted, secondAlreadyExisted);
       obj2Result.model[joinMethodNameForObj2]().attach(tempObj1Result); // Join them in the join table
     }
   });
@@ -106,20 +105,24 @@ exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2) {
 exports.saveAndJoinTuples = function (arrayOfStuff, joinMethodNameOfSecondElementofEachTuple) {
   //input array of tuples [[worldGridObj,permitZoneObj],[worldGridObj,permitZoneObj],[worldGridObj,permitZoneObj]]
   console.log('adding', arrayOfStuff.length, 'tuples ...');
-  var recursiveFn = function (i, promise) {
-
-    promise = promise || null;
+  var recursiveFn = function (i) {
 
     if (i < 0) {  // base case
-      return promise;
+      return;
     }
-
-    //console.log('processing point', i);
 
     // Call saveAndJoin, then return a promise when done, only then can the next call be made
     return exports.saveAndJoin(arrayOfStuff[i][0], arrayOfStuff[i][1], joinMethodNameOfSecondElementofEachTuple)
-    .then(function (promise) {
-      return recursiveFn(i - 1, promise);  //fyi, recursing with i value decreasing
+    .then(function () {
+
+      //seperate the entries in time to reduce database load
+      //return a promise that is resolved once the recursive funciton that is called, returns.
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve(recursiveFn(i - 1)); //fyi, recursing with i value decreasing
+        }, 120);  //120 ms will load 2000 items in apprx 5 minutes
+      });
+
     });
 
   };

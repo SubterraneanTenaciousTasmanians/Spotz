@@ -6,6 +6,9 @@ var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
 
+//when deployed comment the line below
+env(__dirname + '/.env');
+
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
 var User = require('./db/user.js');
@@ -81,8 +84,6 @@ app.post('/api/rule/:polyId', function (req, res) {
  * environment file for developing under a local server
  * comment out before deployment
  */
-
-// env(__dirname + '/.env');
 
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
