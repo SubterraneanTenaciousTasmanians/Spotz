@@ -3,18 +3,17 @@
 var knex = require('knex');  //knex mySql queries
 var bookShelf = require('bookshelf');  //ORM
 var parkingDB = require('./parking.js');  // models and functions for permitzone parking
-
+var connection = process.env.JAWSDB_URL || {
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'spotz',
+  charset: 'utf8',
+}
 //set the knex configuration and database connection
 knex = knex({
   client: 'mysql',
-  connection: process.env.JAWSDB_URL,
-  // {
-  //   host: 'localhost',
-  //   user: 'root',
-  //   password: '',
-  //   database: 'spotz',
-  //   charset: 'utf8',
-  // },
+  connection: connection,
 });
 
 bookShelf = bookShelf(knex);
