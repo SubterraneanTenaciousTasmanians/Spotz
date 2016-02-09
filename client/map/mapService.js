@@ -20,7 +20,7 @@ angular.module('MapServices', ['AdminServices'])
   factory.loadColors = function (callback) {
     return $http({
       method:'GET',
-      url:'http://localhost:8080/map/colors.json',
+      url:'https://spotz.herokuapp.com/map/colors.json',
     })
     .success(function (data) {
       console.log('colors loaded!', data);
@@ -34,7 +34,7 @@ angular.module('MapServices', ['AdminServices'])
 
     $http({
       method:'GET',
-      url:'http://localhost:8080/zones/' + coordinates[0] + '/' + coordinates[1],
+      url:'https://spotz.herokuapp.com/zones/' + coordinates[0] + '/' + coordinates[1],
     })
     .success(function (data) {
       console.log('got em', data);

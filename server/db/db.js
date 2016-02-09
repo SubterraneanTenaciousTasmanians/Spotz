@@ -7,13 +7,14 @@ var parkingDB = require('./parking.js');  // models and functions for permitzone
 //set the knex configuration and database connection
 knex = knex({
   client: 'mysql',
-  connection: {
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'spotz',
-    charset: 'utf8',
-  },
+  connection: process.env.JAWSDB_URL,
+  // {
+  //   host: 'localhost',
+  //   user: 'root',
+  //   password: '',
+  //   database: 'spotz',
+  //   charset: 'utf8',
+  // },
 });
 
 bookShelf = bookShelf(knex);
