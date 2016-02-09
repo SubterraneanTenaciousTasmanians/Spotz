@@ -8,7 +8,7 @@ var env = require('node-env-file');
 
 //DATA BASE
 // var ParkingDB = require('./db/parking.js');
-var User = require('./db/user.js');
+// var User = require('./db/user.js');
 
 //LOGIN
 var jwt = require('jsonwebtoken');
