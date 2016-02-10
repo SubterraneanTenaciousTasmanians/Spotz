@@ -6,6 +6,8 @@ var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
 var fs = require('fs');
+var multer = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 //when deployed comment the line below
 // env(__dirname + '/.env');
@@ -68,7 +70,7 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
-app.post('/api/photo', function (req, res) {
+app.post('/api/photo', upload.single('test'), function (req, res) {
   fs.writeFile('test.jpg', res.body);
   console.log('reqbody: ', req.body);
   res.status(200).send(req.body);
