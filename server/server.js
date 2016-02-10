@@ -69,7 +69,7 @@ app.post('/api/zones', function (req, res) {
 });
 
 app.post('/api/photo', function (req, res) {
-  fs.writefile('test.jpg', res.body);
+  fs.writeFile('test.jpg', res.body);
   console.log('reqbody: ', req.body);
   res.status(200).send(req.body);
 });
