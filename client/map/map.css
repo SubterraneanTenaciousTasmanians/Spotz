@@ -6,6 +6,8 @@ html, body {
 
 #map {
   height: 100%;
+  /*position:absolute;
+  left:200px;*/
 }
 
 .ruleBox{

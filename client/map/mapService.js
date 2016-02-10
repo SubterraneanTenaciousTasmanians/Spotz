@@ -1,5 +1,5 @@
-var SERVER_URL = 'https://spotz.herokuapp.com';  // deployment
-// var SERVER_URL = 'http://localhost:3000';  //local
+// var SERVER_URL = 'https://spotz.herokuapp.com';  // deployment
+var SERVER_URL = 'http://localhost:3000';  //local
 
 angular.module('MapServices', ['AdminServices'])
 
