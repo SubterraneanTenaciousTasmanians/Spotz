@@ -5,9 +5,10 @@ var bodyparser = require('body-parser');
 var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
+var fs = require('fs');
 
 //when deployed comment the line below
-// env(__dirname + '/.env');
+env(__dirname + '/.env');
 
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
@@ -67,12 +68,11 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
-
-app.post('/api/photo', function (req,res) {
-  console.log('reqbody: ', req.body)
-  res.status(200).send(req.body)
+app.post('/api/photo', function (req, res) {
+  fs.writefile("test.jpg", res.body)
+  console.log('reqbody: ', req.body);
+  res.status(200).send(req.body);
 });
-
 
 app.post('/api/rule/:polyId', function (req, res) {
   console.log('processing rules for ', req.params.polyId);
@@ -85,6 +85,7 @@ app.post('/api/rule/:polyId', function (req, res) {
  * environment file for developing under a local server
  * comment out before deployment
  */
+
 // env(__dirname + '/.env');
 console.log(port);
 
