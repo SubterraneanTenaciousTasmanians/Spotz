@@ -1,7 +1,3 @@
-//var SERVER_URL = 'https://spotz.herokuapp.com';
-var SERVER_URL = 'https://spotz.herokuapp.com';
-// 'http://localhost:3000';
-
 angular.module('MapServices', ['AdminServices'])
 
 .factory('MapFactory', ['$http', '$window', '$timeout', 'KeyFactory', function ($http, $window, $timeout, KeyFactory) {
@@ -22,7 +18,7 @@ angular.module('MapServices', ['AdminServices'])
   factory.loadColors = function (callback) {
     return $http({
       method:'GET',
-      url: SERVER_URL + '/map/colors.json',
+      url: '/map/colors.json',
     })
     .success(function (data) {
       console.log('colors loaded!', data);
@@ -36,7 +32,7 @@ angular.module('MapServices', ['AdminServices'])
 
     $http({
       method:'GET',
-      url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + coordinates[2],
+      url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + coordinates[2],
     })
     .success(function (data) {
       console.log('got em', data);
@@ -99,7 +95,7 @@ angular.module('MapServices', ['AdminServices'])
     //send off the request to store the data
     return $http({
       method:'POST',
-      url: SERVER_URL + '/api/rule/' + id,
+      url: '/api/rule/' + id,
       data: rule,
     })
     .success(function () {
