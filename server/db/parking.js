@@ -47,7 +47,7 @@ db.saveRule = function (zoneId, ruleAttrs) {
       attrs: zoneAttrs.attributes,
     };
     console.log('attaching rule to', zoneAttrs.attributes);
-    return helper.saveAndJoin(zoneObj, ruleObj, 'zones');
+    return helper.saveAndJoin(zoneObj, ruleObj, 'zones', true);
   });
 };
 
