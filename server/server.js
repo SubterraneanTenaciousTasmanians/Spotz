@@ -5,6 +5,9 @@ var bodyparser = require('body-parser');
 var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
+var fs = require('fs');
+var multer = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 //when deployed comment the line below
 // env(__dirname + '/.env');
@@ -67,12 +70,19 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
+app.post('/api/photo', upload.single(''), function (req, res) {
+  var tmp_path = req.file.path;
+  var target_path = 'uploads/' + req.file.originalname;
+  var src = fs.createReadStream(tmp_path);
+  var dest = fs.createWriteStream(target_path);
+  src.pipe(dest);
+  src.on('end', function () { res.send('complete'); });
 
-app.post('/api/photo', function (req,res) {
-  console.log('reqbody: ', req.body)
-  res.status(200).send(req.body)
+  src.on('error', function (err) { res.send('error'); });
+
+  // console.log('reqbody: ', req.body);
+  // res.status(200).send(req.body);
 });
-
 
 app.post('/api/rule/:polyId', function (req, res) {
   console.log('processing rules for ', req.params.polyId);
@@ -85,6 +95,7 @@ app.post('/api/rule/:polyId', function (req, res) {
  * environment file for developing under a local server
  * comment out before deployment
  */
+
 // env(__dirname + '/.env');
 console.log(port);
 

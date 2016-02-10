@@ -26,14 +26,13 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "bookshelf": "^0.9.1",
-    "csvtojson": "^0.5.2",
-    "express": "^4.13.4",
-    "knex": "^0.9.0",
-    "morgan": "^1.6.1",
     "cookie-parser": "^1.4.1",
     "csvtojson": "^0.5.2",
     "express": "^4.13.4",
     "jsonwebtoken": "^5.5.4",
+    "knex": "^0.9.0",
+    "morgan": "^1.6.1",
+    "multer": "^1.1.0",
     "mysql": "^2.10.2",
     "node-env-file": "^0.1.8",
     "passport": "^0.3.2",
@@ -51,6 +50,7 @@
     "gulp-karma": "0.0.5",
     "gulp-notify": "^2.2.0",
     "gulp-uglify": "^1.5.1",
+    "multer": "^1.1.0",
     "node": "0.0.0",
     "nodemon": "^1.8.1"
   }
