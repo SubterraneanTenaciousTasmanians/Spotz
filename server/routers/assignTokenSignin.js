@@ -77,7 +77,7 @@ passport.deserializeUser(function (id, done) {
 passport.use(new FacebookStrategy({
   clientID: FACEBOOK_CLIENT_ID,
   clientSecret: FACEBOOK_CLIENT_SECRET,
-  callbackURL: 'https://spotz.herokuapp.com/auth/facebook/callback',
+  callbackURL: '/auth/facebook/callback',
   profileFields: ['email'],
   passReqToCallback: true,
 }, function (req, accessToken, refreshToken, profile, done) {
@@ -97,7 +97,7 @@ passport.use(new FacebookStrategy({
 passport.use(new GoogleStrategy({
   clientID: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: 'https://spotz.herokuapp.com/auth/google/callback',
+  callbackURL: '/auth/google/callback',
   passReqToCallback: true,
 }, function (req, accessToken, refreshToken, profile, done) {
   return User.read({ googleId: profile.emails[0].value }).then(function (user) {
