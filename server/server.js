@@ -10,7 +10,7 @@ var multer = require('multer');
 var upload = multer({ dest: 'uploads/' });
 
 //when deployed comment the line below
-// env(__dirname + '/.env');
+env(__dirname + '/.env');
 
 //DATA BASE
 var ParkingDB = require('./db/parking.js');

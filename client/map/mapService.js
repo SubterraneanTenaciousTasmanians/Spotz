@@ -1,5 +1,5 @@
-var SERVER_URL = 'https://spotz.herokuapp.com';  // deployment
-// var SERVER_URL = 'http://localhost:3000';  //local
+// var SERVER_URL = 'https://spotz.herokuapp.com';  // deployment
+var SERVER_URL = 'http://localhost:3000';  //local
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -118,6 +118,7 @@ angular.module('MapServices', ['AdminServices'])
           rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
           rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
           rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
+          rulesToDisplay += 'Maps may contain inaccuracies. <br>Not all streets in the area specific maps have opted into the program.';
         }
 
         if (numOfRules === 0) {
