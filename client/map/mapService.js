@@ -1,5 +1,5 @@
-var SERVER_URL = 'https://spotz.herokuapp.com';
-// var SERVER_URL = 'http://localhost:8080';
+var SERVER_URL = 'https://spotz.herokuapp.com';  // deployment
+// var SERVER_URL = 'http://localhost:3000';  //local
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -55,6 +55,7 @@ angular.module('MapServices', ['AdminServices'])
         var p = {
           type: 'Feature',
           properties:{
+            rules: poly.rules,
             index: i,
             color: polyColor, //always colors by the first rule
             id: poly.id,
@@ -96,12 +97,39 @@ angular.module('MapServices', ['AdminServices'])
       //      strokeWeight: 1,
       //    });
       // });
+      //
 
-      // factory.map.data.addListener('mouseover', function (event) {
-      //   infowindow.setContent(event.feature.getProperty('id').toString(), event);
-      //   infowindow.setPosition(event.latLng);
-      //   infowindow.open(factory.map);
-      // });
+      // TO DO:
+      // Function to display parking options at current time
+      // Input is the rules object
+      // Output is string to display the options
+
+      // var parkingOptionRightNow = function (rulesObj) {
+      //   var date = moment().format('MM-DD-YYYY');
+      //   var currentTime = moment().format('h:mm a');
+      // };
+
+      factory.map.data.addListener('mouseover', function (event) {
+        var numOfRules = event.feature.getProperty('rules').length;
+        var rulesToDisplay = '';
+        for (var i = 0; i < numOfRules; i++) {
+          rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
+          rulesToDisplay += 'Days: ' + event.feature.getProperty('rules')[i].days + '<br>';
+          rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
+          rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
+          rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
+        }
+
+        if (numOfRules === 0) {
+          rulesToDisplay = 'Parking info not available';
+        }
+
+        infowindow.setContent(rulesToDisplay, event);
+
+        // infowindow.setContent(event.feature.getProperty('id').toString(), event);
+        infowindow.setPosition(event.latLng);
+        infowindow.open(factory.map);
+      });
 
     });
   };
