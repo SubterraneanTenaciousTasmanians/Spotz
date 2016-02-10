@@ -61,7 +61,9 @@ exports.createIfNotExists = function (obj) {
 
 //helper function that makes sure the two objects are present in the tables specified
 //then joins them based on their ids in the join table
-exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2) {
+exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2, joinEvenIfBothExist) {
+  joinEvenIfBothExist = joinEvenIfBothExist || false;
+
   // joinObj  = zones.model.worldGrid()
 
   // joinObj  = zones.model['worldGrid']()
@@ -93,7 +95,7 @@ exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2) {
   .then(function (obj2Result) {
     if (obj2Result.alreadyExists) { secondAlreadyExisted = true; }
 
-    if (!firstAlreadyExisted || !secondAlreadyExisted) {  // Either one didn't already exist
+    if ((!firstAlreadyExisted || !secondAlreadyExisted) || joinEvenIfBothExist) {  // Either one didn't already exist
       obj2Result.model[joinMethodNameForObj2]().attach(tempObj1Result); // Join them in the join table
     }
   });
@@ -120,7 +122,7 @@ exports.saveAndJoinTuples = function (arrayOfStuff, joinMethodNameOfSecondElemen
       return new Promise(function (resolve) {
         setTimeout(function () {
           resolve(recursiveFn(i - 1)); //fyi, recursing with i value decreasing
-        }, 120);  //120 ms will load 2000 items in apprx 5 minutes
+        }, 1);  //120 ms will load 2000 items in apprx 5 minutes
       });
 
     });
@@ -142,13 +144,38 @@ exports.grabRelatedPolygons = function (worldGridObj) {
 
   // Using the coordinates of a worldgrid square, find that square in the
   // permitzones.worldGrid join table and return the permit zones that match that worldgrid square
-  return worldGridObj.table.where(worldGridObj.attrs).fetch({ withRelated: ['zones.worldGrid'] })  //application specific
-  .then(function (worldGridCollection) {
-    if (!worldGridCollection) {
+  return worldGridObj.table.where(worldGridObj.attrs).fetch({ withRelated: ['zones'] })  //application specific
+  .then(function (worldGridResult) {
+
+    if (!worldGridResult) {
       console.log('nothing to return');
       return null;
     }
 
-    return worldGridCollection.related('zones');
+    //get the related zones for that world grid coordinate annnnd attach the rules to each zone
+    // worldGridResult.related('zones') returns a collection of zones
+    // worldGridResult.related('zones').load('rules') loads rules onto each element of the collection
+    return worldGridResult.related('zones').load('rules')
+    .then(function (zonesWithRules) {
+      //print out the rules
+      // zonesWithRules.forEach(function (zone) {
+      //   console.log('zone id: ', zone.get('id'), 'rule model: ', zone.related('rules').at(0));
+      //
+      // });
+
+      return zonesWithRules;
+
+    });
+
+    // worldGridResult.related('zones').forEach(function (zone) {
+    //   zone.related('rules').fetch().then(function (rule) {
+    //     console.log('rule?>>>', rule.attributes);
+    //   });
+
+    //   console.log('rule id:', zone.related('rules').get('id'), ', color:', zone.related('rules').color);
+    // });
+
+    //  return worldGridResult.related('zones');
+
   });
 };

@@ -38,13 +38,25 @@ angular.module('MapServices', ['AdminServices'])
       url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1],
     })
     .success(function (data) {
-      console.log('got em', data);
+      var polyColor;
 
+      console.log('got em', data);
       data.forEach(function (poly, i) {
+
+        if (poly.rules.length) {
+          console.log(poly.id, 'has rule color', poly.rules[0].color);
+        }
+
+        polyColor = '0,0,0';
+        if (poly.rules[0]) {
+          polyColor = poly.rules[0].color;
+        }
+
         var p = {
           type: 'Feature',
           properties:{
             index: i,
+            color: polyColor, //always colors by the first rule
             id: poly.id,
             parkingCode:poly.parkingCode,
           },
@@ -178,11 +190,18 @@ angular.module('MapServices', ['AdminServices'])
         strokeWeight: 5,
       });
 
-      factory.map.data.addListener('click', function (event) {
+      //on map click
+      factory.map.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         console.log(coordinates);
-        //factory.fetchParkingZones(coordinates);
+        factory.fetchParkingZones(coordinates);
       });
+
+      //on polygon click
+      // factory.map.data.addListener('click', function (event) {
+      //   var coordinates = [event.latLng.lng(), event.latLng.lat()];
+      //   console.log(coordinates);
+      // });
 
       callback(factory.map);
 
