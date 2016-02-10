@@ -11,6 +11,7 @@ var env = require('node-env-file');
  * environment file for developing under a local server
  * comment out before deployment
  */
+
 // env(__dirname + '/../.env');
 
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
@@ -20,7 +21,7 @@ var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
 var JWT_SECRET = process.env.JWTSECRET;
 
 assignToken.post('/signin', function (req, res) {
-  console.log("REQUEST DOT BODY ", req.body)
+  console.log('REQUEST DOT BODY ', req.body);
   User.read({ username: req.body.username }).then(function (model) {
     if (!model) {
       res.json({ success: false, message: 'Authentication failed. User not found' });
@@ -34,7 +35,7 @@ assignToken.post('/signin', function (req, res) {
             res.json({ success: true, message: 'Here is your token', token: token });
           });
         }
-      })
+      });
     }
   });
 });
@@ -43,6 +44,7 @@ assignToken.post('/signup', function (req, res) {
   console.log('SEND FROM BACKEND ', req.body);
   User.create(req.body).then(function (model) {
     User.read({ username: req.body.username }).then(function (model) {
+      console.log('MODELLLL', model);
       var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
         console.log('Here is the token', token);
         res.json({ success: true, message: 'Here is your token', token: token });

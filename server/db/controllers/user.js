@@ -22,11 +22,10 @@ module.exports = {
           }
 
           userinfo.password = hash;
-          console.log('hashed password', userinfo.password);
+          console.log('hashed password', userinfo);
           new db.User(userinfo).save().then(function (model) {
             console.log(model, 'user has been saved');
             defer.resolve(model);
-            return model;
           });
         });
       });

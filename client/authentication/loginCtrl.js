@@ -6,7 +6,7 @@ angular.module('spotz.login', ['LoginService'])
     $scope.error = false;
     $scope.userinfo = {};
 
-    $scope.checkCredentials = function() {
+    $scope.checkCredentials = function () {
       var token = $cookies.get('credentials');
       if (token) {
         LoginFactory.verifyToken(token).then(function (response) {
@@ -23,8 +23,8 @@ angular.module('spotz.login', ['LoginService'])
       LoginFactory.signin(userinfo).then(function (response) {
         if (response.data.success) {
           $scope.error = false;
-          $state.go('map');
           $cookies.put('credentials', response.data.token);
+          $state.go('map');
         } else {
           $scope.error = true;
           $scope.userinfo.username = '';
@@ -37,6 +37,7 @@ angular.module('spotz.login', ['LoginService'])
       LoginFactory.signup(userinfo).then(function (response) {
         if (response.data.success) {
           $scope.error = false;
+          $cookies.put('credentials', response.data.token);
           $state.go('map');
         } else {
           $scope.error = true;
@@ -49,4 +50,5 @@ angular.module('spotz.login', ['LoginService'])
     $scope.goSignUp = function () {
       $state.go('signup');
     };
-}])
+  },
+]);
