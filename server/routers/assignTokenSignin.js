@@ -117,7 +117,12 @@ assignToken.get('/google/callback',
   function (req, res) {
     User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
       if (!model) {
-        res.json({ success: false, message: 'Authentication failed. User not found' });
+        User.create({ googleId: req.user.attributes.googleId}).then(function (model) {
+          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+          console.log('Here is the token', token);
+          res.cookie('credentials', token);
+          res.redirect('/');
+        })
       } else if (model) {
         var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
