@@ -8,7 +8,7 @@ var env = require('node-env-file');
 var fs = require('fs');
 
 //when deployed comment the line below
-env(__dirname + '/.env');
+// env(__dirname + '/.env');
 
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
@@ -69,7 +69,7 @@ app.post('/api/zones', function (req, res) {
 });
 
 app.post('/api/photo', function (req, res) {
-  fs.writefile("test.jpg", res.body)
+  fs.writefile('test.jpg', res.body);
   console.log('reqbody: ', req.body);
   res.status(200).send(req.body);
 });
