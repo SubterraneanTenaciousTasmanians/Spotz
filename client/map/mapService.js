@@ -1,4 +1,5 @@
-'use strict';
+var SERVER_URL = 'https://spotz.herokuapp.com';
+// var SERVER_URL = 'http://localhost:8080';
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -20,7 +21,7 @@ angular.module('MapServices', ['AdminServices'])
   factory.loadColors = function (callback) {
     return $http({
       method:'GET',
-      url:'http://localhost:8080/map/colors.json',
+      url: SERVER_URL + '/map/colors.json',
     })
     .success(function (data) {
       console.log('colors loaded!', data);
@@ -34,15 +35,29 @@ angular.module('MapServices', ['AdminServices'])
 
     $http({
       method:'GET',
-      url:'http://localhost:8080/zones/' + coordinates[0] + '/' + coordinates[1],
+      url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1],
     })
     .success(function (data) {
-      console.log('got em', data);
+      var polyColor;
 
-      data.forEach(function (poly) {
+      console.log('got em', data);
+      data.forEach(function (poly, i) {
+
+        if (poly.rules.length) {
+          console.log(poly.id, 'has rule color', poly.rules[0].color);
+        }
+
+        polyColor = '0,0,0';
+        if (poly.rules[0]) {
+          polyColor = poly.rules[0].color;
+        }
+
         var p = {
           type: 'Feature',
           properties:{
+            index: i,
+            color: polyColor, //always colors by the first rule
+            id: poly.id,
             parkingCode:poly.parkingCode,
           },
           geometry:{
@@ -51,42 +66,56 @@ angular.module('MapServices', ['AdminServices'])
           },
         };
         factory.map.data.addGeoJson(p);
+
       });
 
-      var parkingColor = {};
-      var zoneCounter = 0;
+      // var parkingColor = {};
+      // var zoneCounter = 0;
+      //
+      // var colorGenerator = function () {
+      //   var randomColor = colorOptions[Math.round(colorOptions.length * Math.random())];
+      //   return colors[randomColor].rgb;
+      // };
+      //
+      // var parkingCode;
 
-      var colorGenerator = function () {
-        var randomColor = colorOptions[Math.round(colorOptions.length * Math.random())];
-        return colors[randomColor].rgb;
-      };
+      // factory.map.data.setStyle(function (feature) {
+      //   parkingCode = feature.getProperty('parkingCode');
+      //
+      //   if (!parkingColor[parkingCode]) {
+      //     parkingColor[parkingCode] = colorGenerator(parkingCode);
+      //     console.log(zoneCounter, parkingCode, parkingColor[parkingCode]);
+      //     zoneCounter++;
+      //   }
+      //
+      //   var polyColor = parkingColor[parkingCode];
+      //
+      //   return ({
+      //      strokeColor: 'rgb(' + polyColor + ')',
+      //      fillColor:'rgba(' + polyColor + ', 0.7)',
+      //      strokeWeight: 1,
+      //    });
+      // });
 
-      var parkingCode;
+      // factory.map.data.addListener('mouseover', function (event) {
+      //   infowindow.setContent(event.feature.getProperty('id').toString(), event);
+      //   infowindow.setPosition(event.latLng);
+      //   infowindow.open(factory.map);
+      // });
 
-      factory.map.data.setStyle(function (feature) {
-        parkingCode = feature.getProperty('parkingCode');
+    });
+  };
 
-        if (!parkingColor[parkingCode]) {
-          parkingColor[parkingCode] = colorGenerator(parkingCode);
-          console.log(zoneCounter, parkingCode, parkingColor[parkingCode]);
-          zoneCounter++;
-        }
-
-        var polyColor = parkingColor[parkingCode];
-
-        return ({
-           strokeColor: 'rgb(' + polyColor + ')',
-           fillColor:'rgba(' + polyColor + ', 0.7)',
-           strokeWeight: 1,
-         });
-      });
-
-      factory.map.data.addListener('mouseover', function (event) {
-        infowindow.setContent(event.feature.R.parkingCode, event);
-        infowindow.setPosition(event.latLng);
-        infowindow.open(factory.map);
-      });
-
+  factory.sendRule = function (id, rule) {
+    //send off the request to store the data
+    return $http({
+      method:'POST',
+      url: SERVER_URL + '/api/rule/' + id,
+      data: rule,
+    })
+    .success(function () {
+      //color the space to something
+      console.log('rule saved for', id);
     });
   };
 
@@ -161,11 +190,18 @@ angular.module('MapServices', ['AdminServices'])
         strokeWeight: 5,
       });
 
+      //on map click
       factory.map.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         console.log(coordinates);
         factory.fetchParkingZones(coordinates);
       });
+
+      //on polygon click
+      // factory.map.data.addListener('click', function (event) {
+      //   var coordinates = [event.latLng.lng(), event.latLng.lat()];
+      //   console.log(coordinates);
+      // });
 
       callback(factory.map);
 
