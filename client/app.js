@@ -1,6 +1,6 @@
 'use strict';
 
-var mapApp = angular.module('spotz', ['ui.router', 'spotz.map'])
+var mapApp = angular.module('spotz', ['ngCookies', 'ui.router', 'spotz.map', 'spotz.login'])
 
 .config(function ($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -11,8 +11,13 @@ var mapApp = angular.module('spotz', ['ui.router', 'spotz.map'])
     })
     .state('login', {
       url: '/login',
-      templateUrl: '/login/login.html',
+      templateUrl: '/authentication/login.html',
+      controller: 'loginCtrl',
+    })
+    .state('signup', {
+      url: '/signup',
+      templateUrl: '/authentication/signup.html',
+      controller: 'loginCtrl',
     });
-
-  $urlRouterProvider.otherwise('/map');
+  $urlRouterProvider.otherwise('/login');
 });
