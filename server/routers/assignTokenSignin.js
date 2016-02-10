@@ -56,6 +56,7 @@ assignToken.post('/signup', function (req, res) {
  * Serializing user id to save the user's session
  */
 passport.serializeUser(function (user, done) {
+  console.log('SERIALIZE ', user);
   if (!user.id) {
     done(null, user);
   } else {
@@ -64,9 +65,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (id, done) {
-  /*MySQL query for User.findById(id, function(err, user) {
-    done(err, user);
-  });*/
+  console.log('DESERIALIZE ', id);
   User.read({ id: id }, function (err, user) {
     done(err, user);
   });
@@ -98,6 +97,7 @@ passport.use(new GoogleStrategy({
   clientSecret: GOOGLE_CLIENT_SECRET,
   callbackURL: 'https://spotz.herokuapp.com/auth/google/callback',
 }, function (accessToken, refreshToken, profile, done) {
+  console.log('INSIDE STRATEGY ', profile);
   return User.read({ googleId: profile.emails[0].value }).then(function (user) {
     if (user) {
       return done(null, user);
