@@ -2,6 +2,8 @@ var express = require('express');
 var jwt = require('jsonwebtoken');
 var verifyToken = express.Router();
 var env = require('node-env-file');
+var multer = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');

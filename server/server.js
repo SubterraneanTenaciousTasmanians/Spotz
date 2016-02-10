@@ -6,8 +6,6 @@ var path = require('path');
 var morgan = require('morgan');
 var env = require('node-env-file');
 var fs = require('fs');
-var multer = require('multer');
-var upload = multer({ dest: 'uploads/' });
 
 //when deployed comment the line below
 // env(__dirname + '/.env');
