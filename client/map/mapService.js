@@ -1,6 +1,6 @@
 angular.module('MapServices', ['AdminServices'])
 
-.factory('MapFactory', ['$http', '$window', '$timeout', 'KeyFactory', function ($http, $window, $timeout, KeyFactory) {
+.factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($http, $window, $timeout, $cookies, KeyFactory) {
 
   var factory = {};
   var street = [];
@@ -12,7 +12,7 @@ angular.module('MapServices', ['AdminServices'])
   var topRightY;
   var bottomLeftX;
   var bottomLeftY;
-
+  var token = $cookies.get('credentials');
   factory.map = {};
 
   factory.loadColors = function (callback) {
@@ -176,7 +176,7 @@ angular.module('MapServices', ['AdminServices'])
       });
 
       factory.map.addListener('click', function (event) {
-        var coordinates = [event.latLng.lng(), event.latLng.lat()];
+        var coordinates = [event.latLng.lng(), event.latLng.lat(), token];
         console.log(coordinates);
         factory.fetchParkingZones(coordinates);
       });
