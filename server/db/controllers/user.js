@@ -29,6 +29,11 @@ module.exports = {
           });
         });
       });
+    } else {
+      new db.User(userinfo).save().then(function (model) {
+        console.log(model, 'user has been saved');
+        defer.resolve(model);
+      });
     }
 
     return defer.promise;
