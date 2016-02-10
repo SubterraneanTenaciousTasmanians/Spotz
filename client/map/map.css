@@ -7,3 +7,16 @@ html, body {
 #map {
   height: 100%;
 }
+
+.ruleBox{
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #FFF;
+  padding: 20px;
+  border: 1px solid;
+}
+
+.ruleBox input{
+  display: block;
+}

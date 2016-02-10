@@ -1,4 +1,5 @@
-'use strict';
+var SERVER_URL = 'https://spotz.herokuapp.com';  // deployment
+// var SERVER_URL = 'http://localhost:3000';  //local
 
 angular.module('MapServices', ['AdminServices'])
 
@@ -20,7 +21,7 @@ angular.module('MapServices', ['AdminServices'])
   factory.loadColors = function (callback) {
     return $http({
       method:'GET',
-      url:'http://localhost:8080/map/colors.json',
+      url: SERVER_URL + '/map/colors.json',
     })
     .success(function (data) {
       console.log('colors loaded!', data);
@@ -34,15 +35,30 @@ angular.module('MapServices', ['AdminServices'])
 
     $http({
       method:'GET',
-      url:'http://localhost:8080/zones/' + coordinates[0] + '/' + coordinates[1],
+      url: SERVER_URL + '/api/zones/' + coordinates[0] + '/' + coordinates[1],
     })
     .success(function (data) {
-      console.log('got em', data);
+      var polyColor;
 
-      data.forEach(function (poly) {
+      console.log('got em', data);
+      data.forEach(function (poly, i) {
+
+        if (poly.rules.length) {
+          console.log(poly.id, 'has rule color', poly.rules[0].color);
+        }
+
+        polyColor = '0,0,0';
+        if (poly.rules[0]) {
+          polyColor = poly.rules[0].color;
+        }
+
         var p = {
           type: 'Feature',
           properties:{
+            rules: poly.rules,
+            index: i,
+            color: polyColor, //always colors by the first rule
+            id: poly.id,
             parkingCode:poly.parkingCode,
           },
           geometry:{
@@ -51,42 +67,83 @@ angular.module('MapServices', ['AdminServices'])
           },
         };
         factory.map.data.addGeoJson(p);
+
       });
 
-      var parkingColor = {};
-      var zoneCounter = 0;
+      // var parkingColor = {};
+      // var zoneCounter = 0;
+      //
+      // var colorGenerator = function () {
+      //   var randomColor = colorOptions[Math.round(colorOptions.length * Math.random())];
+      //   return colors[randomColor].rgb;
+      // };
+      //
+      // var parkingCode;
 
-      var colorGenerator = function () {
-        var randomColor = colorOptions[Math.round(colorOptions.length * Math.random())];
-        return colors[randomColor].rgb;
-      };
+      // factory.map.data.setStyle(function (feature) {
+      //   parkingCode = feature.getProperty('parkingCode');
+      //
+      //   if (!parkingColor[parkingCode]) {
+      //     parkingColor[parkingCode] = colorGenerator(parkingCode);
+      //     console.log(zoneCounter, parkingCode, parkingColor[parkingCode]);
+      //     zoneCounter++;
+      //   }
+      //
+      //   var polyColor = parkingColor[parkingCode];
+      //
+      //   return ({
+      //      strokeColor: 'rgb(' + polyColor + ')',
+      //      fillColor:'rgba(' + polyColor + ', 0.7)',
+      //      strokeWeight: 1,
+      //    });
+      // });
+      //
 
-      var parkingCode;
+      // TO DO:
+      // Function to display parking options at current time
+      // Input is the rules object
+      // Output is string to display the options
 
-      factory.map.data.setStyle(function (feature) {
-        parkingCode = feature.getProperty('parkingCode');
-
-        if (!parkingColor[parkingCode]) {
-          parkingColor[parkingCode] = colorGenerator(parkingCode);
-          console.log(zoneCounter, parkingCode, parkingColor[parkingCode]);
-          zoneCounter++;
-        }
-
-        var polyColor = parkingColor[parkingCode];
-
-        return ({
-           strokeColor: 'rgb(' + polyColor + ')',
-           fillColor:'rgba(' + polyColor + ', 0.7)',
-           strokeWeight: 1,
-         });
-      });
+      // var parkingOptionRightNow = function (rulesObj) {
+      //   var date = moment().format('MM-DD-YYYY');
+      //   var currentTime = moment().format('h:mm a');
+      // };
 
       factory.map.data.addListener('mouseover', function (event) {
-        infowindow.setContent(event.feature.R.parkingCode, event);
+        var numOfRules = event.feature.getProperty('rules').length;
+        var rulesToDisplay = '';
+        for (var i = 0; i < numOfRules; i++) {
+          rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
+          rulesToDisplay += 'Days: ' + event.feature.getProperty('rules')[i].days + '<br>';
+          rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
+          rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
+          rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
+        }
+
+        if (numOfRules === 0) {
+          rulesToDisplay = 'Parking info not available';
+        }
+
+        infowindow.setContent(rulesToDisplay, event);
+
+        // infowindow.setContent(event.feature.getProperty('id').toString(), event);
         infowindow.setPosition(event.latLng);
         infowindow.open(factory.map);
       });
 
+    });
+  };
+
+  factory.sendRule = function (id, rule) {
+    //send off the request to store the data
+    return $http({
+      method:'POST',
+      url: SERVER_URL + '/api/rule/' + id,
+      data: rule,
+    })
+    .success(function () {
+      //color the space to something
+      console.log('rule saved for', id);
     });
   };
 
@@ -161,11 +218,18 @@ angular.module('MapServices', ['AdminServices'])
         strokeWeight: 5,
       });
 
+      //on map click
       factory.map.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         console.log(coordinates);
         factory.fetchParkingZones(coordinates);
       });
+
+      //on polygon click
+      // factory.map.data.addListener('click', function (event) {
+      //   var coordinates = [event.latLng.lng(), event.latLng.lat()];
+      //   console.log(coordinates);
+      // });
 
       callback(factory.map);
 

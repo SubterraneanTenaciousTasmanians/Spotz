@@ -61,58 +61,70 @@ exports.createIfNotExists = function (obj) {
 
 //helper function that makes sure the two objects are present in the tables specified
 //then joins them based on their ids in the join table
-exports.saveAndJoin = function (worldGridObj, permitZoneObj) {
+exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2, joinEvenIfBothExist) {
+  joinEvenIfBothExist = joinEvenIfBothExist || false;
+
+  // joinObj  = zones.model.worldGrid()
+
+  // joinObj  = zones.model['worldGrid']()
+  // joinObj  = zones.model[joinMethodName]()
 
   /*
-  worldGridObj = {
+  obj1 = {
    table: Author [bookshelf model],
    attrs:{name:"ted"}
   }
-  permitZoneObj = {
+  obj2 = {
    table: Book [bookshelf model],
    attrs:{name:"Jack Jill"}
   }
 
   */
-  var tempWorldGrid;
+  var tempObj1Result;
+
   var firstAlreadyExisted = false;
   var secondAlreadyExisted = false;
 
-  return exports.createIfNotExists(worldGridObj)  // Function defined above
-  .then(function (worldGrid) {
-    if (worldGrid.exists) { firstAlreadyExisted = true; }
+  return exports.createIfNotExists(obj1)  // Function defined above
+  .then(function (obj1Result) {
+    if (obj1Result.alreadyExists) { firstAlreadyExisted = true; }
 
-    tempWorldGrid = worldGrid.model;
-    return exports.createIfNotExists(permitZoneObj);
+    tempObj1Result = obj1Result.model;
+    return exports.createIfNotExists(obj2);
   })
-  .then(function (permitZone) {
-    if (permitZone.exists) { secondAlreadyExisted = true; }
+  .then(function (obj2Result) {
+    if (obj2Result.alreadyExists) { secondAlreadyExisted = true; }
 
-    if (!firstAlreadyExisted || !secondAlreadyExisted) {  // Either one didn't already exist
-      permitZone.model.worldGrid().attach(tempWorldGrid); // Join them in the join table
+    if ((!firstAlreadyExisted || !secondAlreadyExisted) || joinEvenIfBothExist) {  // Either one didn't already exist
+      obj2Result.model[joinMethodNameForObj2]().attach(tempObj1Result); // Join them in the join table
     }
   });
 
 };
 
-// This function uses the saveAndJoin function, to join the array of worldGridObj, PermitZone tuples
-exports.saveAndJoinTuples = function (arrayOfStuff) {
+// This function uses the saveAndJoin function, to join the array of obj1, PermitZone tuples
+//joinMethodName is a property on the Bookshelf model. For example, 'worldGrid' is the joinMethodName for var PermitZones in parking.js.
+exports.saveAndJoinTuples = function (arrayOfStuff, joinMethodNameOfSecondElementofEachTuple) {
   //input array of tuples [[worldGridObj,permitZoneObj],[worldGridObj,permitZoneObj],[worldGridObj,permitZoneObj]]
   console.log('adding', arrayOfStuff.length, 'tuples ...');
-  var recursiveFn = function (i, promise) {
-
-    promise = promise || null;
+  var recursiveFn = function (i) {
 
     if (i < 0) {  // base case
-      return promise;
+      return;
     }
 
-    //console.log('processing point', i);
-
     // Call saveAndJoin, then return a promise when done, only then can the next call be made
-    return exports.saveAndJoin(arrayOfStuff[i][0], arrayOfStuff[i][1])
-    .then(function (promise) {
-      return recursiveFn(i - 1, promise);  //fyi, recursing with i value decreasing
+    return exports.saveAndJoin(arrayOfStuff[i][0], arrayOfStuff[i][1], joinMethodNameOfSecondElementofEachTuple)
+    .then(function () {
+
+      //seperate the entries in time to reduce database load
+      //return a promise that is resolved once the recursive funciton that is called, returns.
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve(recursiveFn(i - 1)); //fyi, recursing with i value decreasing
+        }, 1);  //120 ms will load 2000 items in apprx 5 minutes
+      });
+
     });
 
   };
@@ -132,13 +144,38 @@ exports.grabRelatedPolygons = function (worldGridObj) {
 
   // Using the coordinates of a worldgrid square, find that square in the
   // permitzones.worldGrid join table and return the permit zones that match that worldgrid square
-  return worldGridObj.table.where(worldGridObj.attrs).fetch({ withRelated: ['permitZones.worldGrid'] })  //application specific
-  .then(function (worldGridCollection) {
-    if (!worldGridCollection) {
+  return worldGridObj.table.where(worldGridObj.attrs).fetch({ withRelated: ['zones'] })  //application specific
+  .then(function (worldGridResult) {
+
+    if (!worldGridResult) {
       console.log('nothing to return');
       return null;
     }
 
-    return worldGridCollection.related('permitZones');
+    //get the related zones for that world grid coordinate annnnd attach the rules to each zone
+    // worldGridResult.related('zones') returns a collection of zones
+    // worldGridResult.related('zones').load('rules') loads rules onto each element of the collection
+    return worldGridResult.related('zones').load('rules')
+    .then(function (zonesWithRules) {
+      //print out the rules
+      // zonesWithRules.forEach(function (zone) {
+      //   console.log('zone id: ', zone.get('id'), 'rule model: ', zone.related('rules').at(0));
+      //
+      // });
+
+      return zonesWithRules;
+
+    });
+
+    // worldGridResult.related('zones').forEach(function (zone) {
+    //   zone.related('rules').fetch().then(function (rule) {
+    //     console.log('rule?>>>', rule.attributes);
+    //   });
+
+    //   console.log('rule id:', zone.related('rules').get('id'), ', color:', zone.related('rules').color);
+    // });
+
+    //  return worldGridResult.related('zones');
+
   });
 };
