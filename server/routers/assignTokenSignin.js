@@ -76,7 +76,7 @@ passport.deserializeUser(function (id, done) {
 passport.use(new FacebookStrategy({
   clientID: FACEBOOK_CLIENT_ID,
   clientSecret: FACEBOOK_CLIENT_SECRET,
-  callbackURL: '/auth/facebook/callback',
+  callbackURL: 'https://spotz.herokuapp.com/auth/facebook/callback',
   profileFields: ['email'],
 }, function (accessToken, refreshToken, profile, done) {
   User.read({ facebookId: profile.id }).then(function (user) {
@@ -97,13 +97,12 @@ passport.use(new GoogleStrategy({
   clientSecret: GOOGLE_CLIENT_SECRET,
   callbackURL: 'https://spotz.herokuapp.com/auth/google/callback',
 }, function (accessToken, refreshToken, profile, done) {
-  console.log('INSIDE STRATEGY ', profile);
   return User.read({ googleId: profile.emails[0].value }).then(function (user) {
     if (user) {
       return done(null, user);
     } else {
-      User.create({ googleId: profile.emails[0].value }).then(function (user) {
-        return done(null, user);
+      User.create({ googleId: profile.emails[0].value }).then(function (model) {
+        return done(null, model);
       });
     }
   });
@@ -115,11 +114,9 @@ assignToken.get('/google', passport.authenticate('google', { scope: 'profile ema
 assignToken.get('/google/callback',
   passport.authenticate('google', { scope: 'profile email', failureRedirect: '/' }),
   function (req, res) {
-    console.log('GOOGLE REQUEST', req.user);
     User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
       if (!model) {
         User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
-          console.log('INSIDE CREATE ', model);
           var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
             console.log('Here is the token', token);
             res.cookie('credentials', token);
@@ -145,7 +142,6 @@ assignToken.get('/google/callback',
 assignToken.get('/facebook', passport.authenticate('facebook', { scope: 'email' }));
 assignToken.get('/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
-
   function (req, res) {
     User.read({ facebookId: req.user.attributes.facebookId }).then(function (model) {
       if (!model) {
