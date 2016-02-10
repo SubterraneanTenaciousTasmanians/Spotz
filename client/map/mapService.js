@@ -35,13 +35,26 @@ angular.module('MapServices', ['AdminServices'])
       url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + coordinates[2],
     })
     .success(function (data) {
-      console.log('got em', data);
+      var polyColor;
 
+      console.log('got em', data);
       data.forEach(function (poly, i) {
+
+        if (poly.rules.length) {
+          console.log(poly.id, 'has rule color', poly.rules[0].color);
+        }
+
+        polyColor = '0,0,0';
+        if (poly.rules[0]) {
+          polyColor = poly.rules[0].color;
+        }
+
         var p = {
           type: 'Feature',
           properties:{
+            rules: poly.rules,
             index: i,
+            color: polyColor, //always colors by the first rule
             id: poly.id,
             parkingCode:poly.parkingCode,
           },
@@ -81,12 +94,39 @@ angular.module('MapServices', ['AdminServices'])
       //      strokeWeight: 1,
       //    });
       // });
+      //
 
-      // factory.map.data.addListener('mouseover', function (event) {
-      //   infowindow.setContent(event.feature.getProperty('id').toString(), event);
-      //   infowindow.setPosition(event.latLng);
-      //   infowindow.open(factory.map);
-      // });
+      // TO DO:
+      // Function to display parking options at current time
+      // Input is the rules object
+      // Output is string to display the options
+
+      // var parkingOptionRightNow = function (rulesObj) {
+      //   var date = moment().format('MM-DD-YYYY');
+      //   var currentTime = moment().format('h:mm a');
+      // };
+
+      factory.map.data.addListener('mouseover', function (event) {
+        var numOfRules = event.feature.getProperty('rules').length;
+        var rulesToDisplay = '';
+        for (var i = 0; i < numOfRules; i++) {
+          rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
+          rulesToDisplay += 'Days: ' + event.feature.getProperty('rules')[i].days + '<br>';
+          rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
+          rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
+          rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
+        }
+
+        if (numOfRules === 0) {
+          rulesToDisplay = 'Parking info not available';
+        }
+
+        infowindow.setContent(rulesToDisplay, event);
+
+        // infowindow.setContent(event.feature.getProperty('id').toString(), event);
+        infowindow.setPosition(event.latLng);
+        infowindow.open(factory.map);
+      });
 
     });
   };
@@ -180,6 +220,12 @@ angular.module('MapServices', ['AdminServices'])
         console.log(coordinates);
         factory.fetchParkingZones(coordinates);
       });
+
+      //on polygon click
+      // factory.map.data.addListener('click', function (event) {
+      //   var coordinates = [event.latLng.lng(), event.latLng.lat()];
+      //   console.log(coordinates);
+      // });
 
       callback(factory.map);
 

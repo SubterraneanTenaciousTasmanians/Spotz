@@ -41,14 +41,17 @@ angular.module('spotz.map', ['MapServices'])
        });
     });
 
-    map.data.addListener('click', function (event) {
-      console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
-
-      MapFactory.sendRule(event.feature.getProperty('id').toString(), { token: token, rule: $scope.rule })
-      .then(function () {
-        event.feature.setProperty('color', $scope.rule.color);
-      });
-    });
+    // map.data.addListener('click', function (event) {
+    //   console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
+    //
+    //   MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
+    //   .then(function () {
+    //     console.log('changing color', $scope.rule.color);
+    //     //event.feature.css($scope.color);
+    //     event.feature.setProperty('color', $scope.rule.color);
+    //
+    //   });
+    // });
   });
 
 },
