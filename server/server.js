@@ -43,6 +43,10 @@ app.use(bodyparser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
+var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
+var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
+var FACEBOOK_CLIENT_ID = process.env.FACEBOOKCLIENTID;
+var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
 /**
  * Serializing user id to save the user's session
  */
