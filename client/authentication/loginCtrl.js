@@ -8,7 +8,7 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.checkCredentials = function() {
       var token = $cookies.get('credentials');
-      if (token.length) {
+      if (token) {
         LoginFactory.verifyToken(token).then(function (response) {
           if (response.data.success) {
             $state.go('map');
