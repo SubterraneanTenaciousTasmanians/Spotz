@@ -97,7 +97,7 @@ passport.use(new FacebookStrategy({
 passport.use(new GoogleStrategy({
   clientID: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback',
+  callbackURL: 'https://spotz.herokuapp.com/auth/google/callback',
   passReqToCallback: true,
 }, function (req, accessToken, refreshToken, profile, done) {
   return User.read({ googleId: profile.emails[0].value }).then(function (user) {
