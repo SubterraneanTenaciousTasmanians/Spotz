@@ -95,4 +95,18 @@ verifyToken.post('/rule/:polyId', function (req, res) {
   }
 });
 
+verifyToken.post('/api/photo', upload.single(''), function (req, res) {
+  var tmp_path = req.file.path;
+  var target_path = 'uploads/' + req.file.originalname;
+  var src = fs.createReadStream(tmp_path);
+  var dest = fs.createWriteStream(target_path);
+  src.pipe(dest);
+  src.on('end', function () { res.send('complete'); });
+
+  src.on('error', function (err) { res.send('error'); });
+
+  // console.log('reqbody: ', req.body);
+  // res.status(200).send(req.body);
+});
+
 module.exports = verifyToken;

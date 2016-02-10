@@ -97,16 +97,17 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
       table.integer('rule_id').unsigned().references('rules.id');
     });
   });
-})
+});
 
+//DATA NOW LOADED FROM spotz.sql
 // ***
 // Import Permit Zone info (using the function defined in parking.js)
 // ***
-.then(function () {
-  return parkingDB.importParkingZone('/zoneData/berkeley.json', function () {
-    console.log('data loaded!!');
-  });
-});
+// .then(function () {
+//   // return parkingDB.importParkingZone('/zoneData/berkeley.json', function () {
+//   //   console.log('data loaded!!');
+//   // });
+// });
 
 // Create the user schema/table
 bookShelf.knex.schema.hasTable('users').then(function (exists) {
