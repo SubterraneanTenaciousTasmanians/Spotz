@@ -15,6 +15,8 @@ var User = require('./db/controllers/user.js');
 
 //LOGIN
 var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var cookieParser = require('cookie-parser');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var verifyToken = require('./routers/verifyToken.js');
