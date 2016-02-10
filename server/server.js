@@ -70,10 +70,19 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
+
 app.post('/api/photo', upload.single('recfile'), function (req, res) {
-  fs.writeFile('test.jpg', res.body);
-  console.log('reqbody: ', req.body);
-  res.status(200).send(req.body);
+  var tmp_path = req.file.path;
+  var target_path = 'uploads/' + req.file.originalname;
+  var src = fs.createReadStream(tmp_path);
+  var dest = fs.createWriteStream(target_path);
+  src.pipe(dest);
+  src.on('end', function () { res.send('complete'); });
+
+  src.on('error', function (err) { res.send('error'); });
+
+  // console.log('reqbody: ', req.body);
+  // res.status(200).send(req.body);
 });
 
 app.post('/api/rule/:polyId', function (req, res) {
