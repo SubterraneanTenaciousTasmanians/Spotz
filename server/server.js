@@ -70,8 +70,7 @@ app.post('/api/zones', function (req, res) {
   });
 });
 
-
-app.post('/api/photo', upload.single('recfile'), function (req, res) {
+app.post('/api/photo', upload.single(''), function (req, res) {
   var tmp_path = req.file.path;
   var target_path = 'uploads/' + req.file.originalname;
   var src = fs.createReadStream(tmp_path);
