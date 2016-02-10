@@ -145,7 +145,13 @@ assignToken.get('/facebook/callback',
   function (req, res) {
     User.read({ facebookId: req.user.attributes.facebookId }).then(function (model) {
       if (!model) {
-        res.json({ success: false, message: 'Authentication failed. User not found' });
+        User.create({ googleId: req.user.attributes.facebookId }).then(function (user) {
+          var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+            console.log('Here is the token', token);
+            res.cookie('credentials', token);
+            res.redirect('/');
+          });
+        });
       } else if (model) {
         var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
           console.log('Here is the token', token);
