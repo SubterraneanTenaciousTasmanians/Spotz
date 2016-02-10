@@ -1,14 +1,16 @@
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', '$cookies', 'MapFactory', 'LoginFactory', function ($scope, $cookies, MapFactory, LoginFactory) {
+.controller('mapCtrl', ['$scope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $cookies, $state, MapFactory, LoginFactory) {
   $scope.checkCredentials = function () {
     var token = $cookies.get('credentials');
-    if (token.length) {
+    if (token) {
       LoginFactory.verifyToken(token).then(function (response) {
         if (!response.data.success) {
           $state.go('login');
         }
       });
+    } else {
+      $state.go('login');
     }
   };
 
