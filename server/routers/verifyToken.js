@@ -9,7 +9,7 @@ var ParkingDB = require('./../db/parking.js');
  * environment file for developing under a local server
  * comment out before deployment
  */
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 var JWT_SECRET = process.env.JWTSECRET;
 
