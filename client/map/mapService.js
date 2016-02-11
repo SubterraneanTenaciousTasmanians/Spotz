@@ -29,7 +29,7 @@ angular.module('MapServices', ['AdminServices'])
   };
 
   factory.fetchParkingZones = function (coordinates) {
-
+    console.log('fetching data ...');
     var token = $cookies.get('credentials');
 
     $http({
@@ -38,13 +38,8 @@ angular.module('MapServices', ['AdminServices'])
     })
     .success(function (data) {
       var polyColor;
-
-      console.log('got em', data);
+      console.log('returned data');
       data.forEach(function (poly, i) {
-
-        if (poly.rules.length) {
-          console.log(poly.id, 'has rule color', poly.rules[0].color);
-        }
 
         polyColor = '0,0,0';
         if (poly.rules[0]) {
@@ -109,7 +104,9 @@ angular.module('MapServices', ['AdminServices'])
       // };
 
       factory.map.data.addListener('mouseover', function (event) {
-        var numOfRules = event.feature.getProperty('rules').length;
+        if (event.feature.getProperty('rules')) {
+          var numOfRules = event.feature.getProperty('rules').length;
+        }
         var rulesToDisplay = '';
         for (var i = 0; i < numOfRules; i++) {
           rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
@@ -170,13 +167,10 @@ angular.module('MapServices', ['AdminServices'])
         var stepX = 0.018;
         var stepY = 0.018;
 
-        console.log('titles loaded', [topRightX, topRightY], [bottomLeftX, bottomLeftY]);
-
         var curLine = Math.ceil(bottomLeftX / stepX) * stepX;
         var f;
         while (curLine < topRightX) {
           //line
-          console.log('painting line', [curLine, topRightY], [curLine, bottomLeftY]);
           f = {
             type: 'Feature',
             properties:{},
@@ -194,7 +188,6 @@ angular.module('MapServices', ['AdminServices'])
         curLine = Math.ceil(bottomLeftY / stepY) * stepY;
         while (curLine < topRightY) {
           //line
-          console.log('painting line', [topRightX, curLine], [bottomLeftX, curLine]);
           f = {
             type: 'Feature',
             properties:{},
@@ -219,7 +212,6 @@ angular.module('MapServices', ['AdminServices'])
 
       factory.map.addListener('click', function (event) {
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
-        console.log(coordinates);
         factory.fetchParkingZones(coordinates);
       });
 

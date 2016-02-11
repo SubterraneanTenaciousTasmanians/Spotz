@@ -13,7 +13,6 @@ angular.module('spotz.map', ['MapServices'])
 
   MapFactory.init(function (map) {
 
-    console.log('TOKEN BEFORE MAP FETCH', token);
     var center = map.getCenter();
 
     MapFactory.loadColors(function () {
@@ -21,10 +20,8 @@ angular.module('spotz.map', ['MapServices'])
     });
 
     map.data.setStyle(function (feature) {
-      console.log('setting style');
 
       if (!feature.getProperty('color')) {
-        console.log('no color');
         return;
       }
 
