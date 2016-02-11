@@ -8,6 +8,7 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.checkCredentials = function () {
       var token = $cookies.get('credentials');
+      console.log('Checking credentials', token);
       if (token) {
         LoginFactory.verifyToken(token).then(function (response) {
           if (response.data.success) {
@@ -21,6 +22,7 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.signin = function (userinfo) {
       LoginFactory.signin(userinfo).then(function (response) {
+        console.log('response inside signin function', response);
         if (response.data.success) {
           $scope.error = false;
           $cookies.put('credentials', response.data.token);
