@@ -1,9 +1,10 @@
-.body-fill{
+.login-page{
   width:100%;
   height:1000px;
   background-image: url("../assets/images/parking2.jpg");
   background-size:cover;
   background-position: center;
+  font-family: 'Questrial', sans-serif;
 }
 .login-wrapper {
   margin: 0 auto;
@@ -15,7 +16,6 @@
   position: relative;
   top:100px;
   color: #fff;
-  font-family: 'Questrial', sans-serif;
 }
 
 .login-wrapper h1{
@@ -23,16 +23,16 @@
 }
 
 .login-wrapper p{
-
   margin: 0 0 20px 0;
 }
 
-form a {
-    color: #BABAFF;
-    text-decoration: underline;
-    margin: 30px 0 10px 0;
-    display: block;
-    cursor: pointer;
+.login-page form a {
+  color: #BABAFF;
+  text-decoration: underline;
+  margin: 30px 0 10px 0;
+  display: block;
+  cursor: pointer;
+  color: #94C453;
 }
 
 .login-form input, .login-form button{
@@ -67,43 +67,41 @@ form a {
   margin: 0 auto;
 }
 
-.info{
+.login-page .info{
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 253, 233, 0.95);
   top: 550px;
   min-height: 300px;
   width: 100%;
-  font-family: 'Questrial', sans-serif;
   padding-left: 20px;
   color:#333;
   min-width:860px;
 }
 
-.info h1{
+.login-page .info h1{
   border-bottom: 1px solid #bbb;
   width:520px;
   color: #76b52d;
 }
-img.preview-map {
-    height: 250px;
-    position: absolute;
-    right: 40px;
-    top: 0;
-    border: 1px solid #989898;
-    box-shadow: 1px 1px 3px 1px #B5B5B5;
+.login-page img.preview-map {
+  height: 250px;
+  position: absolute;
+  right: 40px;
+  top: 0;
+  border: 1px solid #989898;
+  box-shadow: 1px 1px 3px 1px #B5B5B5;
 }
 
-.description{
+.login-page .description{
   max-width: 520px;
   padding: 0px 30px;
   text-align: justify;
 }
 
-.top-bar{
+.login-page .top-bar{
   position: fixed;
   height: 50px;
   width: 100%;
-  font-family: 'Questrial', sans-serif;
 
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#76b52d+0,c3dc90+100 */
   background: #76b52d; /* Old browsers */
@@ -115,7 +113,7 @@ img.preview-map {
   z-index: 2;
 }
 
-.top-nav{
+.login-page .top-nav{
   list-style: none;
   position: absolute;
   right: 30px;
@@ -123,32 +121,31 @@ img.preview-map {
   top: 5px;
 }
 
-.top-nav li{
+.login-page .top-nav li{
   display: inline-block;
   margin: 0px 5px;
   padding: 0 10px;
   cursor: pointer;
 }
 
-.top-nav li:hover{
+.login-page .top-nav li:hover{
   border-bottom: 2px solid #fff;
 }
 
-.top-nav li a{
+.login-page .top-nav li a{
   text-decoration: inherit;
   color:inherit;
-
 }
 
-.info-wrapper{
+.login-page .info-wrapper{
   max-width: 1000px;
   position: relative;
   margin: 0 auto;
 }
 
-.logo {
-    font-size: 36px;
-    padding: 5px 0 0 20px;
-    color: #FFF;
-    font-weight: bold;
+.login-page .logo {
+  font-size: 36px;
+  padding: 5px 0 0 20px;
+  color: #FFF;
+  font-weight: bold;
 }
