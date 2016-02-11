@@ -2,6 +2,7 @@ angular.module('spotz.map', ['MapServices'])
 
 .controller('mapCtrl', ['$scope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $cookies, $state, MapFactory, LoginFactory) {
   //Verifying token
+
   var token = $cookies.get('credentials');
 
   $scope.checkCredentials = function () {
@@ -16,7 +17,7 @@ angular.module('spotz.map', ['MapServices'])
     }
   };
 
-  $scope.checkCredentials();
+  // $scope.checkCredentials();
 
   MapFactory.init(function (map) {
     console.log('TOKEN BEFORE MAP FETCH', token);

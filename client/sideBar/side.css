@@ -1,0 +1,21 @@
+.sideBar {
+  /*background-color: rgba(0, 0, 0, 0.7);*/
+  background-color: blue;
+  top:0;
+  left:0;
+  width:200px;
+
+}
+
+.ruleBox{
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: #FFF;
+  padding: 20px;
+  border: 1px solid;
+}
+
+.ruleBox input{
+  display: block;
+}

@@ -1,0 +1,10 @@
+.navBar {
+  /*background-color: rgba(0, 0, 0, 0.7);*/
+  background-color: green;
+  width:100%;
+
+}
+
+.nav{
+  right:0;
+}
