@@ -27,7 +27,7 @@ angular.module('spotz.login', ['LoginService'])
       if (token) {
         LoginFactory.verifyToken(token).then(function (response) {
           if (response.data.success) {
-            $state.go('map');
+            $state.go('main');
           }
         });
       }
@@ -61,7 +61,7 @@ angular.module('spotz.login', ['LoginService'])
       function success(response) {
         console.log('sucessful sign in');
         $cookies.put('credentials', response.data.token);
-        $state.go('map');
+        $state.go('main');
       },
 
       function error(response) {
@@ -82,7 +82,7 @@ angular.module('spotz.login', ['LoginService'])
       function success(response) {
         console.log('sucessful sign up');
         $cookies.put('credentials', response.data.token);
-        $state.go('map');
+        $state.go('main');
       },
 
       function error(response) {
