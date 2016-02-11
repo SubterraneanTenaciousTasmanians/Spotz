@@ -14,7 +14,7 @@ env(__dirname + '/.env');
 
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
-var User = require('./db/controllers/user.js');
+var User = require('./db/user.js');
 
 //LOGIN
 var passport = require('passport');

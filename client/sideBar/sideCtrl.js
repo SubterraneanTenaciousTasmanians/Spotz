@@ -46,6 +46,7 @@ angular.module('spotz.side', ['MapServices'])
   // Add rule to a polygon
 
   console.log("Here is object returned from mapfactory: ", MapFactory);
+
   MapFactory.map.data.addListener('click', function (event) {
     console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
 
