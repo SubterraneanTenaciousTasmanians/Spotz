@@ -21,21 +21,13 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.activeLoginState = loginStates.signUp;
 
-    $scope.checkCredentials = function () {
-      var token = $cookies.get('credentials');
-      console.log('Checking credentials', token);
-      if (token) {
-        LoginFactory.verifyToken(token).then(function (response) {
-          if (response.data.success) {
-            $state.go('map');
-          }
-        });
+    LoginFactory.checkCredentials().then(function (loggedIn) {
+      if (!loggedIn) {
+        $state.go('login');
       }
-    };
+    });
 
-    $scope.checkCredentials();
-
-    $scope.signInOrSignUp = function (userinfo) {
+    $scope.signInOrSignUp = function () {
       if ($scope.activeLoginState === loginStates.signIn) {
         signin($scope.userinfo);
       }else if ($scope.activeLoginState === loginStates.signUp) {
