@@ -7,7 +7,7 @@ angular.module('spotz.map', ['MapServices'])
 
   LoginFactory.checkCredentials().then(function (loggedIn) {
     if (!loggedIn) {
-      $state.go('map');
+      $state.go('login');
     }
   });
 
