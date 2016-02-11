@@ -2,28 +2,22 @@ angular.module('spotz.map', ['MapServices'])
 
 .controller('mapCtrl', ['$scope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $cookies, $state, MapFactory, LoginFactory) {
   //Verifying token
+  //will be undefined on first login...
   var token = $cookies.get('credentials');
 
-  $scope.checkCredentials = function () {
-    if (token) {
-      LoginFactory.verifyToken(token).then(function (response) {
-        if (!response.data.success) {
-          $state.go('login');
-        }
-      });
-    } else {
-      $state.go('login');
+  LoginFactory.checkCredentials().then(function (loggedIn) {
+    if (!loggedIn) {
+      $state.go('map');
     }
-  };
-
-  $scope.checkCredentials();
+  });
 
   MapFactory.init(function (map) {
+
     console.log('TOKEN BEFORE MAP FETCH', token);
     var center = map.getCenter();
 
     MapFactory.loadColors(function () {
-      MapFactory.fetchParkingZones([center.lng(), center.lat(), token]);
+      MapFactory.fetchParkingZones([center.lng(), center.lat()]);
     });
 
     map.data.setStyle(function (feature) {

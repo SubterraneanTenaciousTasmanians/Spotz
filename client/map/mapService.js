@@ -30,9 +30,11 @@ angular.module('MapServices', ['AdminServices'])
 
   factory.fetchParkingZones = function (coordinates) {
 
+    var token = $cookies.get('credentials');
+
     $http({
       method:'GET',
-      url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + coordinates[2],
+      url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
     })
     .success(function (data) {
       var polyColor;
@@ -216,7 +218,7 @@ angular.module('MapServices', ['AdminServices'])
       });
 
       factory.map.addListener('click', function (event) {
-        var coordinates = [event.latLng.lng(), event.latLng.lat(), token];
+        var coordinates = [event.latLng.lng(), event.latLng.lat()];
         console.log(coordinates);
         factory.fetchParkingZones(coordinates);
       });
