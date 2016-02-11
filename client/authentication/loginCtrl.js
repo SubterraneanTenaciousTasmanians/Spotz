@@ -5,6 +5,21 @@ angular.module('spotz.login', ['LoginService'])
     //For error message
     $scope.error = false;
     $scope.userinfo = {};
+    $scope.showServerMsg = false;
+    $scope.serverMsg = '';
+
+    var loginStates = {
+      signIn: {
+        buttonMsg: 'Sign In!',
+        questionMsg: 'New member? Sign up!',
+      },
+      signUp: {
+        buttonMsg: 'Sign Up!',
+        questionMsg: 'Already a member? Sign in',
+      },
+    };
+
+    $scope.activeLoginState = loginStates.signUp;
 
     $scope.checkCredentials = function () {
       var token = $cookies.get('credentials');
@@ -20,37 +35,63 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.checkCredentials();
 
-    $scope.signin = function (userinfo) {
-      LoginFactory.signin(userinfo).then(function (response) {
-        console.log('response inside signin function', response);
-        if (response.data.success) {
-          $scope.error = false;
-          $cookies.put('credentials', response.data.token);
-          $state.go('map');
-        } else {
-          $scope.error = true;
-          $scope.userinfo.username = '';
-          $scope.userinfo.password = '';
-        }
-      });
+    $scope.signInOrSignUp = function (userinfo) {
+      if ($scope.activeLoginState === loginStates.signIn) {
+        signin($scope.userinfo);
+      }else if ($scope.activeLoginState === loginStates.signUp) {
+        signup($scope.userinfo);
+      }
     };
 
-    $scope.signup = function (userinfo) {
-      LoginFactory.signup(userinfo).then(function (response) {
-        if (response.data.success) {
-          $scope.error = false;
-          $cookies.put('credentials', response.data.token);
-          $state.go('map');
-        } else {
-          $scope.error = true;
-          $scope.userinfo.username = '';
-          $scope.userinfo.password = '';
-        }
-      });
+    $scope.toggleSignInSignUp = function () {
+
+      if ($scope.activeLoginState === loginStates.signIn) {
+        $scope.activeLoginState = loginStates.signUp;
+      } else {
+        $scope.activeLoginState = loginStates.signIn;
+      }
+
     };
 
-    $scope.goSignUp = function () {
-      $state.go('signup');
-    };
+    function signin(userinfo) {
+      console.log('signing in', userinfo);
+      $scope.showServerMsg = false;
+      LoginFactory.signin(userinfo)
+      .then(
+      function success(response) {
+        console.log('sucessful sign in');
+        $cookies.put('credentials', response.data.token);
+        $state.go('map');
+      },
+
+      function error(response) {
+        console.log('error handler', response);
+        $scope.showServerMsg = true;
+        $scope.serverMsg = response.data.message;
+        $scope.userinfo.password = '';
+      });
+    }
+
+    function signup(userinfo) {
+      console.log('signing up', userinfo);
+
+      $scope.showServerMsg = false;
+
+      LoginFactory.signup(userinfo)
+      .then(
+      function success(response) {
+        console.log('sucessful sign up');
+        $cookies.put('credentials', response.data.token);
+        $state.go('map');
+      },
+
+      function error(response) {
+        console.log('error handler', response);
+        $scope.showServerMsg = true;
+        $scope.serverMsg = response.data.message;
+        $scope.userinfo.password = '';
+      });
+    }
+
   },
 ]);

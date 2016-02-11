@@ -149,3 +149,11 @@
   color: #FFF;
   font-weight: bold;
 }
+
+.server-msg {
+  background-color: rgba(255, 0, 0, 0.54);
+}
+
+.server-msg p {
+  padding: 10px;
+}
