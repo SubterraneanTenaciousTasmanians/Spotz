@@ -1,10 +1,41 @@
-    <form>
-      <input type="text" class="form-control" ng-model="userinfo.username" placeholder="username" required>
+<div class="body-fill">
+
+  <div class="top-bar">
+    <div class="logo">Spotz</div>
+    <ul class="top-nav">
+      <li><a href="https://github.com/SubterraneanTenaciousTasmanians/Spotz" target="_blank">Documentation</a></li>
+      <li>About</li>
+      <li>Donate</li>
+    </ul>
+  </div>
+
+  <div class="login-wrapper">
+    <h1>Spotz</h1>
+    <p>Cuz you need one.</p>
+    <form class="login-form">
+      <input type="text" class="form-control" ng-model="userinfo.username" placeholder="username" required ng-minlength="5" ng-maxlength="14">
       <input type="password" class="password box" ng-model="userinfo.password" placeholder="password" required>
-      <button ng-click="signin(userinfo)">Sign In!</button>
       <button ng-click="goSignUp()">Sign Up!</button>
+      <a ng-click="signin(userinfo)">Already a member? Sign in</a>
     </form>
-<!-- <a href="//localhost:3000/auth/google/callback"><img src="./assets/images/googleButton.png" /></a>
-<a href="//localhost:3000/auth/facebook/callback"><img src="./assets/images/facebookButton.png" /></a> -->
-<a href="/auth/google"><img src="./assets/images/googleButton.png" /></a>
-<a href="/auth/facebook"><img src="./assets/images/facebookButton.png" /></a>
+    <!-- <a href="//localhost:3000/auth/google/callback"><img src="./assets/images/googleButton.png" /></a>
+    <a href="//localhost:3000/auth/facebook/callback"><img src="./assets/images/facebookButton.png" /></a> -->
+    <div class="passport-login">
+      <a href="/auth/google"><img src="./assets/images/googleButton.png" /></a>
+      <a href="/auth/facebook"><img src="./assets/images/facebookButton.png" /></a>
+    </div>
+  </div>
+</div>
+
+<div class="info">
+  <div class="info-wrapper">
+    <h1>Park smarter.</h1>
+    <div class="description">
+      <p>Much time and energy is wasted driving around looking for a parking spot.</p>
+      <p>Spotz merges together parking data scattered over the internet to give you a comprehensive picture of where to most effectively find a parking spot.
+        Our app shows a map of your surrounding area and overlays parking information. Users can contribute by taking pictures of parking signs when they park.</p>
+      <p>This app is currently in development and only includes Berkeley, CA.</p>
+    </div>
+    <img class="preview-map" src="../assets/images/preview.png">
+  </div>
+</div>
