@@ -1,9 +1,12 @@
+'use strict';
+
 angular.module('LoginService', [])
 
 .factory('LoginFactory', ['$http', function ($http) {
   var authentication = {};
+
   authentication.signup = function (userinfo) {
-    console.log('LOGIN FACTORY INFO', userinfo)
+    console.log('LOGIN FACTORY INFO', userinfo);
     return $http.post('/auth/signup', userinfo);
   };
 
@@ -16,4 +19,5 @@ angular.module('LoginService', [])
   };
 
   return authentication;
-}])
+},
+]);
