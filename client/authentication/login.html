@@ -16,7 +16,7 @@
       <input type="text" class="form-control" ng-model="userinfo.username" placeholder="username">
       <input type="password" class="password box" ng-model="userinfo.password" placeholder="password" required>
       <button ng-click="signInOrSignUp()">{{activeLoginState.buttonMsg}}</button>
-      <a ng-click="toggleSignInSignUp()">{{activeLoginState.questionMsg}}</a>
+      <a class="sign-in-toggle" ng-click="toggleSignInSignUp()">{{activeLoginState.questionMsg}}</a>
     </form>
     <!-- <a href="//localhost:3000/auth/google/callback"><img src="./assets/images/googleButton.png" /></a>
     <a href="//localhost:3000/auth/facebook/callback"><img src="./assets/images/facebookButton.png" /></a> -->
