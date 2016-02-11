@@ -52,12 +52,12 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
 
 // Create the zones/worldgrid join table
 .then(function () {
-  return bookShelf.knex.schema.hasTable('worldgrid_zones').then(function (exists) {
+  return bookShelf.knex.schema.hasTable('worldGrid_zones').then(function (exists) {
     if (exists) {
       return console.log('worldgrid_zones table already exists');
     }
 
-    return bookShelf.knex.schema.createTable('worldgrid_zones', function (table) {
+    return bookShelf.knex.schema.createTable('worldGrid_zones', function (table) {
       console.log('creating NEW join table zones_worldGrid');
       table.integer('worldGrid_id').unsigned().references('worldGrid.id');
       table.integer('zone_id').unsigned().references('zones.id');

@@ -36,6 +36,7 @@
     "multer": "^1.1.0",
     "mysql": "^2.10.2",
     "node-env-file": "^0.1.8",
+    "node-geocoder": "^3.6.2",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.0",
     "passport-google-oauth": "^0.2.0",
