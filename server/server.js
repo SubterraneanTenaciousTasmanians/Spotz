@@ -4,11 +4,7 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var path = require('path');
 var morgan = require('morgan');
-var env = require('node-env-file');
 var fs = require('fs');
-
-//when deployed comment the line below
-// env(__dirname + '/.env');
 
 //DATA BASE
 var ParkingDB = require('./db/parking.js');
@@ -19,6 +15,7 @@ var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var verifyToken = require('./routers/verifyToken.js');
+var donationRouter = require('./routers/braintree.js');
 
 var port = process.env.PORT || 3000;
 
@@ -38,7 +35,6 @@ app.use(morgan('combined'));
 app.use(express.static(__dirname + '/../client/'));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
@@ -49,6 +45,7 @@ app.use(cookieParser());
 
 //Every request with the beginning endpoint of its assigned URL
 //gets ran through the subrouter first
+app.use('/', donationRouter);
 app.use('/auth', assignTokenSignin);
 app.use('/api', verifyToken);
 

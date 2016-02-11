@@ -12,7 +12,7 @@ var env = require('node-env-file');
  * comment out before deployment
  */
 
-// env(__dirname + '/../.env');
+env(__dirname + '/../.env');
 
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
