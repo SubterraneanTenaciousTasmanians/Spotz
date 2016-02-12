@@ -1,13 +1,16 @@
+'use strict';
+
 angular.module('spotz.login', ['LoginService'])
 
 .controller('loginCtrl', ['$scope', '$state', '$cookies', 'LoginFactory',
   function ($scope, $state, $cookies, LoginFactory) {
-    //For error message
-    $scope.error = false;
+
     $scope.userinfo = {};
     $scope.showServerMsg = false;
     $scope.serverMsg = '';
 
+    //to switch between sign up and sign in on the same Page
+    //stores the button text and the question text below the button
     var loginStates = {
       signIn: {
         buttonMsg: 'Sign In!',
@@ -19,12 +22,12 @@ angular.module('spotz.login', ['LoginService'])
       },
     };
 
+    //the current login state being displayed
     $scope.activeLoginState = loginStates.signUp;
 
-
     LoginFactory.checkCredentials().then(function (loggedIn) {
-      if (!loggedIn) {
-        $state.go('login');
+      if (loggedIn) {
+        $state.go('main');
       }
     });
 
@@ -47,18 +50,17 @@ angular.module('spotz.login', ['LoginService'])
     };
 
     function signin(userinfo) {
-      console.log('signing in', userinfo);
       $scope.showServerMsg = false;
+
       LoginFactory.signin(userinfo)
       .then(
       function success(response) {
-        console.log('sucessful sign in');
+        //save token from server
         $cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 
       function error(response) {
-        console.log('error handler', response);
         $scope.showServerMsg = true;
         $scope.serverMsg = response.data.message;
         $scope.userinfo.password = '';
@@ -66,20 +68,17 @@ angular.module('spotz.login', ['LoginService'])
     }
 
     function signup(userinfo) {
-      console.log('signing up', userinfo);
-
       $scope.showServerMsg = false;
 
       LoginFactory.signup(userinfo)
       .then(
       function success(response) {
-        console.log('sucessful sign up');
+        //save token from server
         $cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 
       function error(response) {
-        console.log('error handler', response);
         $scope.showServerMsg = true;
         $scope.serverMsg = response.data.message;
         $scope.userinfo.password = '';

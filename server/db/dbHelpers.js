@@ -2,7 +2,7 @@
 
 // The google world map measures:
 // 1. East to West with 360 degrees and 40,000Km
-// 2. North to South with 180 degrees and 12,400km
+// 2. North to South with 180 degrees and 20,000km
 
 // Our world grid will be in squares of 2km, thus
 // we are using the following formulas to translate the google coordinates into our grid location
@@ -11,7 +11,7 @@
 // (180 deg / 20,000km) * 2km = 0.018 degrees (North/South)
 
 // Thus every 0.018 degrees in the east/west direction and
-// every 0.029 degrees in north/south direction will represent one grid square of our world grid
+// every 0.018 degrees in north/south direction will represent one grid square of our world grid
 var stepX = 0.018;
 var stepY = 0.018;
 
