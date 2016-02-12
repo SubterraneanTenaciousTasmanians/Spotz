@@ -9,8 +9,7 @@
   "license": "MIT",
   "homepage": "",
   "scripts": {
-    "start": "node server/server.js",
-    "postinstall": "bower install"
+    "start": "node server/server.js"
   },
   "ignore": [
     "**/.*",
