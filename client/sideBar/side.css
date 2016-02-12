@@ -26,7 +26,7 @@
   right: 0;
   background-color: #FFF;
   padding: 15px;
-  border: 1px solid;
+  border: 1px solid #5D5A5A;
 }
 .ruleBox h2{
   margin: 3px;
@@ -41,13 +41,13 @@
 
 }
 
-ul {
+.sideBar ul {
   width: 100%;
   padding:0;
   margin:0;
 }
 
-ul button {
+.sideBar ul button {
   padding: 5px;
   width: 100%;
   font-family: inherit;

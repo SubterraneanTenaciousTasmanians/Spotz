@@ -154,8 +154,8 @@ angular.module('MapServices', ['AdminServices'])
 
       console.log('creating map');
       factory.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 14,
-        center: { lng: -122.27156639099121, lat: 37.86634903305901 },
+        zoom: 18,
+        center: { lng: -122.26156639099121, lat: 37.86434903305901 },
       });
 
       factory.map.addListener('tilesloaded', function () {
