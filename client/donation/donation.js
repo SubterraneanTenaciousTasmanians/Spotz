@@ -33,6 +33,7 @@ angular.module('spotz.donation', [])
   };
 
   $scope.handleStripe = function(status, response) {
+    console.log("MONEY", $scope.amount)
     console.log("THIS ", $scope.info);
     console.log("STATUSCODE ", status);
     var test = Stripe.card.createToken($scope.info, $scope.stripeCallback);

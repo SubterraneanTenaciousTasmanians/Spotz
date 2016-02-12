@@ -1,0 +1,64 @@
+{
+  "name": "spotz",
+  "version": "0.0.1",
+  "description": "Putting the king in the Parking",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": "5.4.1",
+    "npm": "3.3.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BugsBananaSlugs/Spotz.git"
+  },
+  "keywords": [
+    "parking"
+  ],
+  "author": "BugsBananaSlugs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BugsBananaSlugs/Spotz/issues"
+  },
+  "homepage": "https://github.com/BugsBananaSlugs/Spotz#readme",
+  "dependencies": {
+    "angular-payments": "^1.0.7",
+    "bcrypt": "^0.8.5",
+    "body-parser": "^1.14.2",
+    "bookshelf": "^0.9.1",
+    "braintree": "^1.35.1",
+    "cookie-parser": "^1.4.1",
+    "csvtojson": "^0.5.2",
+    "express": "^4.13.4",
+    "jsonwebtoken": "^5.5.4",
+    "knex": "^0.9.0",
+    "morgan": "^1.6.1",
+    "multer": "^1.1.0",
+    "mysql": "^2.10.2",
+    "ng-currency-mask": "^1.0.0",
+    "node-env-file": "^0.1.8",
+    "node-geocoder": "^3.6.2",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.0",
+    "passport-google-oauth": "^0.2.0",
+    "path": "^0.12.7",
+    "q": "^1.4.1",
+    "sequelize": "^3.19.1",
+    "stripe": "^4.4.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^2.3.1",
+    "gulp-cssnano": "^2.1.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-karma": "0.0.5",
+    "gulp-notify": "^2.2.0",
+    "gulp-uglify": "^1.5.1",
+    "multer": "^1.1.0",
+    "node": "0.0.0",
+    "nodemon": "^1.8.1"
+  }
+}
