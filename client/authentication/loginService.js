@@ -17,6 +17,8 @@ angular.module('LoginService', [])
   authentication.checkCredentials = function () {
     var token = $cookies.get('credentials');
 
+    console.log('verifying token', token);
+
     return $http.post('/api/verify', { token: token })
     .then(
     function success(response) {

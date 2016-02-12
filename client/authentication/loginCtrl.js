@@ -21,6 +21,7 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.activeLoginState = loginStates.signUp;
 
+
     LoginFactory.checkCredentials().then(function (loggedIn) {
       if (!loggedIn) {
         $state.go('login');
@@ -53,7 +54,7 @@ angular.module('spotz.login', ['LoginService'])
       function success(response) {
         console.log('sucessful sign in');
         $cookies.put('credentials', response.data.token);
-        $state.go('map');
+        $state.go('main');
       },
 
       function error(response) {
@@ -74,7 +75,7 @@ angular.module('spotz.login', ['LoginService'])
       function success(response) {
         console.log('sucessful sign up');
         $cookies.put('credentials', response.data.token);
-        $state.go('map');
+        $state.go('main');
       },
 
       function error(response) {
