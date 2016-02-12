@@ -1,10 +1,8 @@
+'use strict';
 angular.module('MapServices', ['AdminServices'])
 
 .factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($http, $window, $timeout, $cookies, KeyFactory) {
 
-  var factory = {};
-  var street = [];
-  var streets = [];
   var infowindow = {};
   var colors = {};
   var colorOptions = [];
@@ -12,8 +10,8 @@ angular.module('MapServices', ['AdminServices'])
   var topRightY;
   var bottomLeftX;
   var bottomLeftY;
-  var token = $cookies.get('credentials');
-  factory.map = {};
+
+  var factory = {};
 
   factory.loadColors = function (callback) {
     return $http({
@@ -104,9 +102,11 @@ angular.module('MapServices', ['AdminServices'])
       // };
 
       factory.map.data.addListener('mouseover', function (event) {
+        var numOfRules;
         if (event.feature.getProperty('rules')) {
-          var numOfRules = event.feature.getProperty('rules').length;
+          numOfRules = event.feature.getProperty('rules').length;
         }
+
         var rulesToDisplay = '';
         for (var i = 0; i < numOfRules; i++) {
           rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
@@ -121,7 +121,7 @@ angular.module('MapServices', ['AdminServices'])
           rulesToDisplay = 'Parking info not available';
         }
 
-        infowindow.setContent(rulesToDisplay, event);
+        infowindow.setContent('<span class="tooltip-text">' + rulesToDisplay + '</span>', event);
 
         // infowindow.setContent(event.feature.getProperty('id').toString(), event);
         infowindow.setPosition(event.latLng);

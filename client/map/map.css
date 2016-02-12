@@ -13,6 +13,10 @@ html, body {
   /*left:200px;*/
 }
 
+.tooltip-text{
+  font-size:18px;
+}
+
 /*.ruleBox{
   position: absolute;
   top: 0;

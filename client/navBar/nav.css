@@ -32,27 +32,25 @@
 
 .navList{
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 15px;
+  right: 10px;
   text-align: right;
 }
 
 .navList li{
   list-style: none;
   display: inline-block;
-  width: auto;
-  margin: 0;
-  height: 66px;
   text-decoration: none;
-  padding: 24px;
+  padding: 0px 10px;
   color: whitesmoke;
   font-size: 20px;
   font-weight: 400;
   cursor: pointer;
+  margin: 0 15px;
 }
 
 .navList li:hover {
-    background: rgba(255, 255, 255, 0.2);;
+  border-bottom: 3px solid #fff;
 }
 
 /*.nav li:visited{

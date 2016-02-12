@@ -4,7 +4,6 @@ var mapApp = angular.module('spotz', ['ngCookies', 'ui.router', 'spotz.map', 'sp
 
 .config(function ($stateProvider, $urlRouterProvider) {
   $stateProvider
-
   // .state('temp', { // this is the main/landing page which is also the main search page
   //     url: '/', // the main page is found at the main url
   //     views: {
@@ -37,14 +36,9 @@ var mapApp = angular.module('spotz', ['ngCookies', 'ui.router', 'spotz.map', 'sp
     url: '/login',
     templateUrl: '/authentication/login.html',
     controller: 'loginCtrl',
-  })
-
-  // .state('signup', {
-  //   url: '/signup',
-  //   templateUrl: '/authentication/signup.html',
-  //   controller: 'loginCtrl',
-  // });
+  });
 
   // $urlRouterProvider.otherwise('/login');
   $urlRouterProvider.otherwise('/');
+
 });
