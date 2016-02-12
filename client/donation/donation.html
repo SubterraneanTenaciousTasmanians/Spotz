@@ -1,0 +1,27 @@
+<form stripe-form="handleStripe">
+  <div>
+    <label>Name on card </label>
+    <input type="text" ng-model="info.name">
+  </div>
+
+  <div>
+    <label>Card number</label>
+    <input type="text" ng-model="info.number" payments-format="card" />
+  </div>
+
+  <div>
+    <label>Expiration Month/Year</label>
+  </div>
+  <div>
+    <input type="text" class="input-block-level" ng-model="info.exp_month" size="2"/>
+    <label>/</label>
+    <input type="text" class="input-block-level" ng-model="info.exp_year" size="4"/>
+  </div>
+
+  <div>
+    <label>CVC</label>
+    <input type="text" class="input-block-level" ng-model="info.cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type"/>
+  </div>
+  <input ng-model="amount" placeholder="Amount"/>
+  <button type="submit">Submit</button>
+</form>

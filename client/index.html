@@ -15,8 +15,36 @@
   <body>
     <div ui-view class="app-wrapper"></div>
 
-    <!-- <script src="bower_components/angular/angular.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<head>
+  <meta charset="utf-8">
+  <title>Parking</title>
+  <link rel="stylesheet" href="map/map.css">
+  <link rel="stylesheet" href="main.css">
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+</head>
+
+<body>
+  <div ui-view class="app-wrapper"></div>
+
+  <!-- <script src="bower_components/angular/angular.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+  <!-- <script type="text/javascript" src="bower_components/moment/min/moment.min.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-cookies.js"></script>
+  <script src="config.js"></script>
+  <script src="authentication/loginCtrl.js"></script>
+  <script src="authentication/loginService.js"></script>
+  <script src="map/mapService.js"></script>
+  <script src="map/mapCtrl.js"></script>
+  <script src="donation/donation.js"></script>
+  <script src="app.js"></script>
+  <script src="assets/angular-payments/lib/angular-payments.js"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script>
+    Stripe.setPublishableKey("pk_test_K5x7jeJxufrVfvqc0UF0o7iI");
+  </script>
+</body>
 
     <!-- <script type="text/javascript" src="bower_components/moment/min/moment.min.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
@@ -31,6 +59,12 @@
     <script src="sideBar/sideCtrl.js"></script>
     <script src="map/mapService.js"></script>
     <script src="map/mapCtrl.js"></script>
+    <script src="donation/donation.js"></script>
+    <script src="assets/angular-payments/lib/angular-payments.js"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script>
+      Stripe.setPublishableKey("pk_test_K5x7jeJxufrVfvqc0UF0o7iI");
+    </script>
     <script src="app.js"></script>
   </body>
 </html>
