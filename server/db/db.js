@@ -123,30 +123,3 @@ bookShelf.knex.schema.hasTable('users').then(function (exists) {
    });
   }
 });
-
-// NOTE: we will have to change this most likely
-//  streetSegment.number('segmentStartXCoordinate', 255);
-//  streetSegment.number('segmentStartYCoordinates', 255);
-//  streetSegment.number('segmentEndXCoordinates', 255);
-//  streetSegment.number('segmentEndYCoordinates', 255);
-
-// Create the streetSweeping schema/table
-bookShelf.knex.schema.hasTable('streetSweeping').then(function (exists) {
-  if (!exists) {
-    bookShelf.knex.schema.createTable('streetSweeping', function (table) {
-      //  table.increments('id').primary();
-      table.integer('Rte');
-      table.string('Street Name');
-      table.integer('Address From');
-      table.integer('Address To');
-      table.string('Day of Month');
-      table.string('AM/PM');
-      table.string('Side');
-      table.string('From');
-      table.string('To');
-      table.integer('Opt-out');
-    }).then(function (table) {
-     console.log('Created Table', table);
-   });
-  }
-});

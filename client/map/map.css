@@ -9,23 +9,8 @@ html, body {
   width:100%;
   right: 0;
   top:0;
-  /*position:absolute;*/
-  /*left:200px;*/
 }
 
 .tooltip-text{
   font-size:18px;
 }
-
-/*.ruleBox{
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #FFF;
-  padding: 20px;
-  border: 1px solid;
-}
-
-.ruleBox input{
-  display: block;
-}*/

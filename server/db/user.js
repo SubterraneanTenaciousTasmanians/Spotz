@@ -10,89 +10,100 @@ db.User = db.Model.extend({
 });
 
 //accessing functions
-module.exports = {
-  create: function (userinfo) {
-    var defer = Q.defer();
+module.exports = db;
 
-    if (!userinfo.username) {
-      defer.reject('Username required.');
-      return defer.promise;
+//BELOW ARE CRUD FUNCTIONS FOR USER TABLE
+
+//CREATE A NEW USER
+db.create = function (userinfo) {
+  var defer = Q.defer();
+
+  if (!userinfo.username) {
+    defer.reject('Username required.');
+    return defer.promise;
+  }
+
+  if (!userinfo.password) {
+    defer.reject('Password required.');
+    return defer.promise;
+  }
+
+  //check if the username is taken
+  db.User.where({
+    username: userinfo.username,
+  }).fetch().then(function (model) {
+
+    if (model) {
+      defer.reject('Username already exists.');
     }
 
-    if (!userinfo.password) {
-      defer.reject('Password required.');
-      return defer.promise;
-    }
+  }).then(function () {
 
-    //check if the username is taken
-    db.User.where({ username: userinfo.username }).fetch().then(function (model) {
+    //user does not exist, so we can create one
+    console.log('before hashing ', userinfo.password);
 
-      if (model) {
-        defer.reject('Username already exists.');
+    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
+      if (err) {
+        console.log('error in gensalt', err);
+        defer.reject('Server error generating salt.');
       }
 
-    }).then(function () {
+      bcrypt.hash(userinfo.password, salt, function (err, hash) {
 
-      //user does not exist, so we can create one
-      console.log('before hashing ', userinfo.password);
-
-      bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
         if (err) {
-          console.log('error in gensalt', err);
-          defer.reject('Server error generating salt.');
+          console.log('error in hashing password ', err);
+          defer.reject('Server error hasing password.');
         }
 
-        bcrypt.hash(userinfo.password, salt, function (err, hash) {
+        userinfo.password = hash;
 
-          if (err) {
-            console.log('error in hashing password ', err);
-            defer.reject('Server error hasing password.');
+        console.log('hashed password', userinfo);
+        new db.User(userinfo).save().then(function (model) {
+
+          if (!model) {
+            defer.reject('Server error.  User not saved.');
           }
 
-          userinfo.password = hash;
-
-          console.log('hashed password', userinfo);
-          new db.User(userinfo).save().then(function (model) {
-
-            if (!model) {
-              defer.reject('Server error.  User not saved.');
-            }
-
-            defer.resolve(model);
-          });
+          defer.resolve(model);
         });
       });
     });
+  });
 
-    return defer.promise;
-  },
+  return defer.promise;
+};
 
-  read: function (userinfo) {
-    return new db.User(userinfo).fetch().then(function (model) {
-      if (!model) {
-        console.log('user does not exist');
-        return model;
-      } else {
-        console.log(model, 'user has been found');
-        return model;
-      }
+db.read = function (userinfo) {
+  return new db.User(userinfo).fetch().then(function (model) {
+    if (!model) {
+      console.log('user does not exist');
+      return model;
+    } else {
+      console.log(model, 'user has been found');
+      return model;
+    }
+  });
+};
+
+db.update = function (userinfo) {
+  db.knex('users')
+    .where({
+      username: userinfo.username,
+    })
+    .update({
+      password: userinfo.password,
+    })
+    .then(function () {
+      console.log('Model has been updated');
     });
-  },
+};
 
-  update: function (userinfo) {
-    db.knex('users')
-      .where({ username: userinfo.username })
-      .update({ password:userinfo.password })
-      .then(function () {
-        console.log('Model has been updated');
-      });
-  },
-
-  delete: function (userinfo) {
-    return this.read(userinfo).then(function (model) {
-      new db.User({ id: model.id }).destroy().then(function (model) {
-        console.log(model, 'user has been deleted');
-      });
+db.delete = function (userinfo) {
+  return this.read(userinfo).then(function (model) {
+    new db.User({
+      id: model.id,
+    }).destroy().then(function (model) {
+      console.log(model, 'user has been deleted');
     });
-  },
+  });
 };

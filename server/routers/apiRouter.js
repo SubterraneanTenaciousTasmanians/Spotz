@@ -1,25 +1,38 @@
+'use strict';
+
 var express = require('express');
+
+//TOKEN AUTH
 var jwt = require('jsonwebtoken');
-var verifyToken = express.Router();
-var env = require('node-env-file');
+
+//RAPH'S STUFF (IMAGE UPLOAD)
 var multer = require('multer');
 var upload = multer({ dest: 'uploads/' });
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
+
+//DEV ONLY
+var env = require('node-env-file');
+
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
-
 env(__dirname + '/../.env');
 
+//EXPORT ROUTER
+var verifyToken = express.Router();
+module.exports = verifyToken;
+
+//REQUIRED KEYS
 var JWT_SECRET = process.env.JWTSECRET;
 
-verifyToken.post('/verify', function (req, res, next) {
+//TO CONFIRM THAT A USER HAS A TOKEN (IS LOGGED IN)
+verifyToken.post('/verify', function (req, res) {
   var token = req.body.token;
   if (token) {
-    jwt.verify(token, JWT_SECRET, { algorithm: 'HS256' }, function (err, decoded) {
+    jwt.verify(token, JWT_SECRET, { algorithm: 'HS256' }, function (err) {
       if (err) {
         res.status(401).json({ success: false, message: 'your token has expired' });
       } else {
@@ -97,6 +110,7 @@ verifyToken.post('/rule/:polyId', function (req, res) {
   }
 });
 
+//TODO: PHOTO UPLOAD
 verifyToken.post('/api/photo', upload.single(''), function (req, res) {
   var tmp_path = req.file.path;
   var target_path = 'uploads/' + req.file.originalname;
@@ -110,5 +124,3 @@ verifyToken.post('/api/photo', upload.single(''), function (req, res) {
   // console.log('reqbody: ', req.body);
   // res.status(200).send(req.body);
 });
-
-module.exports = verifyToken;

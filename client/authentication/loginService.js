@@ -6,7 +6,6 @@ angular.module('LoginService', [])
   var authentication = {};
 
   authentication.signup = function (userinfo) {
-    console.log('LOGIN FACTORY INFO', userinfo);
     return $http.post('/auth/signup', userinfo);
   };
 
@@ -14,10 +13,9 @@ angular.module('LoginService', [])
     return $http.post('/auth/signin', userinfo);
   };
 
+  //check that a user's token is valid
   authentication.checkCredentials = function () {
     var token = $cookies.get('credentials');
-
-    console.log('verifying token', token);
 
     return $http.post('/api/verify', { token: token })
     .then(
