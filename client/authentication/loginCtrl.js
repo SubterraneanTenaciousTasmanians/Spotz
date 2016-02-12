@@ -21,9 +21,10 @@ angular.module('spotz.login', ['LoginService'])
 
     $scope.activeLoginState = loginStates.signUp;
 
+
     LoginFactory.checkCredentials().then(function (loggedIn) {
       if (!loggedIn) {
-        $state.go('main');
+        $state.go('login');
       }
     });
 

@@ -4,7 +4,7 @@ angular.module('spotz.map', ['MapServices'])
   //Verifying token
 
   //will be undefined on first login...
-  var token = $cookies.get('credentials');
+  // var token = $cookies.get('credentials');
 
   LoginFactory.checkCredentials().then(function (loggedIn) {
     if (!loggedIn) {

@@ -8,14 +8,17 @@
   background: -webkit-linear-gradient(top,  #76b52d 0%,#c3dc90 100%); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(to bottom,  #76b52d 0%,#c3dc90 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#76b52d', endColorstr='#c3dc90',GradientType=0 ); /* IE6-9 */
-  box-shadow: 1px 1px 10px 4px #000;
+  box-shadow: 1px 1px 10px 4px #999998;
   z-index: 2;
   font-family: 'Questrial', sans-serif;
 
 
 
 }
-
+.logout a {
+  text-decoration: inherit;
+  color: inherit;
+}
 .navBar h1{
   font-size: 50px;
   /*font-family: 'Montez', cursive;*/
@@ -27,16 +30,14 @@
   color: whitesmoke;
 }
 
-.navBar ul{
-  margin: 0;
-  display: inline-block;
-  /*float: right;*/
+.navList{
   position: absolute;
-  top: 3px;
-  right: 45px;
+  top: 0;
+  right: 0;
+  text-align: right;
 }
 
-.nav li{
+.navList li{
   list-style: none;
   display: inline-block;
   width: auto;
@@ -50,7 +51,7 @@
   cursor: pointer;
 }
 
-.nav li:hover {
+.navList li:hover {
     background: rgba(255, 255, 255, 0.2);;
 }
 

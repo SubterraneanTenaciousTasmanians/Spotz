@@ -4,7 +4,7 @@ angular.module('spotz.side', ['MapServices'])
   //Verifying token
 
   console.log('side controller loaded');
-  var token = $cookies.get('credentials');
+  // var token = $cookies.get('credentials');
 
   // $scope.checkCredentials = function () {
   //   if (token) {
