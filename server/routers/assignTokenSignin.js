@@ -1,6 +1,6 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
-var User = require('./../db/controllers/user.js');
+var User = require('./../db/user.js');
 var assignToken = express.Router();
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -24,16 +24,22 @@ assignToken.post('/signin', function (req, res) {
   console.log('REQUEST DOT BODY ', req.body);
   User.read({ username: req.body.username }).then(function (model) {
     if (!model) {
-      res.json({ success: false, message: 'Authentication failed. User not found' });
+      res.status(401).json({ message: 'Sign in failed. User not found' });
     } else if (model) {
       Bcrypt.compare(req.body.password, model.attributes.password, function (err, result) {
+
         if (!result) {
-          res.json({ success: false, message: 'Authentication failed. Invalid Password' });
+          res.status(401).json({ message: 'Sign in failed. Invalid Password' });
         } else {
-          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-            console.log('Here is the token', token);
-            res.json({ success: true, message: 'Here is your token', token: token });
-          });
+
+          if (!JWT_SECRET) {
+            console.log('NO SECRET');
+            res.status(401).send({ message: 'Login service is broken :(' });
+          }
+
+          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 });
+          console.log('Here is the token', token);
+          res.status(200).json({ message: 'Here is your token', token: token });
         }
       });
     }
@@ -42,14 +48,29 @@ assignToken.post('/signin', function (req, res) {
 
 assignToken.post('/signup', function (req, res) {
   console.log('SEND FROM BACKEND ', req.body);
-  User.create(req.body).then(function (model) {
-    User.read({ username: req.body.username }).then(function (model) {
-      console.log('MODELLLL', model);
-      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-        console.log('Here is the token', token);
-        res.json({ success: true, message: 'Here is your token', token: token });
-      });
-    });
+
+  //call create from db/controllers/user.js
+  User.create(req.body)
+  .then(function (model) {
+
+    console.log('MODELLLL!!!', model);
+
+    if (!JWT_SECRET) {
+      console.log('NO SECRET');
+      res.status(401).send({ message: 'Login service is broken :(' });
+    }
+
+    var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 });
+    console.log('Here is the token', token);
+    res.status(201).json({ message: 'Here is your token', token: token });
+
+    //res.cookie('credentials', token);
+    //res.redirect('/');
+
+  })
+  .catch(function (message) {
+    console.log('sign up failed:', message);
+    res.status(401).send({ message: message });
   });
 });
 /**

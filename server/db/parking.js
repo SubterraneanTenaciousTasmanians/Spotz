@@ -34,8 +34,6 @@ var Zones = bookShelf.Model.extend({
   },
 });
 
-
-
 db.saveRule = function (zoneId, ruleAttrs) {
   var ruleObj = {
     table: Rules,

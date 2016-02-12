@@ -1,10 +1,8 @@
+'use strict';
 angular.module('MapServices', ['AdminServices'])
 
 .factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($http, $window, $timeout, $cookies, KeyFactory) {
 
-  var factory = {};
-  var street = [];
-  var streets = [];
   var infowindow = {};
   var colors = {};
   var colorOptions = [];
@@ -12,8 +10,8 @@ angular.module('MapServices', ['AdminServices'])
   var topRightY;
   var bottomLeftX;
   var bottomLeftY;
-  var token = $cookies.get('credentials');
-  factory.map = {};
+
+  var factory = {};
 
   factory.loadColors = function (callback) {
     return $http({
@@ -29,20 +27,17 @@ angular.module('MapServices', ['AdminServices'])
   };
 
   factory.fetchParkingZones = function (coordinates) {
+    console.log('fetching data ...');
+    var token = $cookies.get('credentials');
 
     $http({
       method:'GET',
-      url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + coordinates[2],
+      url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
     })
     .success(function (data) {
       var polyColor;
-
-      console.log('got em', data);
+      console.log('returned data');
       data.forEach(function (poly, i) {
-
-        if (poly.rules.length) {
-          console.log(poly.id, 'has rule color', poly.rules[0].color);
-        }
 
         polyColor = '0,0,0';
         if (poly.rules[0]) {
@@ -107,7 +102,11 @@ angular.module('MapServices', ['AdminServices'])
       // };
 
       factory.map.data.addListener('mouseover', function (event) {
-        var numOfRules = event.feature.getProperty('rules').length;
+        var numOfRules;
+        if (event.feature.getProperty('rules')) {
+          numOfRules = event.feature.getProperty('rules').length;
+        }
+
         var rulesToDisplay = '';
         for (var i = 0; i < numOfRules; i++) {
           rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
@@ -115,13 +114,14 @@ angular.module('MapServices', ['AdminServices'])
           rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
           rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
           rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
+          rulesToDisplay += 'Maps may contain inaccuracies. <br>Not all streets in the area specific maps have opted into the program.';
         }
 
         if (numOfRules === 0) {
           rulesToDisplay = 'Parking info not available';
         }
 
-        infowindow.setContent(rulesToDisplay, event);
+        infowindow.setContent('<span class="tooltip-text">' + rulesToDisplay + '</span>', event);
 
         // infowindow.setContent(event.feature.getProperty('id').toString(), event);
         infowindow.setPosition(event.latLng);
@@ -168,13 +168,10 @@ angular.module('MapServices', ['AdminServices'])
         var stepX = 0.018;
         var stepY = 0.018;
 
-        console.log('titles loaded', [topRightX, topRightY], [bottomLeftX, bottomLeftY]);
-
         var curLine = Math.ceil(bottomLeftX / stepX) * stepX;
         var f;
         while (curLine < topRightX) {
           //line
-          console.log('painting line', [curLine, topRightY], [curLine, bottomLeftY]);
           f = {
             type: 'Feature',
             properties:{},
@@ -192,7 +189,6 @@ angular.module('MapServices', ['AdminServices'])
         curLine = Math.ceil(bottomLeftY / stepY) * stepY;
         while (curLine < topRightY) {
           //line
-          console.log('painting line', [topRightX, curLine], [bottomLeftX, curLine]);
           f = {
             type: 'Feature',
             properties:{},
@@ -216,8 +212,7 @@ angular.module('MapServices', ['AdminServices'])
       });
 
       factory.map.addListener('click', function (event) {
-        var coordinates = [event.latLng.lng(), event.latLng.lat(), token];
-        console.log(coordinates);
+        var coordinates = [event.latLng.lng(), event.latLng.lat()];
         factory.fetchParkingZones(coordinates);
       });
 
