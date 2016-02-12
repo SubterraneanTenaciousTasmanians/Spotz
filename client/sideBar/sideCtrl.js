@@ -47,18 +47,20 @@ angular.module('spotz.side', ['MapServices'])
 
   console.log("Here is object returned from mapfactory: ", MapFactory);
 
-  MapFactory.map.data.addListener('click', function (event) {
-    console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
+  // TOOD: data is not ready, need event listener!
 
-    MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
-    .then(function () {
-      console.log('changing color', $scope.rule.color);
-
-      //event.feature.css($scope.color);
-      event.feature.setProperty('color', $scope.rule.color);
-
-    });
-  });
+  // MapFactory.map.data.addListener('click', function (event) {
+  //   console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
+  //
+  //   MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
+  //   .then(function () {
+  //     console.log('changing color', $scope.rule.color);
+  //
+  //     //event.feature.css($scope.color);
+  //     event.feature.setProperty('color', $scope.rule.color);
+  //
+  //   });
+  // });
 
   // });
 
