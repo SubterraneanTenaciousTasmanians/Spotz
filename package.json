@@ -4,7 +4,8 @@
   "description": "Putting the king in the Parking",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "postinstall": "bower install"
   },
   "engines": {
     "node": "5.4.1",
