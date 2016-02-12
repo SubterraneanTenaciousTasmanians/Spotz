@@ -2,8 +2,9 @@ angular.module('spotz.map', ['MapServices'])
 
 .controller('mapCtrl', ['$scope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $cookies, $state, MapFactory, LoginFactory) {
   //Verifying token
+
   //will be undefined on first login...
-  var token = $cookies.get('credentials');
+  // var token = $cookies.get('credentials');
 
   LoginFactory.checkCredentials().then(function (loggedIn) {
     if (!loggedIn) {
