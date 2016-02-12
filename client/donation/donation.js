@@ -1,58 +1,44 @@
 angular.module('spotz.donation', [])
 
-.controller('donateCtrl', ['$http', '$scope', '$state', '$window', function ($http, $scope, $state, $window) {
+.controller('donateCtrl', ['$http', '$scope', '$state', '$window', function($http, $scope, $state, $window) {
   $scope.amount = 0;
-  $scope.message = '';
   $scope.showForm = true;
-  $scope.creditCardNumber = '';
-  $scope.expirationDate = '';
-  $scope.amount = '';
-  $scope.processPayment = function () {
-    $scope.message = 'Processing payment...';
-    $scope.showForm = false;
-
-    // send request to get token, then use the token to tokenize credit card info and process a transaction
-    $http({
-      method: 'GET',
-      url: 'http://localhost:3000/client_token',
-    }).success(function (data) {
-      var client = new braintree.api.Client({
-        clientToken: data,
+  $scope.message;
+  $scope.info = {};
+  $scope.transaction = {};
+  $scope.stripeCallback = function(status, response) {
+    console.log("2nd STRIPE RESPONSE", response);
+    if (response.error) {
+      // there was an error. Fix it.
+      console.log("ERROR", response.error);
+    } else {
+      console.log("AMOUNT", $scope.amount);
+      $scope.transaction = {
+        token: response.id,
+        amount: $scope.amount,
+      };
+      $http.post('/donate', $scope.transaction).then(function (data) {
+        console.log("RESPOSNE FROM SERVER ", data);
+        if (data.status == "OK") {
+          $scope.paid = true;
+          $scope.message = data.message;
+        } else {
+          $scope.paid = false;
+          $scope.message = data.message;
+        }
+      }).catch(function (err) {
+        console.error('error', err);
       });
-      client.tokenizeCard({
-        number: $scope.creditCardNumber,
-        expirationDate: $scope.expirationDate,
-      }, function (err, nonce) {
-        $http({
-          method: 'POST',
-          url: 'http://localhost:3000/checkout',
-          data: {
-            amount: $scope.amount,
-            payment_method_nonce: nonce,
-          },
-        }).success(function (data) {
-          console.log(data.success);
-          $scope.showForm = false;
-          if (data.success) {
-            $scope.message = 'Payment authorized, thank you for your support!';
-            $scope.isError = false;
-            $scope.isPaid = true;
-          } else {
-            // implement your solution to handle payment failures
-            $scope.message = 'Payment failed: ' + data.message + ' Please refresh the page and try again.';
-            $scope.isError = true;
-          }
-        }).error(function (error) {
-          $scope.message = 'Error: cannot connect to server. Please make sure your server is running.';
-          $scope.isError = true;
-          $scope.showForm = false;
-        });
-      });
-    }).error(function (error) {
-      $scope.message = 'Error: cannot connect to server. Please make sure your server is running.';
-      $scope.isError = true;
-      $scope.showForm = false;
-    });
+    }
   };
+
+  $scope.handleStripe = function(status, response) {
+    console.log("THIS ", $scope.info);
+    console.log("STATUSCODE ", status);
+    var test = Stripe.card.createToken($scope.info, $scope.stripeCallback);
+    console.log("TEST", test);
+    console.log("1st STRIPE RESPONSE", response);
+
+  }
 },
 ]);

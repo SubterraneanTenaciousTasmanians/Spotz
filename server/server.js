@@ -15,7 +15,7 @@ var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var assignTokenSignin = require('./routers/assignTokenSignin.js');
 var verifyToken = require('./routers/verifyToken.js');
-var donationRouter = require('./routers/braintree.js');
+var donationRouter = require('./routers/stripe.js');
 
 var port = process.env.PORT || 3000;
 
