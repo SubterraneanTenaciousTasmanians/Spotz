@@ -183,14 +183,14 @@ assignToken.get('/google/callback',
             var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
               console.log('Here is the token', token);
               res.cookie('credentials', token);
-              res.redirect('/');
+              res.redirect('http://localhost/callback');
             });
           });
         } else if (model) {
           var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
             console.log('Here is the token', token);
             res.cookie('credentials', token);
-            res.redirect('/');
+            res.redirect('http://localhost/callback');
           });
         }
       });
