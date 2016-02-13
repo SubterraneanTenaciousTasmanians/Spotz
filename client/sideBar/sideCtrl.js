@@ -43,18 +43,15 @@ angular.module('spotz.side', ['MapServices'])
   //    });
   // });
 
-  // Add rule to a polygon
-
-  console.log('Here is object returned from mapfactory: ', MapFactory);
-
+  // Event listener that waits until the Google map data is ready
+  // (broadcast is emitted from MapFactory init)
   $rootScope.$on('googleMapLoaded', function () {
-    console.log('\n\n\n broadcast received.  Google map data is available');
 
-    // TOOD: data is not ready, need event listener!
-
+    // Add parking rule to a polygon
     MapFactory.map.data.addListener('click', function (event) {
       console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
 
+      // *********
       // TEMPORARILY commented out until the on/off button is functional
 
       // MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
