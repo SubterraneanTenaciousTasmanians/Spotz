@@ -173,6 +173,7 @@ assignToken.get('/google/callback',
               // res.send(token);
 
               res.cookie('credentials', token);
+              res.status(200);
 
               // res.redirect('/');
             });
@@ -184,6 +185,7 @@ assignToken.get('/google/callback',
             // res.send(token);
 
             res.cookie('credentials', token);
+            res.status(200);
 
             // res.redirect('/');
           });
