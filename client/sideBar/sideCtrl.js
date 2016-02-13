@@ -36,7 +36,8 @@ angular.module('spotz.side', ['MapServices'])
       if ($scope.ShowAddRuleOnClick === true) {
         console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
 
-        // DO NOT ERASE!!!
+        // DO NOT ERASE!!!  Needed for admin add rules feature.
+        //
         // REMOVE THE FOLLOWING COMMENTS WHEN YOU ARE READY TO USE THE ADD RULES FEATURE
         // MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
         // .then(function () {
@@ -46,6 +47,7 @@ angular.module('spotz.side', ['MapServices'])
         //   event.feature.setProperty('color', $scope.rule.color);
         //
         // });
+        // DO NOT ERASE!!!
       } else {
         console.log('if you want to add a rule, FIRST YOU NEED TO TOGGLE "add rule on click" ');
       }
