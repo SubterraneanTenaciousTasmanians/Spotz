@@ -19,7 +19,7 @@ var env = require('node-env-file');
  * environment file for developing under a local server
  * comment out before deployment
  */
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
