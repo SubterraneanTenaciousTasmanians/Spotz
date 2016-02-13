@@ -19,12 +19,13 @@ angular.module('spotz', ['ngCookies', 'ui.router', 'angularPayments', 'spotz.don
     url: '/login',
     templateUrl: '/authentication/login.html',
     controller: 'loginCtrl',
-  })
-  .state('donate', {
-    url: '/donate',
-    templateUrl: '/donation/donation.html',
-    controller: 'donateCtrl',
   });
+
+  // .state('donate', {
+  //   url: '/donate',
+  //   templateUrl: '/donation/donation.html',
+  //   controller: 'donateCtrl',
+  // });
 
   $urlRouterProvider.otherwise('/');
 

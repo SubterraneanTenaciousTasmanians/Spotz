@@ -52,7 +52,20 @@
 .navList li:hover {
   border-bottom: 3px solid #fff;
 }
-
+donate-modal.donation {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.7);
+    top: inherit;
+}
+.stripeForm {
+    background-color: #fff;
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    border-radius: 10%;
+    border: 10px solid skyblue;
+}
 /*.nav li:visited{
   color: orange;
 }*/
