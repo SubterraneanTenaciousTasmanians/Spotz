@@ -2,7 +2,9 @@
   <h1>Spotz</h1>
   <ul class="navList">
     <li ng-click="toggleModal()">Donate</li>
-    <li class="logout" ><a href="path to signin page">Logout</a></li>
+    <li class="logout" ng-click="logOut()"><a href="">Logout</a></li>
+    <!-- /login -->
+
   </ul>
 </div>
 <donate-modal ng-show="modalShown" class="donation"></donate-modal>
