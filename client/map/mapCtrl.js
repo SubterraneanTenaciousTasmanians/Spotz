@@ -2,7 +2,7 @@
 
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $cookies, $state, MapFactory, LoginFactory) {
+.controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
 
   //make sure user is authenticated
   LoginFactory.checkCredentials().then(function (loggedIn) {
@@ -18,6 +18,11 @@ angular.module('spotz.map', ['MapServices'])
 
     //get the parking zones based on the center point
     MapFactory.fetchParkingZones([center.lng(), center.lat()]);
+
+    // map data ready, broadcast to the sibling controller (sideCtrl)
+    $rootScope.$broadcast("googleMapLoaded");
+
+
 
     // FOR REFERENCE
     // map.data.addListener('click', function (event) {

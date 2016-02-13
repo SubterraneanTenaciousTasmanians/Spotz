@@ -1,6 +1,6 @@
 angular.module('spotz.side', ['MapServices'])
 
-.controller('sideCtrl', ['$scope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $cookies, $state, MapFactory, LoginFactory) {
+.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
   //Verifying token
 
   console.log('side controller loaded');
@@ -45,22 +45,29 @@ angular.module('spotz.side', ['MapServices'])
 
   // Add rule to a polygon
 
-  console.log("Here is object returned from mapfactory: ", MapFactory);
+  console.log('Here is object returned from mapfactory: ', MapFactory);
 
-  // TOOD: data is not ready, need event listener!
+  $rootScope.$on('googleMapLoaded', function () {
+    console.log('\n\n\n broadcast received.  Google map data is available');
 
-  // MapFactory.map.data.addListener('click', function (event) {
-  //   console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
-  //
-  //   MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
-  //   .then(function () {
-  //     console.log('changing color', $scope.rule.color);
-  //
-  //     //event.feature.css($scope.color);
-  //     event.feature.setProperty('color', $scope.rule.color);
-  //
-  //   });
-  // });
+    // TOOD: data is not ready, need event listener!
+
+    MapFactory.map.data.addListener('click', function (event) {
+      console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
+
+      // TEMPORARILY commented out until the on/off button is functional
+
+      // MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
+      // .then(function () {
+      //   console.log('changing color', $scope.rule.color);
+      //
+      //   //event.feature.css($scope.color);
+      //   event.feature.setProperty('color', $scope.rule.color);
+      //
+      // });
+    });
+
+  });
 
   // });
 
