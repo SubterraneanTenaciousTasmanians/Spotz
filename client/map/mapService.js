@@ -27,7 +27,8 @@ angular.module('MapServices', ['AdminServices'])
     })
     .success(function (data) {
       var polyColor;
-
+      var boundary;
+      var p;
       //loop through zone data and put them on the map
       data.forEach(function (poly, i) {
 
@@ -40,20 +41,42 @@ angular.module('MapServices', ['AdminServices'])
         //make a geoJSON object to be placed on the map
         //http://geojson.org/geojson-spec.html
         //google maps accepts this type of data
-        var p = {
-          type: 'Feature',
-          properties:{
-            rules: poly.rules,
-            index: i,
-            color: polyColor,
-            id: poly.id,
-            parkingCode:poly.parkingCode,
-          },
-          geometry:{
-            type: 'MultiPolygon',
-            coordinates: [[JSON.parse(poly.boundary)]],
-          },
-        };
+
+        boundary = JSON.parse(poly.boundary);
+
+        if (boundary.length > 2) {
+          //we have a polygon
+          p = {
+            type: 'Feature',
+            properties:{
+              rules: poly.rules,
+              index: i,
+              color: polyColor,
+              id: poly.id,
+              parkingCode:poly.parkingCode,
+            },
+            geometry:{
+              type: 'MultiPolygon',
+              coordinates: [[boundary]],
+            },
+          };
+        } else {
+          //we have a line
+          p = {
+            type: 'Feature',
+            properties:{
+              rules: poly.rules,
+              index: i,
+              color: polyColor,
+              id: poly.id,
+              parkingCode:poly.parkingCode,
+            },
+            geometry:{
+              type: 'LineString',
+              coordinates: boundary,
+            },
+          };
+        }
 
         //actually put it on the map
         factory.map.data.addGeoJson(p);
