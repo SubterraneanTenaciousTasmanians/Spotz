@@ -37,7 +37,6 @@ var JWT_SECRET = process.env.JWTSECRET;
 
 //sign in API, all signin requests should come here!
 assignToken.post('/signin', function (req, res) {
-
   //check if username exists in SQL user table
   User.read({ username: req.body.username }).then(function (model) {
 
@@ -158,23 +157,44 @@ assignToken.get('/google', passport.authenticate('google', { scope: 'profile ema
 assignToken.get('/google/callback',
   passport.authenticate('google', { scope: 'profile email', failureRedirect: '/' }),
   function (req, res) {
-    User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
-      if (!model) {
-        User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
+    console.log('REQUEST DEVICE', req.device);
+    if (req.device.type === 'phone') {
+      User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
+        if (!model) {
+          User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
+            var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+              console.log('Here is the token', token);
+              res.cookie('credentials', token);
+              res.redirect('http://localhost/callback/');
+            });
+          });
+        } else if (model) {
+          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+            console.log('Here is the token', token);
+            res.cookie('credentials', token);
+            res.redirect('http://localhost/callback');
+          });
+        }
+      });
+    } else {
+      User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
+        if (!model) {
+          User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
+            var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+              console.log('Here is the token', token);
+              res.cookie('credentials', token);
+              res.redirect('/');
+            });
+          });
+        } else if (model) {
           var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
             console.log('Here is the token', token);
             res.cookie('credentials', token);
             res.redirect('/');
           });
-        });
-      } else if (model) {
-        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-          console.log('Here is the token', token);
-          res.cookie('credentials', token);
-          res.redirect('/');
-        });
-      }
-    });
+        }
+      });
+    }
   }
 );
 
