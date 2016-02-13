@@ -33,7 +33,10 @@ angular.module('spotz.side', ['MapServices'])
     $scope.showMobilePreview = !$scope.showMobilePreview;
   };
 
-  console.log('side controller loaded');
+  //  Grab the preview date and time
+  $scope.savePreviewInput = function (previewData){
+    console.log('date and time: ', previewData.date, previewData.time);
+  }
 
   // Event listener that waits until the Google map data is ready
   // (broadcast is emitted from MapFactory init)

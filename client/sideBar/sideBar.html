@@ -22,14 +22,14 @@
     <button ng-click="mobilePreview()">Mobile Preview</button>
 
     <div class="mobilePreviewFields" ng-show="showMobilePreview">
-
-    <div class="previewDate">
-      <span>Date:</span><input type="text" ng-model="preview.date" placeholder="some date">
-    </div>
-    <div class="previewTime">
-      <span>Time:</span><input type="text" ng-model="preview.time" placeholder="some time">
-    </div>
-  </div>
+      <div class="previewDate">
+        <span>Date:</span><input type="text" ng-model="preview.date" placeholder="some date">
+      </div>
+      <div class="previewTime">
+        <span>Time:</span><input type="text" ng-model="preview.time" placeholder="some time">
+      </div>
+      <input class="submitAction" type="submit" ng-click="savePreviewInput(preview)" value="Submit"/>
+   </div>
 
 
 
