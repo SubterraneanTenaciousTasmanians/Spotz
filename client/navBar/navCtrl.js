@@ -1,6 +1,6 @@
 angular.module('spotz.nav', ['NavServices'])
 
-.controller('navCtrl', ['$scope', 'NavFactory', function ($scope, NavFactory) {
+.controller('navCtrl', ['$scope', 'NavFactory', '$cookies', '$state', function ($scope, NavFactory, $cookies, $state) {
   $scope.info = {};
   $scope.transaction = {};
   $scope.amount = 0;
@@ -42,5 +42,14 @@ angular.module('spotz.nav', ['NavServices'])
     console.log('1st STRIPE RESPONSE', response);
     console.log('PAID??? ', $scope.paid);
   };
+
+  $scope.logOut = function () {
+    console.log('Here is the window cookies: ', $cookies);
+
+    // remove credentials from local cookies and return to the login screen
+    $cookies.remove('credentials');
+    $state.go('login');
+  };
+
 },
 ]);

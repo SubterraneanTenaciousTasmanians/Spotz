@@ -36,6 +36,7 @@ angular.module('spotz.side', ['MapServices'])
       if ($scope.ShowAddRuleOnClick === true) {
         console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
 
+        // DO NOT ERASE!!!
         // REMOVE THE FOLLOWING COMMENTS WHEN YOU ARE READY TO USE THE ADD RULES FEATURE
         // MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
         // .then(function () {
