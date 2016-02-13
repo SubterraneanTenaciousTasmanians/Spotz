@@ -173,7 +173,8 @@ assignToken.get('/google/callback',
               // res.send(token);
 
               res.cookie('credentials', token);
-              res.redirect('/');
+
+              // res.redirect('/');
             });
           });
         } else if (model) {
@@ -183,7 +184,8 @@ assignToken.get('/google/callback',
             // res.send(token);
 
             res.cookie('credentials', token);
-            res.redirect('/');
+
+            // res.redirect('/');
           });
         }
       });
