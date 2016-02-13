@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('spotz.donation', [])
 
 .directive('donateModal', function () {

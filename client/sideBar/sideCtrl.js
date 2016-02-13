@@ -1,6 +1,7 @@
+'use strict';
 angular.module('spotz.side', ['MapServices'])
 
-.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
+.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', function ($scope, $rootScope, $cookies, $state, MapFactory) {
   // Add rule on click is hidden
   $scope.ShowAddRuleOnClick = false;
 
