@@ -3,7 +3,7 @@
 
   <h1>Display Options</h1>
 
-  <div class="ruleBox">
+  <div class="ruleBox" ng-show="ShowAddRuleOnClick">
     <h2>Add Rule</h2>
     <span>code</span><input type="text" ng-model="rule.permitCode" placeholder="A">
     <span>days</span><input type="text" ng-model="rule.days" placeholder="M,T,W,TH,F,S">
@@ -15,11 +15,11 @@
 
 
   <ul>
-    <button>Add rule on click</button>
-    <button>Show/Hide Grid</button>
-    <button>Show/Hide Permit Zones</button>
-    <button>Show/Hide Street Sweeping</button>
-    <button>Mobile Preview</button>
+    <button ng-click="toggleAddRule()">Add rule on click</button>
+    <button ng-click="showHideGrid()">Show/Hide Grid</button>
+    <button ng-click="showHidePermitZones()">Show/Hide Permit Zones</button>
+    <button ng-click="showHideStreetSweeping()">Show/Hide Street Sweeping</button>
+    <button ng-click="mobilePreview()">Mobile Preview</button>
 
 
 

@@ -20,22 +20,7 @@ angular.module('spotz.map', ['MapServices'])
     MapFactory.fetchParkingZones([center.lng(), center.lat()]);
 
     // map data ready, broadcast to the sibling controller (sideCtrl)
-    $rootScope.$broadcast("googleMapLoaded");
-
-
-
-    // FOR REFERENCE
-    // map.data.addListener('click', function (event) {
-    //   console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
-    //
-    //   MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
-    //   .then(function () {
-    //     console.log('changing color', $scope.rule.color);
-    //     //event.feature.css($scope.color);
-    //     event.feature.setProperty('color', $scope.rule.color);
-    //
-    //   });
-    // });
+    $rootScope.$broadcast('googleMapLoaded');
   });
 
 },
