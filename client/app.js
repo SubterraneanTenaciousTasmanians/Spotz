@@ -1,6 +1,15 @@
 'use strict';
 
-angular.module('spotz', ['ngCookies', 'ui.router', 'angularPayments', 'spotz.donation', 'spotz.map', 'spotz.login', 'spotz.nav', 'spotz.side'])
+angular.module('spotz', [
+'ngCookies',
+'ui.router',
+'angularPayments',
+'spotz.map',
+'spotz.login',
+'spotz.nav',
+'spotz.side',
+'spotz.donate',
+])
 
 .config(function ($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -17,6 +26,7 @@ angular.module('spotz', ['ngCookies', 'ui.router', 'angularPayments', 'spotz.don
           'nav@main': { templateUrl: '/navBar/nav.html', controller: 'navCtrl' },
           'side@main': { templateUrl: '/sideBar/sideBar.html', controller: 'sideCtrl' },
           'map@main': { templateUrl: '/map/map.html', controller:'mapCtrl' },
+          'donate@main': { templateUrl: '/donate/donate.html', controller:'donateCtrl' },
         },
       })
   .state('login', {

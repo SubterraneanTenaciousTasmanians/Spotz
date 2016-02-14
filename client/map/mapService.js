@@ -46,24 +46,7 @@ angular.module('MapServices', ['AdminServices'])
         //google maps accepts this type of data
 
         boundary = JSON.parse(poly.boundary);
-
-        if (boundary.length > 2) {
-          //we have a polygon
-          p = {
-            type: 'Feature',
-            properties:{
-              rules: poly.rules,
-              index: i,
-              color: polyColor,
-              id: poly.id,
-              parkingCode:poly.parkingCode,
-            },
-            geometry:{
-              type: 'MultiPolygon',
-              coordinates: [[boundary]],
-            },
-          };
-        } else {
+        if (poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
           //we have a line
           p = {
             type: 'Feature',
@@ -79,6 +62,23 @@ angular.module('MapServices', ['AdminServices'])
               coordinates: boundary,
             },
           };
+        } else {
+          //we have a polygon
+          p = {
+            type: 'Feature',
+            properties:{
+              rules: poly.rules,
+              index: i,
+              color: polyColor,
+              id: poly.id,
+              parkingCode:poly.parkingCode,
+            },
+            geometry:{
+              type: 'MultiPolygon',
+              coordinates: [[boundary]],
+            },
+          };
+
         }
 
         //actually put it on the map

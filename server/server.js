@@ -4,6 +4,9 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var morgan = require('morgan');
 
+//Device Capturer
+var device = require('express-device');
+
 //DATA BASE
 //not explictly used, but needed for bookshelf depedency
 var ParkingDB = require('./db/parking.js');
@@ -25,6 +28,7 @@ var app = express();
 //CORS
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
@@ -34,9 +38,10 @@ app.use(morgan('combined'));
 app.use(express.static(__dirname + '/../client/'));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+app.use(cookieParser());
+app.use(device.capture());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cookieParser());
 
 //SUBROUTERS
 //Every request with the beginning endpoint of its assigned URL
