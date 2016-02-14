@@ -15,6 +15,9 @@ angular.module('MapServices', ['AdminServices'])
   //what we return
   var factory = {};
 
+  var convertTime = function (inputTimeString) {
+    return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
+  };
 
   //get parking polygons + rules from server
   factory.fetchParkingZones = function (coordinates) {
@@ -115,18 +118,47 @@ angular.module('MapServices', ['AdminServices'])
         }
 
         var rulesToDisplay = '';
+
+        // Variables for testing
+        var sampleTime = '';  //defuault
+        var sampleTime = '7:00:00';  //test
+        var sampleDate = 'figure it out later';
+        var sampleDuration = 1.5; //hours
+        var polygonRules = {};
+
         for (var i = 0; i < numOfRules; i++) {
           rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
           rulesToDisplay += 'Days: ' + event.feature.getProperty('rules')[i].days + '<br>';
+
+          polygonRules.timeLimit = event.feature.getProperty('rules')[i].timeLimit;
           rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
+
+          polygonRules.startTime = event.feature.getProperty('rules')[i].startTime;
           rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
+
+          polygonRules.endTime = event.feature.getProperty('rules')[i].endTime;
           rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
           rulesToDisplay += 'Maps may contain inaccuracies. <br>Not all streets in the area specific maps have opted into the program.';
         }
 
         if (numOfRules === 0) {
           rulesToDisplay = 'Parking info not available';
-        }
+        } else if (sampleTime !== '') {
+
+          // Convert time format form 08:12:10 to 081210
+          var convSampleTime = convertTime(sampleTime);
+          var convStartTime = convertTime(polygonRules.startTime);
+          var convEndTime = convertTime(polygonRules.endTime);
+
+          var parkingMessage = '';
+          if (convSampleTime < convStartTime || convSampleTime > convEndTime) {
+            parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
+          } else {
+            parkingMessage = 'You can park here for two hours only';
+          }
+
+          rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
+        };
 
         //infowindow points to a google map infowindow object
         //append the content and set the location, then display it
