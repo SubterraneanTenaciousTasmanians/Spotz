@@ -134,13 +134,13 @@ angular.module('MapServices', ['AdminServices'])
           rulesToDisplay += 'Days: ' + event.feature.getProperty('rules')[i].days + '<br>';
 
           polygonRules.timeLimit = event.feature.getProperty('rules')[i].timeLimit;
-          rulesToDisplay += event.feature.getProperty('rules')[i].timeLimit + 'hrs' + '<br>';
+          rulesToDisplay += polygonRules.timeLimit + 'hrs' + '<br>';
 
           polygonRules.startTime = event.feature.getProperty('rules')[i].startTime;
-          rulesToDisplay += event.feature.getProperty('rules')[i].startTime + ' to ';
+          rulesToDisplay +=  polygonRules.startTime + ' to ';
 
           polygonRules.endTime = event.feature.getProperty('rules')[i].endTime;
-          rulesToDisplay += event.feature.getProperty('rules')[i].endTime + '<br>';
+          rulesToDisplay += polygonRules.endTime + '<br>';
           rulesToDisplay += 'Maps may contain inaccuracies. <br>Not all streets in the area specific maps have opted into the program.';
         }
 
