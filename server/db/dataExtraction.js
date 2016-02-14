@@ -1,17 +1,21 @@
 'use strict';
 var fs = require('fs');
+var https = require('https');
 var parkingDb = require('./parking.js');
+
+var polyline = require('polyline');
 
 var geocoderProvider = 'google';
 var httpAdapter = 'https';
 
 var extra = {
-  apiKey: 'AIzaSyC4PGPlEeQU55KSmsEsIjkZmx1UE9QAQig',
+  apiKey: 'AIzaSyAsghqMscNFe51nUYSZSfF-Il5ZeMgkwlY',
   formatter: null,
 };
 
 var geocoder = require('node-geocoder')(geocoderProvider, httpAdapter, extra);
-var address;
+var addressFrom;
+var addressTo;
 
 fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function (err, data) {
   if (err) {throw err; }
@@ -19,9 +23,10 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function 
   data = JSON.parse(data);
 
   //loop through each data point
-  var recursive = function (i) {
+  var recursive = function (pointNr) {
 
-    if (i === data.length) {
+    if (pointNr === data.length) {
+      console.log('all done!');
       return;
     }
 
@@ -30,25 +35,44 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function 
     var startTime;
     var endTime;
 
-    console.log(data[i]);
-    address = data[i]['Address From'] + ' ' + data[i]['Street Name'] + ' Berkeley, CA';
+    console.log('parsing ', pointNr);
+    addressFrom = data[pointNr]['Address From'] + ' ' + data[pointNr]['Street Name'] + ' Berkeley, CA';
+    addressTo = data[pointNr]['Address To'] + ' ' + data[pointNr]['Street Name'] + ' Berkeley, CA';
 
-    geocoder.geocode(address)
-    .then(function (res) {
-      coordindates.push([res[0].longitude, res[0].latitude]);
+    //get directions
+    https.get('https://maps.googleapis.com/maps/api/directions/json?origin=' + encodeURI(addressFrom) + '&destination=' + encodeURI(addressTo) + '&key=' + extra.apiKey, function (res) {
+      //console.log('here are the directions', res.body);
+      var allData = '';
 
-      address = data[i]['Address To'] + ' ' + data[i]['Street Name'] + ' Berkeley, CA';
-      geocoder.geocode(address)
-      .then(function (res) {
-        coordindates.push([res[0].longitude, res[0].latitude]);
+      res.on('data', function (d) {
+        allData += d.toString();
+      });
+
+      res.on('end', function () {
+        allData =  JSON.parse(allData);
+
+        if (allData.status !== 'OK') {
+          console.log(JSON.stringify(allData));
+          return;
+        }
+
+        allData.routes[0].legs[0].steps.forEach(function (r) {
+          coordindates = polyline.decode(r.polyline.points);
+
+          //SWAP COORDINATES!
+          coordindates.map(function (coordinate) {
+            var swap = coordinate[0];
+            coordinate[0] = coordinate[1];
+            coordinate[1] = swap;
+          });
+
+        });
 
         //store corrdinates in db
-        console.log(i, JSON.stringify([{ coordinates: [coordindates] }]));
+        //console.log(pointNr, JSON.stringify([{ coordinates: [coordindates] }]));
         parkingDb.savePermitZones([{ coordinates: [coordindates] }]).then(function (zone) {
 
-          console.log(zone);
-
-          if (data[i]['AM/PM'] === 'AM') {
+          if (data[pointNr]['AM/PM'] === 'AM') {
             startTime = '08:00';
             endTime = '12:00';
           } else {
@@ -57,9 +81,9 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function 
           }
 
           rule = {
-            permitCode: 'sweep-' + data[i].Rte,
+            permitCode: 'sweep-' + data[pointNr].Rte,
             timeLimit: 0,
-            days: data[i]['Day of Month'],
+            days: data[pointNr]['Day of Month'],
             color: '255,0,0',
             startTime: startTime,
             endTime: endTime,
@@ -68,20 +92,13 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function 
           parkingDb.saveRule(zone.id, rule).then(function () {
             //recurse
             setTimeout(function () {
-              recursive(i + 1);
-            }, 100);
+              recursive(pointNr + 1);
+            }, 200);
           });
         });
 
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-
-    })
-    .catch(function (err) {
-      console.log(err);
-    });
+      }); //end res.on('end')
+    }); //end https.get
   };
 
   recursive(0);
