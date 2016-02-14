@@ -15,6 +15,9 @@ angular.module('MapServices', ['AdminServices'])
   //what we return
   var factory = {};
 
+  // Helper function: Converts time format from 08:12:10 to 081210
+  // used for calculations
+
   var convertTime = function (inputTimeString) {
     return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
   };
@@ -143,7 +146,8 @@ angular.module('MapServices', ['AdminServices'])
 
         if (numOfRules === 0) {
           rulesToDisplay = 'Parking info not available';
-        } else if (sampleTime !== '') {
+
+        } else if (sampleTime !== '') {  //Sample Time submitted.  Display parking availability
 
           // Convert time format form 08:12:10 to 081210
           var convSampleTime = convertTime(sampleTime);
