@@ -1,0 +1,39 @@
+<form stripe-form="handleStripe">
+  <div class="stripeForm">
+
+    <h1>Support Spotz!</h2>
+    <div ng-model="message"></div>
+
+    <div class="entry-block">
+      <label>Name on card </label>
+      <input type="text" ng-model="info.name" placeholder="Daniel Kim">
+    </div>
+
+    <div class="entry-block">
+      <label>Card number</label>
+      <input type="text" ng-model="info.number" payments-format="card" placeholder="0123 4567 8901 1234" />
+    </div>
+
+    <div class="entry-block">
+      <label>Expiration</label>
+      <input type="text" class="pay-small" ng-model="info.exp_month" max="2" placeholder="MM"/>
+      <label>/</label>
+      <input type="text" class="pay-small" ng-model="info.exp_year" max="4" placeholder="YY"/>
+    </div>
+
+    <div class="entry-block">
+      <label>CVC</label>
+      <input type="password" class="pay-small" ng-model="info.cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type" placeholder="123"/>
+    </div>
+
+    <div class="entry-block">
+      <label>Amount</label>
+      <input type="text" ng-model="amount" placeholder="10.00 (USD)" required/>
+    </div>
+
+    <button class="submit" type="submit">Submit</button>
+
+    <div class="close" ng-click="toggleModal()">X</div>
+
+  </div>
+</form>

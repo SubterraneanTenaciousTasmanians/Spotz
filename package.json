@@ -47,6 +47,7 @@
     "passport-facebook": "^2.1.0",
     "passport-google-oauth": "^0.2.0",
     "path": "^0.12.7",
+    "polyline": "^0.2.0",
     "q": "^1.4.1",
     "sequelize": "^3.19.1",
     "stripe": "^4.4.0"
