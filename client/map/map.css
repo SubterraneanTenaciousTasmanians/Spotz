@@ -14,3 +14,10 @@ html, body {
 .tooltip-text{
   font-size:18px;
 }
+
+.mapLoading {
+  position: absolute;
+  padding: 28% 45%;
+  z-index: 1000;
+  background-color: rgba(255, 253, 250, 0.4);
+}

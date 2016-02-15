@@ -1,7 +1,7 @@
 'use strict';
 angular.module('MapServices', ['AdminServices'])
 
-.factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($http, $window, $timeout, $cookies, KeyFactory) {
+.factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($rootScope, $http, $window, $timeout, $cookies, KeyFactory) {
 
   //google tooltip
   var infowindow = {};
@@ -15,7 +15,6 @@ angular.module('MapServices', ['AdminServices'])
   //what we return
   var factory = {};
 
-
   //get parking polygons + rules from server
   factory.fetchParkingZones = function (coordinates) {
 
@@ -26,9 +25,11 @@ angular.module('MapServices', ['AdminServices'])
       url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
     })
     .success(function (data) {
+      $rootScope.$broadcast('mapLoaded');
       var polyColor;
       var boundary;
       var p;
+
       //loop through zone data and put them on the map
       data.forEach(function (poly, i) {
 
@@ -171,7 +172,6 @@ angular.module('MapServices', ['AdminServices'])
       //tooltip
       infowindow = new google.maps.InfoWindow();
 
-
       //once the map is displayed (async), we can access information about the display
       factory.map.addListener('tilesloaded', function () {
 
@@ -234,6 +234,7 @@ angular.module('MapServices', ['AdminServices'])
 
       //click handler to load data into the world grid squares
       factory.map.addListener('click', function (event) {
+        $rootScope.$broadcast('loadMap');
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         factory.fetchParkingZones(coordinates);
       });

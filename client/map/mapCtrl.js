@@ -3,6 +3,19 @@
 angular.module('spotz.map', ['MapServices'])
 
 .controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
+  $scope.mapLoading = true;
+
+  $rootScope.$on('googleMapLoaded', function () {
+    $scope.mapLoading = false;
+  });
+
+  $rootScope.$on('loadMap', function () {
+    $scope.mapLoading = true;
+  });
+
+  $rootScope.$on('mapLoaded', function () {
+    $scope.mapLoading = false;
+  });
 
   //make sure user is authenticated
   LoginFactory.checkCredentials().then(function (loggedIn) {
@@ -13,7 +26,7 @@ angular.module('spotz.map', ['MapServices'])
 
   //load the google map, then return map object in callback
   MapFactory.init(function (map) {
-
+    $scope.mapLoading = true;
     var center = map.getCenter();
 
     //get the parking zones based on the center point
