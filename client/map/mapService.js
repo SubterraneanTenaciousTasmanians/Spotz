@@ -35,6 +35,7 @@ angular.module('MapServices', ['AdminServices'])
       var polyColor;
       var boundary;
       var p;
+
       //loop through zone data and put them on the map
       data.forEach(function (poly, i) {
 
@@ -192,7 +193,8 @@ angular.module('MapServices', ['AdminServices'])
   factory.init = function (callback) {
 
     //jsonp
-    $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFactory.map + '&callback=JSON_CALLBACK')
+    // added places library to api request.  Required for searchBar option
+    $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFactory.map + '&libraries=places&callback=JSON_CALLBACK')
     .success(function () {
 
       //we have a google.maps object here!
@@ -207,6 +209,75 @@ angular.module('MapServices', ['AdminServices'])
       //tooltip
       infowindow = new google.maps.InfoWindow();
 
+      // ***** Start Google search bar functionality
+
+      // Create the search box and link it to the UI element.
+      var input = document.getElementById('pac-input');
+      var searchBox = new google.maps.places.SearchBox(input);
+
+      // Bias the SearchBox results towards current map's viewport.
+      factory.map.addListener('bounds_changed', function () {
+        searchBox.setBounds(factory.map.getBounds());
+      });
+
+      var markers = [];
+
+      // Listen for the event fired when the user selects a prediction and retrieve
+      // more details for that place.
+      searchBox.addListener('places_changed', function () {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+          return;
+        }
+
+        // Clear out the old markers.
+        markers.forEach(function (marker) {
+          marker.setMap(null);
+        });
+
+        markers = [];
+
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function (place) {
+          var icon = {
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(5, 5),
+          };
+
+          // Create a marker for each place.
+          markers.push(new google.maps.Marker({
+            map: factory.map,
+            icon: icon,
+            title: place.name,
+            position: place.geometry.location,
+          }));
+
+          if (place.geometry.viewport) {
+            // Only geocodes have viewport.
+            bounds.union(place.geometry.viewport);
+          } else {
+            bounds.extend(place.geometry.location);
+          }
+        });
+
+        factory.map.fitBounds(bounds);
+
+        var newCenter = factory.map.getCenter();
+
+        // NOTE: Every time an address is entered, the permit zones are reloaded
+        // TODO: Save all the zones once they're loaded, to avoid redudant server requests
+
+        //get the parking zones based on the new center point
+        factory.fetchParkingZones([newCenter.lng(), newCenter.lat()]);
+
+      });
+
+      // **** End of Google search bar code
 
       //once the map is displayed (async), we can access information about the display
       factory.map.addListener('tilesloaded', function () {
