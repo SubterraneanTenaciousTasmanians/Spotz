@@ -78,3 +78,13 @@
   cursor: pointer;
   color:#f00;
 }
+
+.server-msg {
+  background-color: rgba(255, 0, 0, 0.54);
+}
+
+.loading {
+  position: absolute;
+  padding: 44% 22%;
+  background-color: rgba(255, 253, 246, 0.6);
+}
