@@ -1,7 +1,11 @@
 <div class="drawing-controls">
-  <button type="button" class="{{addPointClass}}" ng-Click="clickAddPolygonButton()">Add Feature</button>
-  <button type="button" class="{{removePointClass}}"  ng-Click="clickRemovePolygonButton()">Remove Feature</button>
+  <div>Add Feature:</div>
+  <button type="button" class="{{addPointClass}}" ng-Click="clickAddPolygonButton()">Enabled</button>
   <button type="button" ng-Click="savePolygon()">Save New Polygon</button>
   <button type="button" ng-Click="erasePolygon()">Erase New Polygon</button>
+  <div>Edit Feature:</div>
+  <button type="button" class="{{selectPolygonClass}}" ng-Click="clickSelectPolygonButton()">Enabled</button>
+  <button type="button" ng-Click="deletePolygon()">Remove Feature</button>
+  <div>Other:</div>
   <button type="button" ng-Click="killTooltip()">Kill Tooltip</button>
 </div>
