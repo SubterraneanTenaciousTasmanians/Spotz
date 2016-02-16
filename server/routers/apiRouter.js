@@ -7,7 +7,12 @@ var jwt = require('jsonwebtoken');
 
 //RAPH'S STUFF (IMAGE UPLOAD)
 var multer = require('multer');
-var upload = multer({ dest: 'uploads/' });
+var upload = multer({
+   dest: __dirname + '/tmp/',
+   limits: { fileSize: 10000000, files:1 }, //limits filesize to 10mb
+ });
+var tesseract = require('node-tesseract');
+var fs = require('fs');
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
@@ -20,7 +25,7 @@ var env = require('node-env-file');
  * comment out before deployment
  */
 
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
@@ -134,17 +139,44 @@ verifyToken.post('/rule/:polyId', function (req, res) {
   }
 });
 
-//TODO: PHOTO UPLOAD
-verifyToken.post('/api/photo', upload.single(''), function (req, res) {
-  var tmp_path = req.file.path;
-  var target_path = 'uploads/' + req.file.originalname;
-  var src = fs.createReadStream(tmp_path);
-  var dest = fs.createWriteStream(target_path);
-  src.pipe(dest);
-  src.on('end', function () { res.send('complete'); });
+//TODO: PHOTO UPLOAD upload.single(''),
+verifyToken.post('/photo', function (req, res) {
+  console.log('REQUEST BODY ', req.body);
+  var decode = new Buffer(req.body.data, 'base64');
+  var copy = fs.writeFile(__dirname + '/tmp/copy.jpeg', decode, function (err) {
+    if (err) {
+      return console.error(err);
+    } else {
+      console.log('DECODED URI', decode);
+      res.send('SUCCESSSSSS!!!!!');
+    }
+  });
 
-  src.on('error', function (err) { res.send('error'); });
+  // var target_path = __dirname + '/tmp/';
+  // var stream = req.pipe(target_path);
+  // stream.on('finish', function () {
+  //   tesseract.process(target_path, function (err, text) {
+  //     if (err) {
+  //       console.error(err);
+  //       res.send(err);
+  //     } else {
+  //       res.send(text);
+  //     }
+  //   });
+  // });
+  //
+  // stream.on('error', function () {
+  //   res.send('ERROR');
+  // });
 
+  // var tmp_path = req.file.path;
+  // var target_path = 'uploads/' + req.file.originalname;
+  // var src = fs.createReadStream(tmp_path);
+  // var dest = fs.createWriteStream(target_path);
+  // src.pipe(dest);
+  // src.on('end', function () { res.send('complete'); });
+  //
+  // src.on('error', function (err) { res.send('error'); });
   // console.log('reqbody: ', req.body);
   // res.status(200).send(req.body);
 });
