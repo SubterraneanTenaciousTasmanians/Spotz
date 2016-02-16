@@ -21,6 +21,24 @@
     <button ng-click="showHideStreetSweeping()">Show/Hide Street Sweeping</button>
     <button ng-click="mobilePreview()">Mobile Preview</button>
 
+    <div class="mobilePreviewFields" ng-show="showMobilePreview">
+      <form>
+        <div class="previewDate">
+          <span>Date:</span><input type="date" ng-model="preview.date" placeholder="some date" required>
+        </div>
+        <div class="previewTime">
+          <span>Time:</span><input type="text" ng-model="preview.time" placeholder="some time" required>
+        </div>
+        <div class="previewDuration">
+          <span>Duration (in hours):</span><input type="text" ng-model="preview.duration" placeholder="2">
+        </div>
+
+
+        <input class="submitAction" type="submit" ng-click="savePreviewInput()" value="Submit"/>
+    </form>
+   </div>
+
+
 
 
 
