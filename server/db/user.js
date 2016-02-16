@@ -17,58 +17,71 @@ module.exports = db;
 //CREATE A NEW USER
 db.create = function (userinfo) {
   var defer = Q.defer();
-
-  if (!userinfo.username) {
-    defer.reject('Username required.');
-    return defer.promise;
-  }
-
-  if (!userinfo.password) {
-    defer.reject('Password required.');
-    return defer.promise;
-  }
-
-  //check if the username is taken
-  db.User.where({
-    username: userinfo.username,
-  }).fetch().then(function (model) {
-
-    if (model) {
-      defer.reject('Username already exists.');
+  if (!userinfo.facebookId && !userinfo.googleId) {
+    if (!userinfo.username) {
+      defer.reject('Username required.');
+      return defer.promise;
     }
 
-  }).then(function () {
+    if (!userinfo.password) {
+      defer.reject('Password required.');
+      return defer.promise;
+    }
+  }
 
-    //user does not exist, so we can create one
-    console.log('before hashing ', userinfo.password);
+  if (userinfo.username) {
 
-    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
-      if (err) {
-        console.log('error in gensalt', err);
-        defer.reject('Server error generating salt.');
+    //check if the username is taken
+    db.User.where({
+      username: userinfo.username,
+    }).fetch().then(function (model) {
+
+      if (model) {
+        defer.reject('Username already exists.');
       }
 
-      bcrypt.hash(userinfo.password, salt, function (err, hash) {
+    }).then(function () {
 
+      //user does not exist, so we can create one
+      console.log('before hashing ', userinfo.password);
+
+      bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
         if (err) {
-          console.log('error in hashing password ', err);
-          defer.reject('Server error hasing password.');
+          console.log('error in gensalt', err);
+          defer.reject('Server error generating salt.');
         }
 
-        userinfo.password = hash;
+        bcrypt.hash(userinfo.password, salt, function (err, hash) {
 
-        console.log('hashed password', userinfo);
-        new db.User(userinfo).save().then(function (model) {
-
-          if (!model) {
-            defer.reject('Server error.  User not saved.');
+          if (err) {
+            console.log('error in hashing password ', err);
+            defer.reject('Server error hasing password.');
           }
 
-          defer.resolve(model);
+          userinfo.password = hash;
+
+          console.log('hashed password', userinfo);
+          new db.User(userinfo).save().then(function (model) {
+
+            if (!model) {
+              defer.reject('Server error.  User not saved.');
+            }
+
+            defer.resolve(model);
+          });
         });
       });
     });
-  });
+  } else {
+    new db.User(userinfo).save().then(function (model) {
+
+      if (!model) {
+        defer.reject('Server error.  User not saved.');
+      }
+
+      defer.resolve(model);
+    });
+  }
 
   return defer.promise;
 };
