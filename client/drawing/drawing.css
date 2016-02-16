@@ -1,0 +1,17 @@
+.drawing{
+  min-width:100px;
+  min-height:100px;
+  background-color: #fff;
+  position: absolute;
+  right:0;
+  top:0;
+  z-index: 5;
+}
+
+.drawing button{
+  display: block;
+}
+
+.enabled{
+  background-color: #0f0;
+}

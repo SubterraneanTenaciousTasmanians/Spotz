@@ -157,7 +157,7 @@ angular.module('MapServices', ['AdminServices'])
   factory.init = function (callback) {
 
     //jsonp
-    $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFactory.map + '&callback=JSON_CALLBACK')
+    $http.jsonp('https://maps.googleapis.com/maps/api/js?v=3&key=' + KeyFactory.map + '&callback=JSON_CALLBACK')
     .success(function () {
 
       //we have a google.maps object here!
@@ -167,7 +167,7 @@ angular.module('MapServices', ['AdminServices'])
         zoom: 18,
         center: { lng: -122.26156639099121, lat: 37.86434903305901 },
       });
-
+      factory.mapEvents = google.maps.event;
       //save the infowindow in a local variable
       //tooltip
       infowindow = new google.maps.InfoWindow();
@@ -225,11 +225,6 @@ angular.module('MapServices', ['AdminServices'])
           currentLine = currentLine + stepY;
         }
 
-      });
-
-      //style the gridlines
-      factory.map.data.setStyle({
-        strokeWeight: 5,
       });
 
       //click handler to load data into the world grid squares
