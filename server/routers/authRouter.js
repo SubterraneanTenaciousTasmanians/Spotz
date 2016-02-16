@@ -26,7 +26,7 @@ module.exports = assignToken;
  * comment out before deployment
  */
 
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 //KEYS REQUIRED FOR THIRD PARTY API AUTHENTICATION
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
@@ -92,6 +92,42 @@ assignToken.post('/signup', function (req, res) {
   });
 });
 
+assignToken.post('/googleOauth', function (req, res) {
+  User.read({ googleId: req.body.id }).then(function (model) {
+    if (!model) {
+      User.create({ googleId: req.body.id }).then(function (model) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+          console.log('Here is the token', token);
+          res.send(token);
+        });
+      });
+    } else if (model) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        console.log('Here is the token', token);
+        res.send(token);
+      });
+    }
+  });
+});
+
+assignToken.post('/facebookOauth', function (req, res) {
+  User.read({ facebookId: req.body.id }).then(function (model) {
+    if (!model) {
+      User.create({ facebookId: req.body.id }).then(function (user) {
+        var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+          console.log('Here is the token', token);
+          res.send(token);
+        });
+      });
+    } else if (model) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        console.log('Here is the token', token);
+        res.send(token);
+      });
+    }
+  });
+});
+
 //==============================================================
 //BELOW IS PASSPORT (THIRD PARTY AUTENTICATION)
 
@@ -120,7 +156,7 @@ passport.use(new FacebookStrategy({
   clientID: FACEBOOK_CLIENT_ID,
   clientSecret: FACEBOOK_CLIENT_SECRET,
   callbackURL: 'https://spotz.herokuapp.com/auth/facebook/callback',
-  profileFields: ['email'],
+  profileFields: ['email', 'public_profile'],
 }, function (accessToken, refreshToken, profile, done) {
   User.read({ facebookId: profile.id }).then(function (user) {
     if (user) {
@@ -159,59 +195,24 @@ assignToken.get('/google', passport.authenticate('google', { scope: 'profile ema
 assignToken.get('/google/callback',
   passport.authenticate('google', { scope: 'profile email', failureRedirect: '/' }),
   function (req, res) {
-    console.log('REQUEST DEVICE', req.device);
-    console.log('2nd', req.device.parser);
-    console.log('3rd', req.device.type);
-    console.log('4th', req);
-    if (req.device.type === 'phone') {
-      User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
-        if (!model) {
-          User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
-            var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-              console.log('Here is the token', token);
-
-              // res.send(token);
-
-              res.cookie('credentials', token);
-              res.status(200);
-
-              // res.redirect('/');
-            });
-          });
-        } else if (model) {
-          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-            console.log('Here is the token', token);
-
-            // res.send(token);
-
-            res.cookie('credentials', token);
-            res.status(200);
-
-            // res.redirect('/');
-          });
-        }
+  User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
+    if (!model) {
+      User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+          console.log('Here is the token', token);
+          res.cookie('credentials', token);
+          res.redirect('/');
+        });
       });
-    } else {
-      User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
-        if (!model) {
-          User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
-            var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-              console.log('Here is the token', token);
-              res.cookie('credentials', token);
-              res.redirect('/');
-            });
-          });
-        } else if (model) {
-          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
-            console.log('Here is the token', token);
-            res.cookie('credentials', token);
-            res.redirect('/');
-          });
-        }
+    } else if (model) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        console.log('Here is the token', token);
+        res.cookie('credentials', token);
+        res.redirect('/');
       });
     }
-  }
-);
+  });
+});
 
 /**
  * Redirect to Facebook Signin
@@ -224,7 +225,7 @@ assignToken.get('/facebook/callback',
   function (req, res) {
     User.read({ facebookId: req.user.attributes.facebookId }).then(function (model) {
       if (!model) {
-        User.create({ googleId: req.user.attributes.facebookId }).then(function (user) {
+        User.create({ facebookId: req.user.attributes.facebookId }).then(function (user) {
           var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
             console.log('Here is the token', token);
             res.cookie('credentials', token);
