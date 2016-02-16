@@ -139,7 +139,7 @@ verifyToken.post('/rule/:polyId', function (req, res) {
 });
 
 //TODO: PHOTO UPLOAD upload.single(''),
-verifyToken.post('/api/photo', function (req, res) {
+verifyToken.post('/photo', function (req, res) {
   console.log('REQUEST BODY ', req.body);
   var target_path = __dirname + '/tmp/';
   var stream = req.pipe(target_path);
@@ -152,6 +152,10 @@ verifyToken.post('/api/photo', function (req, res) {
         res.send(text);
       }
     });
+  });
+
+  stream.on('error', function () {
+    res.send('ERROR');
   });
 
   // var tmp_path = req.file.path;
