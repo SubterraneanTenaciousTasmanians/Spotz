@@ -4,9 +4,10 @@ angular.module('spotz.drawing', ['DrawingServices'])
 .controller('drawingCtrl', ['$scope', '$rootScope', 'DrawingFactory', function ($scope, $rootScope, DrawingFactory) {
 
   $scope.addModeEnabled = false;
-  $scope.removeModeEnabled = false;
+  $scope.selectModeEnabled = false;
   $scope.addPointClass = '';
-  $scope.removePointClass = '';
+  $scope.selectPolygonClass = '';
+
   // Event listener that waits until the Google map data is ready
   // (broadcast is emitted from MapFactory init)
   $rootScope.$on('googleMapLoaded', function () {
@@ -16,7 +17,7 @@ angular.module('spotz.drawing', ['DrawingServices'])
     var addButtonEnabled = function () {
       $scope.addModeEnabled = true;
       $scope.addPointClass = 'enabled';
-      removeButtonDisabled();
+      selectButtonDisabled();
       DrawingFactory.addPolygonOnClick(true);
     };
 
@@ -26,25 +27,25 @@ angular.module('spotz.drawing', ['DrawingServices'])
       DrawingFactory.addPolygonOnClick(false);
     };
 
-    var removeButtonEnabled = function () {
-      $scope.removeModeEnabled = true;
-      $scope.removePointClass = 'enabled';
+    var selectButtonEnabled = function () {
+      $scope.selectModeEnabled = true;
+      $scope.selectPolygonClass = 'enabled';
       addButtonDisabled();
-      DrawingFactory.removePolygonOnClick(true);
+      DrawingFactory.selectPolygonOnClick(true);
     };
 
-    var removeButtonDisabled = function () {
-      $scope.removeModeEnabled = false;
-      $scope.removePointClass = '';
-      DrawingFactory.removePolygonOnClick(false);
+    var selectButtonDisabled = function () {
+      $scope.selectModeEnabled = false;
+      $scope.selectPolygonClass = '';
+      DrawingFactory.selectPolygonOnClick(false);
     };
 
-    $scope.clickRemovePolygonButton = function () {
+    $scope.clickSelectPolygonButton = function () {
 
-      if ($scope.removeModeEnabled) {
-        removeButtonDisabled();
+      if ($scope.selectModeEnabled) {
+        selectButtonDisabled();
       } else {
-        removeButtonEnabled();
+        selectButtonEnabled();
       }
     };
 
@@ -55,6 +56,10 @@ angular.module('spotz.drawing', ['DrawingServices'])
       } else {
         addButtonEnabled();
       }
+    };
+
+    $scope.deletePolygon = function () {
+      DrawingFactory.removeSelectedPolygon();
     };
 
     $scope.savePolygon = function () {
@@ -68,6 +73,7 @@ angular.module('spotz.drawing', ['DrawingServices'])
     $scope.killTooltip = function () {
       DrawingFactory.killTooltip();
     };
+
   });
 },
 ]);

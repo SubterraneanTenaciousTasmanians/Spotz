@@ -8,40 +8,133 @@ angular.module('DrawingServices', [])
   var geoPoly = {};
   var addPointOnClickHandle;
   var addPointOnDataClickHandle;
+  var selectPolygonOnClickHandle;
   var removePolygonOnClickHandle;
   var shapeHandle;
   var selectedPolygonId;
+  var flashingPolygonHandle;
+  var selectedFeature;
+  var selectedColor;
+
+  factory.selectPolygonOnClick = function (enabled) {
+
+    if (enabled) {
+      console.log('select mode enabled');
+      selectPolygonOnClickHandle = MapFactory.map.data.addListener('click', selectPolygonOnClick);
+      google.maps.event.addDomListener(document, 'keyup', nudgePolygonOnArrow);
+
+    } else {
+      if (selectPolygonOnClickHandle) {
+        MapFactory.mapEvents.removeListener(selectPolygonOnClickHandle);
+      }
+    }
+
+    function selectPolygonOnClick(event) {
+
+      //restore the last selected object
+      if (selectedFeature) {
+        clearInterval(flashingPolygonHandle);
+        selectedFeature.setProperty('color', selectedColor);
+      }
+
+      //make the newly selected object flash
+      var flashColorId = 0;
+      flashingPolygonHandle = setInterval(function () {
+        if (flashColorId === 0) {
+          event.feature.setProperty('color', '0,0,255');
+          flashColorId = 1;
+        } else {
+          event.feature.setProperty('color', '0,255,0');
+          flashColorId = 0;
+        }
+      }, 500);
+
+      //update the previous feature to the currently selected feature
+      selectedFeature = event.feature;
+      selectedPolygonId = event.feature.getProperty('id').toString();
+      selectedColor = event.feature.getProperty('color');
+    }
+
+    function nudgePolygonOnArrow(event) {
+      var code = (event.keyCode ? event.keyCode : event.which);
+      console.log(code);
+      var keyCodes = {
+        38:'up',
+        40:'down',
+        37:'left',
+        39:'right',
+      };
+      var stepSize = 0.00001;
+      var stepX = 0;
+      var stepY = 0;
+
+      var movement = {
+        up: {
+          stepX:0,
+          stepY:stepSize,
+        },
+        down: {
+          stepX:0,
+          stepY:-stepSize,
+        },
+        left: {
+          stepX:-stepSize,
+          stepY:0,
+        },
+        right: {
+          stepX:stepSize,
+          stepY:0,
+        },
+      };
+
+      selectedFeature.toGeoJson(function (geoJson) {
+
+        console.log('geoJson', geoJson);
+        if (geoJson.properties.rules[0] && geoJson.properties.rules[0].permitCode.indexOf('sweep') !== -1) {
+          //sweep icoordinateLists
+          console.log('we have a sweep');
+          geoJson.geometry.coordinates = geoJson.geometry.coordinates.map(function (coordinate) {
+            console.log(coordinate);
+            return [coordinate[0] + movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
+          });
+        }else {
+          geoJson.geometry.coordinates[0][0] = geoJson.geometry.coordinates[0][0].map(function (coordinate) {
+            console.log(coordinate);
+            return [coordinate[0]+ movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
+          });
+        }
+
+        //remove the existing feature from the map
+        MapFactory.map.data.remove(selectedFeature);
+        var newFeatures = MapFactory.map.data.addGeoJson(geoJson);
+
+        //update the selected feature to the one we just created
+        selectedFeature = newFeatures[0];
+        selectedPolygonId = newFeatures[0].getProperty('id').toString();
+        selectedColor = newFeatures[0].getProperty('color');
+      });
+
+    }
+
+  };
 
   factory.killTooltip = function () {
     MapFactory.mapEvents.clearListeners(MapFactory.map.data, 'mouseover');
   };
 
-  factory.removePolygonOnClick = function (enabled) {
-    if (enabled) {
-      console.log('shape delete mode enabled');
-      removePolygonOnClickHandle = MapFactory.map.data.addListener('click', detectIdOnClick);
-    } else {
-      if (removePolygonOnClickHandle) {
-        MapFactory.mapEvents.removeListener(removePolygonOnClickHandle);
-        removePolygonOnClickHandle = undefined;
-      }
+  factory.removeSelectedPolygon = function () {
+
+    if (!selectedPolygonId) {
+      console.log('need to select a polygon first');
     }
 
-    function detectIdOnClick(event) {
-      selectedPolygonId = event.feature.getProperty('id').toString();
-      console.log(selectedPolygonId);
-      var oldColor = event.feature.getProperty('color');
-      event.feature.setProperty('color', '255,0,0');
-      setTimeout(function () {
-        if (confirm('Are you sure you want to delete this shape?')) {
-          factory.deletePolygon(selectedPolygonId).then(function () {
-            MapFactory.map.data.remove(event.feature);
-            console.log('deleted!');
-          });
-        } else {
-          event.feature.setProperty('color', oldColor);
-        }
-      }, 100);
+    if (confirm('Are you sure you want to delete this shape?')) {
+      factory.deletePolygon(selectedPolygonId).then(function () {
+        MapFactory.map.data.remove(selectedFeature);
+        console.log('deleted!');
+      });
+    } else {
+      event.feature.setProperty('color', selectedColor);
     }
   };
 
