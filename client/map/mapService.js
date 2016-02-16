@@ -180,38 +180,43 @@ angular.module('MapServices', ['AdminServices'])
 
           var parkingMessage = '';
 
-          console.log('\n\n\nStreet sweeping object lookup:', streetSweepingObj[polygonRules.days]);
-          //Moused over a street Sweeping Segment
+          // Moused over a street Sweeping Segment
+          // thus polygon rules will be a street sweeping day
+          // that is listed in the streetSweepingObj (Example: 4th Fri, 2nd Weds, etc)
           if (streetSweepingObj[polygonRules.days]) {
 
-            // console.log('\n\n\n\n\n Street Sweeping on: ', polygonRules.days);
-            if (userDay === 0 || userDay === 6){
+            // Check for Sat or Sunday
+            if (userDay === 0 || userDay === 6) {
               parkingMessage = 'No street sweeping Sat or Sunday!';
+              rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
             } else {
-              console.log('user entered date: ', preview.date);
 
-              // Convert the date into which weekday of the month it is Example: 3rd Monday of the month
-              var ordinals = ["", "1st", "2nd", "3rd", "4th", "5th"];
-              // Mon Feb 15 2016 00:00:00
-              var date = preview.date.toDateString();
-              var tokens = date.split(' ');
-              console.log('split date array', tokens);
-              // console.log( "The " + ordinals[Math.ceil(tokens[2]/7)] + " " + tokens[0] + " of the month");
+              // This block of code will convert the user submitted date into
+              // the weekday of the month it is (Example: 3rd Monday of the month)
+              var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
 
-              var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2]/7)] + " " + tokens[0];
-              console.log('Correct day: ', weekdayOfTheMonth);
-              console.log('Street Sweeping day is: ', polygonRules.days);
+              // Ex: Mon Feb 15 2016 00:00:00
+              var date = preview.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
+              var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
 
-              // ***************'
-              // WORK ON THIS ON TUES!!!
-              // NOTE:  IT WORKS BUT needs to check the street sweeping time also!!!!
-              // ***********
-              if (polygonRules.days === weekdayOfTheMonth) {
-                parkingMessage = 'WARNING: Street sweeping on the date you entred, cuz its the' + weekdayOfTheMonth;
+              // take the date, divide by 7 and round up
+              // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
+              var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
+
+              // console.log('Correct day: ', weekdayOfTheMonth);
+              // console.log('Street Sweeping day is: ', polygonRules.days);
+
+              // Check if the preview date and time, matches the sweeping date and time
+              if ((polygonRules.days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
+                parkingMessage = 'WARNING: Street sweeping is occuring here on the date and time you entered.';
               }
+
+              rulesToDisplay += '<br>' + '<strong style="color:red">' + parkingMessage + '</strong>';
             }
+
           } else {
             // Moused over Permit Zone selected
+            // thus polygonRuls.days will be (M, T, W, Th, F and possibly Sat)
 
             // console.log('\n\nRules:', polygonRules);
             var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
@@ -221,7 +226,7 @@ angular.module('MapServices', ['AdminServices'])
 
             // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
             if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
-              parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE.';
+              parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE for the date entered.';
             }  else {
 
               if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
@@ -230,9 +235,10 @@ angular.module('MapServices', ['AdminServices'])
                 parkingMessage = 'You can park here for two hours only';
               }
             }
+
+            rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
           }
 
-          rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
         };
 
         //infowindow points to a google map infowindow object
