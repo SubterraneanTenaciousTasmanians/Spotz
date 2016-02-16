@@ -20,7 +20,7 @@ var env = require('node-env-file');
  * comment out before deployment
  */
 
-// env(__dirname + '/../.env');
+env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
@@ -78,7 +78,30 @@ verifyToken.post('/zones', function (req, res) {
       if (err) {
         res.status(401).json({ success: false, message: 'your token is not valid' });
       } else {
-        ParkingDB.savePermitZones(req.body).then(function (data) {  //function is in parking.js)
+        ParkingDB.savePermitZones(req.body.polygons).then(function (data) {  //function is in parking.js)
+          res.status(201).send(data);
+        });
+      }
+    });
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'No token was provided',
+    });
+  }
+});
+
+//delete a parking zone
+verifyToken.delete('/zones/:id/:token', function (req, res) {
+  var token = req.params.token;
+  console.log('here is your data', req.params);
+  if (token) {
+    jwt.verify(token, JWT_SECRET, { algorithm: 'HS256' }, function (err, decoded) {
+      if (err) {
+        res.status(401).json({ success: false, message: 'your token is not valid' });
+      } else {
+        console.log(ParkingDB);
+        ParkingDB.destroyParkingZone(req.params.id).then(function (data) {  //function is in parking.js)
           res.status(201).send(data);
         });
       }
