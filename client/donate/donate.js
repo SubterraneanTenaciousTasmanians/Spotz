@@ -8,7 +8,8 @@ angular.module('spotz.donate', ['DonateServices'])
   $scope.paid = false;
   $scope.message = '';
   $scope.showDonateModal = false;
-
+  $scope.showMessage = false;
+  $scope.loading = false;
   $scope.toggleModal = function () {
     $scope.showDonateModal = !$scope.showDonateModal;
     console.log('shown?', $scope.showDonateModal);
@@ -20,6 +21,7 @@ angular.module('spotz.donate', ['DonateServices'])
 
   $scope.stripeCallback = function (status, response) {
     console.log('2nd STRIPE RESPONSE', response);
+    $scope.loading = !$scope.loading;
     if (response.error) {
       // there was an error. Fix it.
       console.log('ERROR', response.error);
@@ -31,6 +33,8 @@ angular.module('spotz.donate', ['DonateServices'])
       };
       DonateFactory.requestToken($scope.transaction).then(function (response) {
         console.log('RESPOSNE FROM FACTORY ', response);
+        $scope.loading = !$scope.loading;
+        $scope.showMessage = !$scope.showMessage;
         $scope.paid = response.paid;
         $scope.message = response.message;
       });

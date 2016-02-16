@@ -141,6 +141,12 @@
   font-weight: bold;
 }
 
+.loginLoading {
+  position: absolute;
+  padding: 28% 45%;
+  background-color: rgba(255, 253, 250, 0.4);
+}
+
 .server-msg {
   background-color: rgba(255, 0, 0, 0.54);
 }

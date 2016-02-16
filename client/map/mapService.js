@@ -1,7 +1,7 @@
 'use strict';
 angular.module('MapServices', ['AdminServices'])
 
-.factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', '$rootScope', function ($http, $window, $timeout, $cookies, KeyFactory, $rootScope) {
+.factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($rootScope, $http, $window, $timeout, $cookies, KeyFactory) {
 
   //google tooltip
   var infowindow = {};
@@ -32,6 +32,7 @@ angular.module('MapServices', ['AdminServices'])
       url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
     })
     .success(function (data) {
+      $rootScope.$broadcast('mapLoaded');
       var polyColor;
       var boundary;
       var p;
@@ -280,7 +281,7 @@ angular.module('MapServices', ['AdminServices'])
         zoom: 18,
         center: { lng: -122.26156639099121, lat: 37.86434903305901 },
       });
-
+      factory.mapEvents = google.maps.event;
       //save the infowindow in a local variable
       //tooltip
       infowindow = new google.maps.InfoWindow();
@@ -410,13 +411,9 @@ angular.module('MapServices', ['AdminServices'])
 
       });
 
-      //style the gridlines
-      factory.map.data.setStyle({
-        strokeWeight: 5,
-      });
-
       //click handler to load data into the world grid squares
       factory.map.addListener('click', function (event) {
+        $rootScope.$broadcast('loadMap');
         var coordinates = [event.latLng.lng(), event.latLng.lat()];
         factory.fetchParkingZones(coordinates);
       });

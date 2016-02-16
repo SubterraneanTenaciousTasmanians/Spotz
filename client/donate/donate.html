@@ -2,8 +2,9 @@
   <div class="stripeForm">
 
     <h1>Support Spotz!</h2>
-    <div ng-model="message"></div>
-
+    <div ng-show="loading" class="loading">
+      <img src="./assets/images/squares.gif"/>
+    </div>
     <div class="entry-block">
       <label>Name on card </label>
       <input type="text" ng-model="info.name" placeholder="Daniel Kim">
@@ -30,7 +31,9 @@
       <label>Amount</label>
       <input type="text" ng-model="amount" placeholder="10.00 (USD)" required/>
     </div>
-
+    <div class="server-msg" ng-show="showMessage">
+      <p>{{message}}</p>
+    </div>
     <button class="submit" type="submit">Submit</button>
 
     <div class="close" ng-click="toggleModal()">X</div>
