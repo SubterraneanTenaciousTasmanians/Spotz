@@ -132,7 +132,7 @@ angular.module('MapServices', ['AdminServices'])
         if ($rootScope.userPreview !== undefined) {
           preview.time = $rootScope.userPreview.time;
           preview.date = $rootScope.userPreview.date;
-          console.log(preview.date);
+          //console.log(preview.date);
         }
 
         var sampleDate = 'figure it out later';
@@ -167,19 +167,68 @@ angular.module('MapServices', ['AdminServices'])
           var convEndTime = convertTime(polygonRules.endTime);
 
           // check for Sat or Sunday
-          var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 6 = Saturday)
-          var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
+          var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
+
+          // All Street sweeping day possiblilities
+          var streetSweepingObj = {
+            '1st Mon': true, '2nd Mon': true, '3rd Mon': true, '4th Mon': true,
+            '1st Tue': true, '2nd Tue': true, '3rd Tue': true, '4th Tue': true,
+            '1st Wed': true, '2nd Wed': true, '3rd Wed': true, '4th Wed': true,
+            '1st Thurs': true, '2nd Thurs': true, '3rd Thurs': true, '4th Thurs': true,
+            '1st Fri': true, '2nd Fri': true, '3rd Fri': true, '4th Fri': true,
+          };
+
           var parkingMessage = '';
 
-          // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
-          if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
-            parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE.';
-          }  else {
+          console.log('\n\n\nStreet sweeping object lookup:', streetSweepingObj[polygonRules.days]);
+          //Moused over a street Sweeping Segment
+          if (streetSweepingObj[polygonRules.days]) {
 
-            if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
-              parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
+            // console.log('\n\n\n\n\n Street Sweeping on: ', polygonRules.days);
+            if (userDay === 0 || userDay === 6){
+              parkingMessage = 'No street sweeping Sat or Sunday!';
             } else {
-              parkingMessage = 'You can park here for two hours only';
+              console.log('user entered date: ', preview.date);
+
+              // Convert the date into which weekday of the month it is Example: 3rd Monday of the month
+              var ordinals = ["", "1st", "2nd", "3rd", "4th", "5th"];
+              // Mon Feb 15 2016 00:00:00
+              var date = preview.date.toDateString();
+              var tokens = date.split(' ');
+              console.log('split date array', tokens);
+              // console.log( "The " + ordinals[Math.ceil(tokens[2]/7)] + " " + tokens[0] + " of the month");
+
+              var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2]/7)] + " " + tokens[0];
+              console.log('Correct day: ', weekdayOfTheMonth);
+              console.log('Street Sweeping day is: ', polygonRules.days);
+
+              // ***************'
+              // WORK ON THIS ON TUES!!!
+              // NOTE:  IT WORKS BUT needs to check the street sweeping time also!!!!
+              // ***********
+              if (polygonRules.days === weekdayOfTheMonth) {
+                parkingMessage = 'WARNING: Street sweeping on the date you entred, cuz its the' + weekdayOfTheMonth;
+              }
+            }
+          } else {
+            // Moused over Permit Zone selected
+
+            // console.log('\n\nRules:', polygonRules);
+            var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
+            //console.log('Days array', daysArray);
+
+            parkingMessage = '';
+
+            // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
+            if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
+              parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE.';
+            }  else {
+
+              if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
+                parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
+              } else {
+                parkingMessage = 'You can park here for two hours only';
+              }
             }
           }
 

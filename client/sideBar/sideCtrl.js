@@ -37,7 +37,7 @@ angular.module('spotz.side', ['MapServices'])
   //  Grab the preview date and time
   $scope.savePreviewInput = function () {
     $rootScope.userPreview = $scope.preview;
-    console.log('the time, date, duration object: ', $scope.preview.date.getDate());
+    console.log('the time, date, duration object: ', $scope.preview);
   };
 
   // Event listener that waits until the Google map data is ready
