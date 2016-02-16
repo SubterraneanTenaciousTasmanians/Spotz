@@ -1,10 +1,12 @@
 'use strict';
 angular.module('spotz.side', ['MapServices'])
 
-.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', function ($scope, $rootScope, $cookies, $state, MapFactory) {
+.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', '$filter', function ($scope, $rootScope, $cookies, $state, MapFactory, $filter) {
   // Add rule on click is hidden
   $scope.ShowAddRuleOnClick = false;
   $scope.showMobilePreview = false;
+  $scope.preview = {};
+  // $scope.preview.date = $filter("date")(Date.now(), 'MM/dd/yyyy');
   // $scope.preview.date = moment().calendar();
 
   $scope.toggleAddRule = function () {

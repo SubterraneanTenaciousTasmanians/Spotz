@@ -153,7 +153,7 @@ angular.module('MapServices', ['AdminServices'])
 
           polygonRules.endTime = event.feature.getProperty('rules')[i].endTime;
           rulesToDisplay += polygonRules.endTime + '<br>';
-          rulesToDisplay += 'Maps may contain inaccuracies. <br>Not all streets in the area specific maps have opted into the program.';
+          rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
         }
 
         if (numOfRules === 0) {
