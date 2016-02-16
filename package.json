@@ -35,6 +35,7 @@
     "csvtojson": "^0.5.2",
     "express": "^4.13.4",
     "express-device": "^0.4.2",
+    "fs": "0.0.2",
     "jsonwebtoken": "^5.5.4",
     "knex": "^0.9.0",
     "morgan": "^1.6.1",

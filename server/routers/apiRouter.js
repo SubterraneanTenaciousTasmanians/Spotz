@@ -12,6 +12,7 @@ var upload = multer({
    limits: { fileSize: 10000000, files:1 }, //limits filesize to 10mb
  });
 var tesseract = require('node-tesseract');
+var fs = require('fs');
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
@@ -141,22 +142,32 @@ verifyToken.post('/rule/:polyId', function (req, res) {
 //TODO: PHOTO UPLOAD upload.single(''),
 verifyToken.post('/photo', function (req, res) {
   console.log('REQUEST BODY ', req.body);
-  var target_path = __dirname + '/tmp/';
-  var stream = req.pipe(target_path);
-  stream.on('finish', function () {
-    tesseract.process(target_path, function (err, text) {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        res.send(text);
-      }
-    });
+  var decode = new Buffer(req.body.data, 'base64');
+  var copy = fs.writeFile(__dirname + '/tmp/copy.jpeg', decode, function (err) {
+    if (err) {
+      return console.error(err);
+    } else {
+      console.log('DECODED URI', decode);
+      res.send('SUCCESSSSSS!!!!!');
+    }
   });
 
-  stream.on('error', function () {
-    res.send('ERROR');
-  });
+  // var target_path = __dirname + '/tmp/';
+  // var stream = req.pipe(target_path);
+  // stream.on('finish', function () {
+  //   tesseract.process(target_path, function (err, text) {
+  //     if (err) {
+  //       console.error(err);
+  //       res.send(err);
+  //     } else {
+  //       res.send(text);
+  //     }
+  //   });
+  // });
+  //
+  // stream.on('error', function () {
+  //   res.send('ERROR');
+  // });
 
   // var tmp_path = req.file.path;
   // var target_path = 'uploads/' + req.file.originalname;
