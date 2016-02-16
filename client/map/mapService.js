@@ -1,7 +1,7 @@
 'use strict';
 angular.module('MapServices', ['AdminServices'])
 
-.factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($http, $window, $timeout, $cookies, KeyFactory) {
+.factory('MapFactory', ['$http', '$window', '$timeout', '$cookies', 'KeyFactory', '$rootScope', function ($http, $window, $timeout, $cookies, KeyFactory, $rootScope) {
 
   //google tooltip
   var infowindow = {};
@@ -123,15 +123,26 @@ angular.module('MapServices', ['AdminServices'])
 
         var rulesToDisplay = '';
 
-        // Variables for testing
-        var sampleTime = '';  //defuault
-        var sampleTime = '7:00:00';  //test
+        // Capture the user submitted time and date
+        var preview = {
+          time: '',
+          date: '',
+        };
+
+        if ($rootScope.userPreview !== undefined) {
+          preview.time = $rootScope.userPreview.time;
+          preview.date = $rootScope.userPreview.date;
+          console.log(preview.date);
+        }
+
         var sampleDate = 'figure it out later';
         var sampleDuration = 1.5; //hours
         var polygonRules = {};
 
         for (var i = 0; i < numOfRules; i++) {
           rulesToDisplay += 'Permit code: ' + event.feature.getProperty('rules')[i].permitCode + '<br>';
+
+          polygonRules.days = event.feature.getProperty('rules')[i].days;
           rulesToDisplay += 'Days: ' + event.feature.getProperty('rules')[i].days + '<br>';
 
           polygonRules.timeLimit = event.feature.getProperty('rules')[i].timeLimit;
@@ -148,18 +159,28 @@ angular.module('MapServices', ['AdminServices'])
         if (numOfRules === 0) {
           rulesToDisplay = 'Parking info not available';
 
-        } else if (sampleTime !== '') {  //Sample Time submitted.  Display parking availability
+        } else if (preview.time !== '') {  //Sample Time submitted.  Display parking availability
 
           // Convert time format form 08:12:10 to 081210
-          var convSampleTime = convertTime(sampleTime);
+          var convPreviewTime = convertTime(preview.time);
           var convStartTime = convertTime(polygonRules.startTime);
           var convEndTime = convertTime(polygonRules.endTime);
 
+          // check for Sat or Sunday
+          var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 6 = Saturday)
+          var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
           var parkingMessage = '';
-          if (convSampleTime < convStartTime || convSampleTime > convEndTime) {
-            parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
-          } else {
-            parkingMessage = 'You can park here for two hours only';
+
+          // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
+          if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
+            parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE.';
+          }  else {
+
+            if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
+              parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
+            } else {
+              parkingMessage = 'You can park here for two hours only';
+            }
           }
 
           rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';

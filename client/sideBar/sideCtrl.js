@@ -5,6 +5,7 @@ angular.module('spotz.side', ['MapServices'])
   // Add rule on click is hidden
   $scope.ShowAddRuleOnClick = false;
   $scope.showMobilePreview = false;
+  // $scope.preview.date = moment().calendar();
 
   $scope.toggleAddRule = function () {
     console.log('Add rule was clicked!');
@@ -34,9 +35,10 @@ angular.module('spotz.side', ['MapServices'])
   };
 
   //  Grab the preview date and time
-  $scope.savePreviewInput = function (previewData){
-    console.log('date and time: ', previewData.date, previewData.time);
-  }
+  $scope.savePreviewInput = function () {
+    $rootScope.userPreview = $scope.preview;
+    console.log('the time, date, duration object: ', $scope.preview.date.getDate());
+  };
 
   // Event listener that waits until the Google map data is ready
   // (broadcast is emitted from MapFactory init)
