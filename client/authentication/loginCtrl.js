@@ -2,12 +2,17 @@
 
 angular.module('spotz.login', ['LoginService'])
 
-.controller('loginCtrl', ['$scope', '$state', '$cookies', 'LoginFactory',
-  function ($scope, $state, $cookies, LoginFactory) {
+.controller('loginCtrl', ['$rootScope', '$scope', '$state', '$cookies', 'LoginFactory',
+  function ($rootScope, $scope, $state, $cookies, LoginFactory) {
 
     $scope.userinfo = {};
     $scope.showServerMsg = false;
     $scope.serverMsg = '';
+    $scope.loginLoading = false;
+
+    $rootScope.$on('signin', function () {
+      $scope.loginLoading = true;
+    });
 
     //to switch between sign up and sign in on the same Page
     //stores the button text and the question text below the button
@@ -26,6 +31,7 @@ angular.module('spotz.login', ['LoginService'])
     $scope.activeLoginState = loginStates.signUp;
 
     LoginFactory.checkCredentials().then(function (loggedIn) {
+      $scope.loginLoading = false;
       if (loggedIn) {
         $state.go('main');
       }
@@ -61,6 +67,7 @@ angular.module('spotz.login', ['LoginService'])
       },
 
       function error(response) {
+        $scope.loginLoading = false;
         $scope.showServerMsg = true;
         $scope.serverMsg = response.data.message;
         $scope.userinfo.password = '';
@@ -68,17 +75,20 @@ angular.module('spotz.login', ['LoginService'])
     }
 
     function signup(userinfo) {
+      $scope.loginLoading = true;
       $scope.showServerMsg = false;
 
       LoginFactory.signup(userinfo)
       .then(
       function success(response) {
         //save token from server
+        $scope.loginLoading = false;
         $cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 
       function error(response) {
+        $scope.loginLoading = false;
         $scope.showServerMsg = true;
         $scope.serverMsg = response.data.message;
         $scope.userinfo.password = '';
