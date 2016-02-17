@@ -8,7 +8,7 @@
     "postinstall": "bower install"
   },
   "engines": {
-    "node": "5.4.1",
+    "node": "~0.10.21",
     "npm": "3.3.12"
   },
   "repository": {
