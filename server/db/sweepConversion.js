@@ -9,7 +9,7 @@ var geocoderProvider = 'google';
 var httpAdapter = 'https';
 
 var extra = {
-  apiKey: 'AIzaSyAsghqMscNFe51nUYSZSfF-Il5ZeMgkwlY',
+  apiKey: 'AIzaSyC4PGPlEeQU55KSmsEsIjkZmx1UE9QAQig',
   formatter: null,
 };
 
@@ -17,10 +17,31 @@ var geocoder = require('node-geocoder')(geocoderProvider, httpAdapter, extra);
 var addressFrom;
 var addressTo;
 
-fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function (err, data) {
+fs.readFile(__dirname + '/zoneData/berkeley/sweeping.json', 'utf8', function (err, data) {
   if (err) {throw err; }
 
   data = JSON.parse(data);
+
+  var stepSize = 0.00002;
+
+  var bumpIt = {
+    N: {
+      stepX:0,
+      stepY:stepSize,
+    },
+    S: {
+      stepX:0,
+      stepY:-stepSize,
+    },
+    W: {
+      stepX:-stepSize,
+      stepY:0,
+    },
+    E: {
+      stepX:stepSize,
+      stepY:0,
+    },
+  };
 
   //loop through each data point
   var recursive = function (pointNr) {
@@ -62,8 +83,8 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function 
           //SWAP COORDINATES!
           coordindates.map(function (coordinate) {
             var swap = coordinate[0];
-            coordinate[0] = coordinate[1];
-            coordinate[1] = swap;
+            coordinate[0] = coordinate[1] + bumpIt[data[pointNr].Side].stepX;
+            coordinate[1] = swap + bumpIt[data[pointNr].Side].stepY;
           });
 
         });
@@ -81,7 +102,7 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweepingAll.json', 'utf8', function 
           }
 
           rule = {
-            permitCode: 'sweep-' + data[pointNr].Rte,
+            permitCode: 'sweep-' + data[pointNr].Rte + ' [' + data[pointNr].Side + ']',
             timeLimit: 0,
             days: data[pointNr]['Day of Month'],
             color: '255,0,0',
