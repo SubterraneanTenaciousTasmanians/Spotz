@@ -13,6 +13,7 @@ var upload = multer({
  });
 var tesseract = require('node-tesseract');
 var fs = require('fs');
+var gm = require('gm');
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
@@ -143,13 +144,26 @@ verifyToken.post('/rule/:polyId', function (req, res) {
 verifyToken.post('/photo', function (req, res) {
   console.log('REQUEST BODY ', req.body);
   var decode = new Buffer(req.body.data, 'base64');
-  var copy = fs.writeFile(__dirname + '/tmp/copy.jpeg', decode, function (err) {
+  console.log('DECODEEEEE', decode);
+  var copy = fs.writeFile(__dirname + '/../tmp/copy1.jpeg', decode, function (err) {
     if (err) {
       return console.error(err);
     } else {
-      console.log('DECODED URI', decode);
-      res.send('SUCCESSSSSS!!!!!');
-    }
+      // console.log('DECODED URI', decode);
+    //   console.log('PATTHHH ' + __dirname);
+    //   gm(__dirname + '/../tmp/copy1.jpeg')
+    //
+    //   .monochrome()
+    //   .write(__dirname + '/../tmp/copy2.jpeg', function (err) {
+    //     if (!err) {
+    //       console.log('done');
+    //       res.send('SUCCESSSSSS!!!!!');
+    //     } else {
+    //       res.send('FAILLLLL', err);
+    //     }
+    //   });
+    // }
+    res.send("SUCCESS");
   });
 
   // var target_path = __dirname + '/tmp/';
