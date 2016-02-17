@@ -26,6 +26,12 @@ angular.module('MapServices', ['AdminServices'])
   // Helper function: Converts time format from 08:12:10 to 081210
   // used for calculations
 
+  $rootScope.$on('logOut', function () {
+    console.log('clearing downloaded info');
+    downloadedGridZones = {};
+    displayedPolygons = {};
+  });
+
   var convertTime = function (inputTimeString) {
     return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
   };
