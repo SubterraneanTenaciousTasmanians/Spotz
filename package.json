@@ -54,8 +54,7 @@
     "polyline": "^0.2.0",
     "q": "^1.4.1",
     "sequelize": "^3.19.1",
-    "stripe": "^4.4.0",
-    "tesseract_native": "^0.5.2"
+    "stripe": "^4.4.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
