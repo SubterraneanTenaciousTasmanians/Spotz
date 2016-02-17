@@ -80,7 +80,7 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweeping.json', 'utf8', function (er
         allData.routes[0].legs[0].steps.forEach(function (r) {
           coordindates = polyline.decode(r.polyline.points);
 
-          //SWAP COORDINATES!
+          //SWAP COORDINATES AND ADJUST BASED ON N,S,E,W!
           coordindates.map(function (coordinate) {
             var swap = coordinate[0];
             coordinate[0] = coordinate[1] + bumpIt[data[pointNr].Side].stepX;
