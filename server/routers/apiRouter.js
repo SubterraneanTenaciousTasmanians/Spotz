@@ -13,10 +13,7 @@ var upload = multer({
  });
 var fs = require('fs');
 var gm = require('gm').subClass({ imageMagick: true });
-
-// var tesseract = require('node-tesseract');
-var tesseract = require('tesseract_native');
-var myocr = new tesseract.OcrEio();
+var tesseract = require('node-tesseract');
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
@@ -160,28 +157,17 @@ verifyToken.post('/photo', function (req, res) {
         return console.dir(arguments);
       }
 
-      // tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
-      //     if (err) {
-      //       console.error(err);
-      //       res.send(err);
-      //     } else {
-      //       res.send(text);
-      //     }
-      //   });
-      fs.readFile(__dirname + '/../tmp/copy3.jpeg', function (err, data) {
-        if (err) {
-          throw err;
-        }
-
-        myocr.ocr(data, function (err, result) {
+      var options = {
+        binary: '/usr/local/bin/tesseract',
+      };
+      tesseract.process(__dirname + '/../tmp/copy3.jpeg', options, function (err, text) {
           if (err) {
-            throw err;
+            console.error(err);
+            res.send(err);
+          } else {
+            res.send(text);
           }
-
-          console.log('RESULTTTTT', result);
-          res.send(result);
         });
-      });
 
       console.log('SUCCESSSSS');
     });
