@@ -209,7 +209,7 @@ angular.module('MapServices', ['AdminServices'])
 
               // Check if the preview date and time, matches the sweeping date and time
               if ((polygonRules.days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
-                parkingMessage = 'WARNING: Street sweeping is occuring here on the date and time you entered.';
+                parkingMessage = 'WARNING: Street sweeping is occuring here <br> on the date and time you entered.';
               }
 
               rulesToDisplay += '<br>' + '<strong style="color:red">' + parkingMessage + '</strong>';
@@ -231,7 +231,7 @@ angular.module('MapServices', ['AdminServices'])
             }  else {
 
               if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
-                parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
+                parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then you there is a two hour limit until' + polygonRules.endTime;
               } else {
                 parkingMessage = 'You can park here for two hours only';
               }
@@ -255,10 +255,14 @@ angular.module('MapServices', ['AdminServices'])
   //to save a parking rule for a given zone id
   factory.sendRule = function (id, rule) {
     //send off the request to store the data
+    var token = $cookies.get('credentials');
     return $http({
       method:'POST',
       url: '/api/rule/' + id,
-      data: rule,
+      data: {
+        token: token,
+        rule: rule,
+      },
     })
     .success(function () {
       //color the space to something
