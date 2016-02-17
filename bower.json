@@ -8,6 +8,9 @@
   "moduleType": [],
   "license": "MIT",
   "homepage": "",
+  "scripts": {
+    "start": "node server/server.js"
+  },
   "ignore": [
     "**/.*",
     "node_modules",
@@ -17,6 +20,8 @@
   ],
   "dependencies": {
     "angular": "~1.4.9",
-    "angular-ui-router": "~0.2.17"
+    "angular-ui-router": "~0.2.17",
+    "moment": "~2.11.2",
+    "angular-payments": "*"
   }
 }

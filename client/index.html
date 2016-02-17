@@ -1,19 +1,52 @@
 <!DOCTYPE html>
 <html ng-app="spotz">
-  <head>
-    <meta charset="utf-8">
-    <title>Parking</title>
-    <link rel="stylesheet" href="map/map.css">
-    <link rel="stylesheet" href="main.css">
-  </head>
-  <body>
-    <div ui-view class="app-wrapper"></div>
 
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="config.js"></script>
-    <script src="map/mapService.js"></script>
-    <script src="map/mapCtrl.js"></script>
-    <script src="app.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>Parking</title>
+  <link rel="stylesheet" href="map/map.css">
+  <link rel="stylesheet" href="authentication/login.css">
+  <link rel="stylesheet" href="navBar/nav.css">
+  <link rel="stylesheet" href="sideBar/side.css">
+  <link rel="stylesheet" href="donate/donate.css">
+  <link rel="stylesheet" href="drawing/drawing.css">
+  <link rel="stylesheet" href="main.css">
+  <link href='https://fonts.googleapis.com/css?family=Questrial' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  <div ui-view class="app-wrapper"></div>
+
+  <!-- DEPENDENCIES -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-cookies.js"></script>
+  <script src="bower_components/angular-payments/lib/angular-payments.js"></script>
+  <script src="bower_components/moment/moment.js"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script>
+    Stripe.setPublishableKey("pk_test_K5x7jeJxufrVfvqc0UF0o7iI");
+  </script>
+
+  <!-- ANGULAR CONTROLLERS -->
+  <script src="authentication/loginCtrl.js"></script>
+  <script src="navBar/navCtrl.js"></script>
+  <script src="sideBar/sideCtrl.js"></script>
+  <script src="map/mapCtrl.js"></script>
+  <script src="map/config.js"></script>
+  <script src="donate/donate.js"></script>
+  <script src="drawing/drawing.js"></script>
+
+  <!-- ANGULAR SERVICES -->
+  <script src="authentication/loginService.js"></script>
+  <script src="navBar/navService.js"></script>
+  <script src="sideBar/sideService.js"></script>
+  <script src="map/mapService.js"></script>
+  <script src="donate/donateService.js"></script>
+  <script src="drawing/drawingService.js"></script>
+  <!-- MAIN APP -->
+  <script src="app.js"></script>
+
+</body>
+
 </html>
