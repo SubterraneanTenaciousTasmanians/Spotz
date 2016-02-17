@@ -49,19 +49,25 @@ angular.module('spotz.side', ['MapServices'])
     // Add parking rule to a polygon
     MapFactory.map.data.addListener('click', function (event) {
       if ($scope.ShowAddRuleOnClick === true) {
-        console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
 
-        // DO NOT ERASE!!!  Needed for admin add rules feature.
-        //
-        // REMOVE THE FOLLOWING COMMENTS WHEN YOU ARE READY TO USE THE ADD RULES FEATURE
-        // MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
-        // .then(function () {
-        //   console.log('changing color', $scope.rule.color);
-        //
-        //   //event.feature.css($scope.color);
-        //   event.feature.setProperty('color', $scope.rule.color);
-        //
-        // });
+        if (window.confirm('Are you sure you want to change the rule?')) {
+
+          console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
+          MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
+          .then(function () {
+
+            event.feature.setProperty('permitCode', $scope.rule.permitCode);
+            event.feature.setProperty('days', $scope.rule.days);
+            event.feature.setProperty('timeLimit', $scope.rule.timeLimit);
+            event.feature.setProperty('startTime', $scope.rule.startTime);
+            event.feature.setProperty('endTime', $scope.rule.endTime);
+            event.feature.setProperty('color', $scope.rule.color);
+
+            console.log('\n\nUpdated rules are:', $scope.rule);
+
+          });
+        }
+
         // DO NOT ERASE!!!
       } else {
         console.log('if you want to add a rule, FIRST YOU NEED TO TOGGLE "add rule on click" ');

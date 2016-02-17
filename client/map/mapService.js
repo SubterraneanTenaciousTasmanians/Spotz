@@ -255,10 +255,14 @@ angular.module('MapServices', ['AdminServices'])
   //to save a parking rule for a given zone id
   factory.sendRule = function (id, rule) {
     //send off the request to store the data
+    var token = $cookies.get('credentials');
     return $http({
       method:'POST',
       url: '/api/rule/' + id,
-      data: rule,
+      data: {
+        token: token,
+        rule: rule,
+      },
     })
     .success(function () {
       //color the space to something
