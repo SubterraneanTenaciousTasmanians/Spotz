@@ -19,14 +19,14 @@ var gm = require('gm');
 var ParkingDB = require('./../db/parking.js');
 
 //DEV ONLY
-// var env = require('node-env-file');
+var env = require('node-env-file');
 
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
 
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
