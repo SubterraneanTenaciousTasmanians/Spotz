@@ -147,7 +147,8 @@ verifyToken.post('/photo', function (req, res) {
   console.log('DECODEEEEE', decode);
   var copy = fs.writeFile(__dirname + '/../tmp/copy1.jpeg', decode, function (err) {
     if (err) {
-      return console.error(err);
+      // return console.error(err);
+      res.status(403).send(req.body);
     }
 
     res.send('SUCCESS');
