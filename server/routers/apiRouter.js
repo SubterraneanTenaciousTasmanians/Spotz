@@ -13,7 +13,7 @@ var upload = multer({
  });
 var tesseract = require('node-tesseract');
 var fs = require('fs');
-var gm = require('gm');
+var gm = require('gm').subClass({ imageMagick: true });
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
@@ -142,34 +142,49 @@ verifyToken.post('/rule/:polyId', function (req, res) {
 
 //TODO: PHOTO UPLOAD upload.single(''),
 verifyToken.post('/photo', function (req, res) {
-  console.log('REQUEST BODY ', req.body);
   var decode = new Buffer(req.body.data, 'base64');
-  console.log('DECODEEEEE', decode);
   var copy = fs.writeFile(__dirname + '/../tmp/copy1.jpeg', decode, function (err) {
     if (err) {
-      // return console.error(err);
-      res.status(403).send(req.body);
+      return console.error(err);
     }
 
-    res.send('SUCCESS');
+    // var readStream = fs.createReadStream();
+    // var writeStream = fs.createWriteStream(__dirname + '/../tmp/copy2.jpeg');
+    gm(__dirname + '/../tmp/copy1.jpeg')
+    .monochrome()
+    .write(__dirname + '/../tmp/copy3.jpeg', function (err) {
+      if (err) {
+        return console.dir(arguments);
+      }
 
+      tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
+          if (err) {
+            console.error(err);
+            res.send(err);
+          } else {
+            res.send(text);
+          }
+        });
+
+      console.log('SUCCESSSSS');
+    });
+
+    // .stream()
+    // .pipe(writeStream);
+
+    // .write(__dirname + '/../tmp/copy2.jpeg', function (err) {
+    //   if (!err) {
+    //     console.log('done');
+    //     res.send('SUCCESSSSSS!!!!!');
+    //   } else {
+    //     res.send('FAILLLLL', err);
+    //   }
+    // });
   });
 });
 
     // console.log('DECODED URI', decode);
     //   console.log('PATTHHH ' + __dirname);
-    //   gm(__dirname + '/../tmp/copy1.jpeg')
-    //
-    //   .monochrome()
-    //   .write(__dirname + '/../tmp/copy2.jpeg', function (err) {
-    //     if (!err) {
-    //       console.log('done');
-    //       res.send('SUCCESSSSSS!!!!!');
-    //     } else {
-    //       res.send('FAILLLLL', err);
-    //     }
-    //   });
-    // }
 
   // var target_path = __dirname + '/tmp/';
   // var stream = req.pipe(target_path);
