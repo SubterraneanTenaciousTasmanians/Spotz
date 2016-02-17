@@ -9,7 +9,6 @@ angular.module('DrawingServices', [])
   var addPointOnClickHandle;
   var addPointOnDataClickHandle;
   var selectPolygonOnClickHandle;
-  var removePolygonOnClickHandle;
   var shapeHandle;
   var selectedPolygonId;
   var flashingPolygonHandle;
@@ -21,7 +20,7 @@ angular.module('DrawingServices', [])
     if (enabled) {
       console.log('select mode enabled');
       selectPolygonOnClickHandle = MapFactory.map.data.addListener('click', selectPolygonOnClick);
-      google.maps.event.addDomListener(document, 'keyup', nudgePolygonOnArrow);
+      MapFactory.mapEvents.addDomListener(document, 'keyup', nudgePolygonOnArrow);
 
     } else {
       if (selectPolygonOnClickHandle) {
@@ -65,8 +64,6 @@ angular.module('DrawingServices', [])
         39:'right',
       };
       var stepSize = 0.00001;
-      var stepX = 0;
-      var stepY = 0;
 
       var movement = {
         up: {
@@ -100,7 +97,7 @@ angular.module('DrawingServices', [])
         }else {
           geoJson.geometry.coordinates[0][0] = geoJson.geometry.coordinates[0][0].map(function (coordinate) {
             console.log(coordinate);
-            return [coordinate[0]+ movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
+            return [coordinate[0] + movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
           });
         }
 
@@ -116,10 +113,6 @@ angular.module('DrawingServices', [])
 
     }
 
-  };
-
-  factory.killTooltip = function () {
-    MapFactory.mapEvents.clearListeners(MapFactory.map.data, 'mouseover');
   };
 
   factory.removeSelectedPolygon = function () {
@@ -191,10 +184,9 @@ angular.module('DrawingServices', [])
       return false;
     });
 
-    console.log('saved');
   };
 
-  factory.erasePolygon = function (polyId) {
+  factory.erasePolygon = function () {
     pointsDrawn = [];
     drawnShape = [];
     if (shapeHandle) {

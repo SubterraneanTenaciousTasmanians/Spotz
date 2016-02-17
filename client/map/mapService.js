@@ -3,6 +3,10 @@ angular.module('MapServices', ['AdminServices'])
 
 .factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'KeyFactory', function ($rootScope, $http, $window, $timeout, $cookies, KeyFactory) {
 
+  //world grid calculations
+  var stepX = 0.018;
+  var stepY = 0.018;
+
   //google tooltip
   var infowindow = {};
 
@@ -11,6 +15,10 @@ angular.module('MapServices', ['AdminServices'])
   var topRightY;
   var bottomLeftX;
   var bottomLeftY;
+
+  //remember what we fetched
+  var downloadedGridZones = {};
+  var displayedPolygons = {};
 
   //what we return
   var factory = {};
@@ -22,10 +30,30 @@ angular.module('MapServices', ['AdminServices'])
     return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
   };
 
+  var computeGridNumbers = function (coordinates) {
+    var x = coordinates[0];
+    var y = coordinates[1];
+
+    return [
+     Math.ceil(x / stepX),
+     Math.ceil(y / stepY),
+    ];
+  };
+
   //get parking polygons + rules from server
   factory.fetchParkingZones = function (coordinates) {
 
     var token = $cookies.get('credentials');
+
+    //check if we already downloaded this gridzone
+    if (downloadedGridZones[JSON.stringify(computeGridNumbers(coordinates))]) {
+      console.log('already got it');
+      return;
+    }
+
+    //if we made it here, we need to fetch the gridzone
+    //mark coordinates as downloaded
+    downloadedGridZones[JSON.stringify(computeGridNumbers(coordinates))] = true;
 
     $http({
       method:'GET',
@@ -39,6 +67,16 @@ angular.module('MapServices', ['AdminServices'])
 
       //loop through zone data and put them on the map
       data.forEach(function (poly, i) {
+
+        //check if we already displayed this polygon
+        if (displayedPolygons[poly.id]) {
+          console.log('already displayed this polygon');
+          return;
+        }
+
+        //if we made it here, we need to display this polygon
+        //mark polygon as displayed
+        displayedPolygons[poly.id] = true;
 
         //color the zone
         polyColor = '0,0,0';
@@ -93,15 +131,20 @@ angular.module('MapServices', ['AdminServices'])
 
       //how to set the color based on the rule table
       factory.map.data.setStyle(function (feature) {
+        var weight = 1;
 
         if (!feature.getProperty('color')) {
           return;
         }
 
+        if (feature.getProperty('rules')[0] && feature.getProperty('rules')[0].permitCode.indexOf('sweep') !== -1) {
+          weight = 3;
+        }
+
         return ({
            strokeColor: 'rgb(' + feature.getProperty('color') + ')',    // color will be given as '255, 123, 7'
            fillColor:'rgba(' + feature.getProperty('color')  + ', 0.7)',
-           strokeWeight: 1,
+           strokeWeight: weight,
          });
       });
 
@@ -116,7 +159,7 @@ angular.module('MapServices', ['AdminServices'])
       // };
 
       //enable tooltip display, tell it what to display
-      factory.map.data.addListener('mouseover', function (event) {
+      factory.map.data.addListener('click', function (event) {
         var numOfRules;
         if (event.feature.getProperty('rules')) {
           numOfRules = event.feature.getProperty('rules').length;
@@ -136,8 +179,6 @@ angular.module('MapServices', ['AdminServices'])
           //console.log(preview.date);
         }
 
-        var sampleDate = 'figure it out later';
-        var sampleDuration = 1.5; //hours
         var polygonRules = {};
 
         for (var i = 0; i < numOfRules; i++) {
@@ -240,7 +281,7 @@ angular.module('MapServices', ['AdminServices'])
             rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
           }
 
-        };
+        }
 
         //infowindow points to a google map infowindow object
         //append the content and set the location, then display it
@@ -308,7 +349,7 @@ angular.module('MapServices', ['AdminServices'])
       searchBox.addListener('places_changed', function () {
         var places = searchBox.getPlaces();
 
-        if (places.length == 0) {
+        if (places.length === 0) {
           return;
         }
 

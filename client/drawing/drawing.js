@@ -70,10 +70,6 @@ angular.module('spotz.drawing', ['DrawingServices'])
       DrawingFactory.erasePolygon();
     };
 
-    $scope.killTooltip = function () {
-      DrawingFactory.killTooltip();
-    };
-
   });
 },
 ]);
