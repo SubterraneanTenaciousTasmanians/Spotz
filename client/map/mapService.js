@@ -181,46 +181,43 @@ angular.module('MapServices', ['AdminServices'])
       //   var date = moment().format('MM-DD-YYYY');
       //   var currentTime = moment().format('h:mm a');
       // };
-
-      //enable tooltip display, tell it what to display
-      factory.map.data.addListener('click', function (event) {
-
-        setSelectedFeature(event.feature);
-
-        factory.refreshTooltipText(event.feature);
-        infowindow.setPosition(event.latLng);
-
-        //add listeners for the remove rule buttons
-        var deleteButtons = document.getElementsByClassName('delete-rule');
-        for (var i = 0; i < deleteButtons.length; i++) {
-          google.maps.event.addDomListener(deleteButtons[i], 'click', function (deleteButton) {
-            console.log('Map was clicked!', this.dataset.polyid, this.dataset.ruleid);
-            if (confirm('Are you sure you want to delete this rule?')) {
-              factory.deleteRule(this.dataset.polyid, this.dataset.ruleid).then(function (rules) {
-                console.log(factory.selectedFeature.feature);
-                factory.selectedFeature.feature.setProperty('rules', rules);
-                factory.refreshTooltipText(factory.selectedFeature.feature);
-              });
-            }
-          });
-        }
-
-        //add listeners for the remove polygon button
-        var deletePolygon = document.getElementsByClassName('delete-polygon');
-        google.maps.event.addDomListener(deletePolygon[0], 'click', function (deleteButton) {
-          console.log('Map was clicked!', this.dataset.polyid);
-          if (confirm('Are you sure you want to delete this polygon?')) {
-            factory.deleteParkingZone(this.dataset.polyid);
-            factory.map.data.remove(factory.selectedFeature.feature);
-            infowindow.close();
-            console.log('deleted!');
-          }
-        });
-
-      });
-
     });
   };
+
+  function addDeleteButtonClickHandlers() {
+
+    //add listeners for the remove rule buttons
+    var deleteButtons = document.getElementsByClassName('delete-rule');
+    for (var i = 0; i < deleteButtons.length; i++) {
+      google.maps.event.addDomListener(deleteButtons[i], 'click', function (deleteButton) {
+        console.log('Map was clicked!', this.dataset.polyid, this.dataset.ruleid);
+        if (confirm('Are you sure you want to delete this rule?')) {
+          factory.deleteRule(this.dataset.polyid, this.dataset.ruleid).then(function (rules) {
+            factory.selectedFeature.feature.setProperty('rules', rules);
+            factory.refreshTooltipText(factory.selectedFeature.feature);
+          });
+        }
+      });
+    }
+
+    //add listeners for the remove polygon button
+    var deletePolygon = document.getElementsByClassName('delete-polygon');
+    google.maps.event.addDomListener(deletePolygon[0], 'click', function (deleteButton) {
+      console.log('Map was clicked!', this.dataset.polyid);
+      if (confirm('Are you sure you want to delete this polygon?')) {
+        factory.deleteParkingZone(this.dataset.polyid).then(function (succeeded) {
+          if (succeeded) {
+            console.log('removing', factory.selectedFeature.feature);
+            factory.map.data.remove(factory.selectedFeature.feature);
+            infowindow.close();
+            console.log('delete complete');
+          } else {
+            console.log('delete failed');
+          }
+        });
+      }
+    });
+  }
 
   factory.deleteParkingZone = function (polyId) {
     var token = $cookies.get('credentials');
@@ -244,6 +241,7 @@ angular.module('MapServices', ['AdminServices'])
     //append the content and set the location, then display it
     infowindow.setContent('<span class="tooltip-text">' + rulesToDisplay + '</span>', event);
     infowindow.open(factory.map);
+    addDeleteButtonClickHandlers();
   };
 
   function createTooltipText(feature) {
@@ -442,6 +440,14 @@ angular.module('MapServices', ['AdminServices'])
       //save the infowindow in a local variable
       //tooltip
       infowindow = new google.maps.InfoWindow();
+
+      //enable tooltip display, tell it what to display
+      factory.map.data.addListener('click', function (event) {
+        console.log(event.feature.getProperty('id'));
+        setSelectedFeature(event.feature);
+        factory.refreshTooltipText(event.feature);
+        infowindow.setPosition(event.latLng);
+      });
 
       // ***** Start Google search bar functionality
 

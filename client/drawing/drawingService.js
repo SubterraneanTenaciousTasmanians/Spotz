@@ -192,14 +192,23 @@ angular.module('DrawingServices', [])
       addPointOnClickHandle = MapFactory.map.addListener('click', addPointOnClick);
       addPointOnDataClickHandle = MapFactory.map.data.addListener('click', addPointOnClick);
     } else {
+      console.log('points add mode disabled');
       if (addPointOnClickHandle) {
         if (newFeature.handle &&  newFeature.handle.getProperty('id') === -1) {
           if (confirm('You have a drawn shape which is not yet saved, would you like to save it?')) {
             factory.savePolygon().then(function () {
               MapFactory.mapEvents.removeListener(addPointOnClickHandle);
               MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+              addPointOnClickHandle = undefined;
+              addPointOnDataClickHandle = undefined;
             });
           }
+        } else {
+          console.log('removing add listeners');
+          MapFactory.mapEvents.removeListener(addPointOnClickHandle);
+          MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+          addPointOnClickHandle = undefined;
+          addPointOnDataClickHandle = undefined;
         }
 
       }
@@ -279,7 +288,6 @@ angular.module('DrawingServices', [])
     return $http.post('/api/zones', payload)
     .success(function (data) {
       console.log('saved!', data);
-
       //save the id from the server so it can be updated
       newFeature.handle.setProperty('id', data.id);
 

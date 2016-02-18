@@ -59,16 +59,17 @@ angular.module('spotz.side', ['MapServices'])
       console.log('sending off rule', feature.getProperty('id').toString(), $scope.rule);
 
       MapFactory.sendRule(feature.getProperty('id').toString(), $scope.rule)
-      .then(function () {
-
+      .then(function (response) {
+        console.log('here is the rule', response.data);
         var newRule = {
-          permitCode:$scope.rule.permitCode,
-          days: $scope.rule.days,
-          timeLimit: $scope.rule.timeLimit,
-          startTime: $scope.rule.startTime,
-          endTime: $scope.rule.endTime,
-          costPerHour: $scope.rule.costPerHour,
-          color: $scope.rule.color,
+          id: response.data.id,
+          permitCode:response.data.permitCode,
+          days: response.data.days,
+          timeLimit: response.data.timeLimit,
+          startTime: response.data.startTime,
+          endTime: response.data.endTime,
+          costPerHour: response.data.costPerHour,
+          color: response.data.color,
         };
 
         if (Array.isArray(feature.getProperty('rules'))) {
@@ -81,6 +82,9 @@ angular.module('spotz.side', ['MapServices'])
 
         console.log('\n\nUpdated rules are:', $scope.rule);
 
+      })
+      .catch(function (err) {
+        console.log('saved failed', err);
       });
     }
 
