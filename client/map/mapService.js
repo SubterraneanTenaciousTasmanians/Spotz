@@ -473,7 +473,7 @@ angular.module('MapServices', ['AdminServices'])
                 feature.setProperty('color', '0,255,0');
               }  else {
 
-
+                // CONTINUE HERE!!!
                 // SOLA FIX THIS TO USE DURATION ALSO!!!!
                 if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
                   // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
