@@ -322,7 +322,13 @@ angular.module('MapServices', ['AdminServices'])
         var testSweepingIDArray = [];
 
         // loop through each polygon/line and change its color
-        data.forEach(function (poly, i) {
+        factory.map.data.forEach(function (feature, i) {
+        // data.forEach(function (poly, i) {  //previous implemenation that painted updated streets/polygons
+          var poly = {
+            rules: feature.getProperty('rules'),
+            id: feature.getProperty('id'),
+          };
+
 
           // add for testing only
           //console.log('\n\n\nthe rules of each line or polygon: ', poly.rules);
@@ -335,7 +341,7 @@ angular.module('MapServices', ['AdminServices'])
 
           //if we made it here, we need to display this polygon
           //mark polygon as displayed
-          displayedPolygons[poly.id] = true;
+          // displayedPolygons[poly.id] = true;
 
           //color the zone
           // polyColor = '0,0,0';
@@ -347,11 +353,11 @@ angular.module('MapServices', ['AdminServices'])
           //http://geojson.org/geojson-spec.html
           //google maps accepts this type of data
 
-          boundary = JSON.parse(poly.boundary);
+          //boundary = JSON.parse(poly.boundary);  //previous implemenation that painted updated streets/polygons
 
           var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
 
-          if (poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
+          if (poly.rules && poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
             //we have a line
 
             // convert the time so it can be used in a calculation
@@ -375,11 +381,14 @@ angular.module('MapServices', ['AdminServices'])
             if (streetSweepingObj[poly.rules[0].days]) {
 
               testSweepingIDArray.push(poly.id);
+
               // Check for Sat or Sunday
               if (userDay === 0 || userDay === 6) {
                 // paint the object green because no street sweeping on the weekends
                 console.log('all street sweeping should be green');
-                polyColor = '0,255,0';
+                //polyColor = '0,255,0';
+                console.log('Polygon map color is: ', feature.getProperty('color'));
+                feature.setProperty('color', '0,255,0');
               } else {
 
                 // This block of code will convert the user submitted date into
@@ -401,11 +410,15 @@ angular.module('MapServices', ['AdminServices'])
                 if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
                   // parkingMessage = 'WARNING: Street sweeping is occuring here <br> on the date and time you entered.';
                   console.log('parking during street sweeping time, so paint street sweeping lines red');
-                  polyColor = '255,0,0';
+                  // polyColor = '255,0,0';
+                  feature.setProperty('color', '255,0,0');
+
 
                 } else {
                   console.log('parking on a weekday, but outside of sweeping time so paint street sweeping lines green');
-                  polyColor = '0,255,0';
+                  // polyColor = '0,255,0';
+                  feature.setProperty('color', '0,255,0');
+
                 }
 
                 // rulesToDisplay += '<br>' + '<strong style="color:red">' + parkingMessage + '</strong>';
@@ -413,7 +426,7 @@ angular.module('MapServices', ['AdminServices'])
 
             }
 
-            boundary = JSON.parse(poly.boundary);
+            // boundary = JSON.parse(poly.boundary);  //previous implemenation that painted updated streets/polygons
 
             // Nick line drawing code
             p = {
@@ -433,13 +446,13 @@ angular.module('MapServices', ['AdminServices'])
 
             //actually put it on the map
             console.log('going to add it to the map: ', p);
-            factory.map.data.addGeoJson(p);
+            // factory.map.data.addGeoJson(p);   //previous implemenation that painted updated streets/polygons
           }
           else {
             //we have a polygon
 
             // write the code
-            if (poly.rules[0] !== undefined) {
+            if (poly.rules && poly.rules[0] !== undefined) {
 
               var daysArray = poly.rules[0].days.split(',');  //Grab the permit days and put them in an array
               //console.log('Days array', daysArray);
@@ -456,17 +469,23 @@ angular.module('MapServices', ['AdminServices'])
               if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
                 // parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE for the date entered.';
                 console.log('Its Sat or Sunday, no permit needed so paint the polygons green.');
-                polyColor = '0,255,0';
+                // polyColor = '0,255,0';
+                feature.setProperty('color', '0,255,0');
               }  else {
 
+
+                // SOLA FIX THIS TO USE DURATION ALSO!!!!
                 if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
                   // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
-                  console.log('parking outside of permit time, so paint street sweeping lines pink (for now)');
-                  polyColor = '255,192,203';  // pink fix later, need to consider duration
+                  console.log('parking outside of permit time, so paint street sweeping lines green (for now)');
+                  // polyColor = '255,192,203';  // pink fix later, need to consider duration
+                  // polyColor = '0,255,0';
+                  feature.setProperty('color', '0,255,0');
                 } else {
                   // parkingMessage = 'You can park here for two hours only';
                   console.log('parking during permit time, so paint street sweeping lines yellow');
-                  polyColor = '0,255,255';  // yellow
+                  // polyColor = '255,255,0';  // yellow
+                  feature.setProperty('color', '255,255,0');
                 }
               }
 
@@ -486,7 +505,7 @@ angular.module('MapServices', ['AdminServices'])
               };
 
               //actually put it on the map
-              factory.map.data.addGeoJson(p);
+              // factory.map.data.addGeoJson(p);  //previous implemenation that painted updated streets/polygons
           }
         }
 
