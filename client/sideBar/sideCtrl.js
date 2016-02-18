@@ -42,39 +42,68 @@ angular.module('spotz.side', ['MapServices'])
     console.log('the time, date, duration object: ', $scope.preview);
   };
 
-  // Event listener that waits until the Google map data is ready
-  // (broadcast is emitted from MapFactory init)
-  $rootScope.$on('googleMapLoaded', function () {
+  var saveRule = function (feature) {
 
-    // Add parking rule to a polygon
-    MapFactory.map.data.addListener('click', function (event) {
-      if ($scope.ShowAddRuleOnClick === true) {
+    if (window.confirm('Are you sure you want to change the rule?')) {
 
-        if (window.confirm('Are you sure you want to change the rule?')) {
+      if (!$scope.rule.permitCode) {
+        console.log('permit code required');
+        return;
+      }
 
-          console.log('sending off rule', event.feature.getProperty('id').toString(), $scope.rule);
-          MapFactory.sendRule(event.feature.getProperty('id').toString(), $scope.rule)
-          .then(function () {
+      if (!$scope.rule.color) {
+        console.log('color required');
+        return;
+      }
 
-            event.feature.setProperty('permitCode', $scope.rule.permitCode);
-            event.feature.setProperty('days', $scope.rule.days);
-            event.feature.setProperty('timeLimit', $scope.rule.timeLimit);
-            event.feature.setProperty('startTime', $scope.rule.startTime);
-            event.feature.setProperty('endTime', $scope.rule.endTime);
-            event.feature.setProperty('color', $scope.rule.color);
+      console.log('sending off rule', feature.getProperty('id').toString(), $scope.rule);
 
-            console.log('\n\nUpdated rules are:', $scope.rule);
+      MapFactory.sendRule(feature.getProperty('id').toString(), $scope.rule)
+      .then(function (response) {
+        console.log('here is the rule', response.data);
+        var newRule = {
+          id: response.data.id,
+          permitCode:response.data.permitCode,
+          days: response.data.days,
+          timeLimit: response.data.timeLimit,
+          startTime: response.data.startTime,
+          endTime: response.data.endTime,
+          costPerHour: response.data.costPerHour,
+          color: response.data.color,
+        };
 
-          });
+        if (Array.isArray(feature.getProperty('rules'))) {
+          feature.getProperty('rules').push(newRule);
+        }else {
+          feature.setProperty('rules', [newRule]);
         }
 
-        // DO NOT ERASE!!!
-      } else {
-        console.log('if you want to add a rule, FIRST YOU NEED TO TOGGLE "add rule on click" ');
-      }
-    });
+        MapFactory.refreshTooltipText(feature);
 
-  });
+        console.log('\n\nUpdated rules are:', $scope.rule);
 
+      })
+      .catch(function (err) {
+        console.log('saved failed', err);
+      });
+    }
+
+  };
+
+  $scope.toggleAddRuleMenu = function () {
+    //toggle drop down
+    $scope.ShowAddRuleOnClick = !$scope.ShowAddRuleOnClick;
+  };
+
+  $scope.addRule = function () {
+
+    //make sure a polygon is selected
+    if (MapFactory.selectedFeature && MapFactory.selectedFeature.id !== -1) {
+      saveRule(MapFactory.selectedFeature.feature);
+    } else {
+      console.log('invalid polygon selected.  Try again. ');
+    }
+
+  };
 },
 ]);
