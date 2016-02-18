@@ -23,6 +23,28 @@ angular.module('MapServices', ['AdminServices'])
   //what we return
   var factory = {};
 
+  var convertTime = function (inputTimeString) {
+    return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
+  };
+
+  var removeLeadingZero = function (timeString) {
+    if (timeString.charAt(0) === '0') {
+      return timeString.substring(1);
+    }
+
+    return timeString;
+  };
+
+  var computeGridNumbers = function (coordinates) {
+    var x = coordinates[0];
+    var y = coordinates[1];
+
+    return [
+     Math.ceil(x / stepX),
+     Math.ceil(y / stepY),
+    ];
+  };
+
   // Helper function: Converts time format from 08:12:10 to 081210
   // used for calculations
   function setSelectedFeature(feature) {
@@ -50,19 +72,172 @@ angular.module('MapServices', ['AdminServices'])
     displayedPolygons = {};
   });
 
-  var convertTime = function (inputTimeString) {
-    return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
-  };
+  // listener so we can repaint the map based on user submitted date/time/duration
+  // TODO: Update logic to read parking data
+  $rootScope.$on('previewRequested', function () {
+    // NOTE !!!!! Change these variable names later, since they are also used in when displaying
+    // availablity in the tool tip
 
-  var computeGridNumbers = function (coordinates) {
-    var x = coordinates[0];
-    var y = coordinates[1];
+    console.log('rendering preview');
 
-    return [
-     Math.ceil(x / stepX),
-     Math.ceil(y / stepY),
-    ];
-  };
+    var preview = {
+      time: '',
+      date: '',
+      duration: 2,
+    };
+
+    if ($rootScope.userPreview !== undefined) {
+      preview.time = $rootScope.userPreview.time;
+      preview.date = $rootScope.userPreview.date;
+      if ($rootScope.userPreview.duration !== undefined) {
+        preview.duration = $rootScope.userPreview.duration;
+      }
+    }
+
+    // Convert time format form 08:12:10 to 0812
+    var convPreviewTime = convertTime(preview.time);
+    // console.log(convPreviewTime);
+    convPreviewTime = removeLeadingZero(convPreviewTime);
+    convPreviewTime = Number(convPreviewTime);  // number string becomes an integer
+    //var x = +"1000"; another way to convert an string integer to a real integer
+
+    var convStartTime = '';
+    var convEndTime = '';
+
+    // change into format HHMM  (hour Min Seconds)
+    // example: 2 hours -> 2 changes to 200
+    var convPreviewDuration = preview.duration + '00';
+    convPreviewDuration = Number(convPreviewDuration); // number string becomes an integer
+
+    // loop through each polygon/line and change its color
+    factory.map.data.forEach(function (feature) {
+      var poly = {
+        rules: feature.getProperty('rules'),
+        id: feature.getProperty('id'),
+      };
+
+      var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
+
+      if (poly.rules && poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
+        //we have a line
+
+        // convert the time string so it can be used in a calculation
+        convStartTime = convertTime(poly.rules[0].startTime);
+        convEndTime = convertTime(poly.rules[0].endTime);
+
+        // remove leading zeros, if exist
+        convStartTime = removeLeadingZero(convStartTime);
+        convEndTime = removeLeadingZero(convEndTime);
+
+        // convert the number strings to integers
+        convStartTime = Number(convStartTime);
+        convEndTime = Number(convEndTime);
+
+        // console.log('\n\n\nthe rules of each line: ', poly.rules[0]);
+
+        // All Street sweeping day possiblilities
+        var streetSweepingObj = {
+          '1st Mon': true, '2nd Mon': true, '3rd Mon': true, '4th Mon': true,
+          '1st Tue': true, '2nd Tue': true, '3rd Tue': true, '4th Tue': true,
+          '1st Wed': true, '2nd Wed': true, '3rd Wed': true, '4th Wed': true,
+          '1st Thurs': true, '2nd Thurs': true, '3rd Thurs': true, '4th Thurs': true,
+          '1st Fri': true, '2nd Fri': true, '3rd Fri': true, '4th Fri': true,
+        };
+
+        // this first if statement is prob not needed
+        if (streetSweepingObj[poly.rules[0].days]) {
+
+          // Check for Sat or Sunday
+          if (userDay === 0 || userDay === 6) {
+            // paint the object green because no street sweeping on the weekends
+            feature.setProperty('color', '0,255,0');
+          } else {
+
+            // This block of code will convert the user submitted date into
+            // the weekday of the month it is (Example: 3rd Monday of the month)
+            var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
+
+            // Ex: Mon Feb 15 2016 00:00:00
+            var date = preview.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
+            var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
+
+            // take the date, divide by 7 and round up
+            // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
+            var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
+
+            // Check if the preview date and time, intersect with the sweeping date and time
+            if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
+              // parking during street sweeping time, so paint street sweeping lines red
+              feature.setProperty('color', '255,0,0');
+            } else {
+
+              if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) > convStartTime) && ((convPreviewTime + convPreviewDuration) < convEndTime)) {
+                // parking BEFORE street sweeping time, BUT duration goes into ss time, so paint street sweeping lines red');
+                feature.setProperty('color', '255,0,0');
+
+              } else if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convEndTime) && ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
+                // parking AFTER street sweeping time, BUT duration goes into ss time so paint street sweeping lines red
+                feature.setProperty('color', '255,0,0');
+
+              } else {
+                //parking on a weekday, but outside of sweeping time so paint street sweeping lines green
+                feature.setProperty('color', '0,255,0');
+              }
+
+            }
+
+          }
+
+        }
+
+      } else {
+        //we have a polygon
+        if (poly.rules && poly.rules[0] !== undefined) {
+
+          //Grab the permit days (M,T,W...) and put them in an array
+          var daysArray = poly.rules[0].days.split(',');
+
+          // convert the time so it can be used in a calculation
+          convStartTime = convertTime(poly.rules[0].startTime);
+          convEndTime = convertTime(poly.rules[0].endTime);
+
+          // remove leading zeros, if exist
+          convStartTime = removeLeadingZero(convStartTime);
+          convEndTime = removeLeadingZero(convEndTime);
+
+          //convert number strings into actual integers
+          convStartTime = Number(convStartTime);
+          convEndTime = Number(convEndTime);
+
+          // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
+          if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
+            //On Sat or Sunday, no permit needed so paint the polygons green.');
+            feature.setProperty('color', '0,255,0');
+          }  else {
+
+            if (  ((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
+              ((convPreviewTime > convEndTime) &&  ((convPreviewTime + convPreviewDuration - 2400) < convStartTime)) ) {
+              // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
+              console.log('parking outside of permit time, so paint the permit zones green');
+              // polyColor = '255,192,203';  // pink fix later, need to consider duration
+              // polyColor = '0,255,0';
+              feature.setProperty('color', '0,255,0');
+            } else {
+              // parkingMessage = 'You can park here for two hours only';
+              console.log('parking during permit time, so so paint the permit zones yellow');
+
+              // polyColor = '255,255,0';  // yellow
+              feature.setProperty('color', '255,255,0');
+            }
+          }
+
+        }
+      }
+
+    });
+  });  // End of code block that redraw the map based on date/time
+  // *********************
+  // *********************
 
   //get parking polygons + rules from server
   factory.fetchParkingZones = function (coordinates) {
@@ -300,7 +475,9 @@ angular.module('MapServices', ['AdminServices'])
 
     } else if (preview.time !== '') {  //Sample Time submitted.  Display parking availability
 
-      // Convert time format form 08:12:10 to 081210
+      // NOTE update these to use removeLeadingZero function, works without it for now
+      // and change them to real integers
+      // Convert time format form 08:12:10 to 0812
       var convPreviewTime = convertTime(preview.time);
       var convStartTime = convertTime(polygonRules.startTime);
       var convEndTime = convertTime(polygonRules.endTime);
@@ -354,7 +531,7 @@ angular.module('MapServices', ['AdminServices'])
         }
 
       } else {
-        // Moused over Permit Zone selected
+        // If user clicked a Permit Zone polygon (changed from 'mouse over')
         // thus polygonRuls.days will be (M, T, W, Th, F and possibly Sat)
 
         // console.log('\n\nRules:', polygonRules);
@@ -385,6 +562,9 @@ angular.module('MapServices', ['AdminServices'])
 
     return rulesToDisplay;
   }
+
+
+
 
   //to save a parking rule for a given zone id
   factory.sendRule = function (id, rule) {

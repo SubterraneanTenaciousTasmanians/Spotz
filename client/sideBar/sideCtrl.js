@@ -6,8 +6,6 @@ angular.module('spotz.side', ['MapServices'])
   $scope.ShowAddRuleOnClick = false;
   $scope.showMobilePreview = false;
   $scope.preview = {};
-  // $scope.preview.date = $filter("date")(Date.now(), 'MM/dd/yyyy');
-  // $scope.preview.date = moment().calendar();
 
   $scope.toggleAddRule = function () {
     console.log('Add rule was clicked!');
@@ -40,6 +38,7 @@ angular.module('spotz.side', ['MapServices'])
   $scope.savePreviewInput = function () {
     $rootScope.userPreview = $scope.preview;
     console.log('the time, date, duration object: ', $scope.preview);
+    $rootScope.$broadcast('previewRequested');
   };
 
   var saveRule = function (feature) {
