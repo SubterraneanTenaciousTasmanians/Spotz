@@ -36,6 +36,14 @@ angular.module('MapServices', ['AdminServices'])
     return moment(inputTimeString, 'HH:mm:ss').format('HHmm');
   };
 
+  var removeLeadingZero = function (timeString) {
+    if (timeString.charAt(0) === '0') {
+      return timeString.substring(1);
+    };
+
+    return timeString;
+  };
+
   var computeGridNumbers = function (coordinates) {
     var x = coordinates[0];
     var y = coordinates[1];
@@ -96,11 +104,6 @@ angular.module('MapServices', ['AdminServices'])
 
         boundary = JSON.parse(poly.boundary);
         if (poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
-
-          /* add for testing only
-          console.log('\nthe rules of each line: ', poly.rules);
-          console.log('userPreview: ', $rootScope.userPreview);
-          */
 
           //we have a line
           p = {
@@ -204,7 +207,10 @@ angular.module('MapServices', ['AdminServices'])
 
         } else if (preview.time !== '') {  //Sample Time submitted.  Display parking availability
 
-          // Convert time format form 08:12:10 to 081210
+
+          // NOTE update these to use removeLeadingZero function, works without it for now
+          // and change them to real integers
+          // Convert time format form 08:12:10 to 0812
           var convPreviewTime = convertTime(preview.time);
           var convStartTime = convertTime(polygonRules.startTime);
           var convEndTime = convertTime(polygonRules.endTime);
@@ -223,8 +229,8 @@ angular.module('MapServices', ['AdminServices'])
 
           var parkingMessage = '';
 
-          // Clicked a street Sweeping Segment  (changed from 'mouse over')
-          // thus polygon rules will be a street sweeping day
+          // User clicked a street Sweeping Segment  (changed from 'mouse over')
+          // thus polygon rules will be a street sweeping data/rules
           // that is listed in the streetSweepingObj (Example: 4th Fri, 2nd Weds, etc)
           if (streetSweepingObj[polygonRules.days]) {
 
@@ -246,10 +252,7 @@ angular.module('MapServices', ['AdminServices'])
               // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
               var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
 
-              // console.log('Correct day: ', weekdayOfTheMonth);
-              // console.log('Street Sweeping day is: ', polygonRules.days);
-
-              // Check if the preview date and time, matches the sweeping date and time
+              // Check if the preview date and time, intersects with street sweeping date and time
               if ((polygonRules.days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
                 parkingMessage = 'WARNING: Street sweeping is occuring here <br> on the date and time you entered.';
               }
@@ -258,12 +261,11 @@ angular.module('MapServices', ['AdminServices'])
             }
 
           } else {
-            // Clicked a Permit Zone polygon (changed from 'mouse over')
-            // thus polygonRuls.days will be (M, T, W, Th, F and possibly Sat)
+            // User clicked a Permit Zone polygon (changed from 'mouse over')
+            // thus polygonRules.days will be (M, T, W, Th, F and possibly Sat)
 
             // console.log('\n\nRules:', polygonRules);
             var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
-            //console.log('Days array', daysArray);
 
             parkingMessage = '';
 
@@ -291,13 +293,8 @@ angular.module('MapServices', ['AdminServices'])
         infowindow.open(factory.map);
       });
 
-      //  *****************************
-      // ***************
-      // Here's where we want to add a listener so we can redraw the map based on date/time
+      // Add a listener so we can redraw the map based on user submitted date/time/duration
       $rootScope.$on('previewRequested', function () {
-        console.log('time to redraw the map since a preview was requested');
-        console.log('date and time form use: ', $rootScope.userPreview);
-
         // NOTE !!!!! Change these variable names later, since they are also used in when displaying
         // availablity in the tool tip
 
@@ -309,64 +306,51 @@ angular.module('MapServices', ['AdminServices'])
         if ($rootScope.userPreview !== undefined) {
           preview.time = $rootScope.userPreview.time;
           preview.date = $rootScope.userPreview.date;
+          preview.duration = $rootScope.userPreview.duration;
         }
 
         var polygonRules = {};
 
-        // Convert time format form 08:12:10 to 081210
+        // Convert time format form 08:12:10 to 0812
         var convPreviewTime = convertTime(preview.time);
+        convPreviewTime = removeLeadingZero(convPreviewTime);
+        convPreviewTime = Number(convPreviewTime);  // number string becomes an integer
+        //var x = +"1000"; another way to convert an string integer to a real integer
+
         var convStartTime = '';
         var convEndTime = '';
 
-        console.log('display updates: ', convPreviewTime, convStartTime, convEndTime);
-        var testSweepingIDArray = [];
+        // change into format HHMM  (hour Min Seconds)
+        // example: 2 hours -> 2 changes to 200
+        var convPreviewDuration = preview.duration + '00';
+        convPreviewDuration = Number(convPreviewDuration); // number string becomes an integer
 
         // loop through each polygon/line and change its color
         factory.map.data.forEach(function (feature, i) {
-        // data.forEach(function (poly, i) {  //previous implemenation that painted updated streets/polygons
           var poly = {
             rules: feature.getProperty('rules'),
             id: feature.getProperty('id'),
           };
-
-
-          // add for testing only
-          //console.log('\n\n\nthe rules of each line or polygon: ', poly.rules);
-
-          //check if we already displayed this polygon
-          // if (displayedPolygons[poly.id]) {
-          //   console.log('already displayed this polygon');
-          //   return;
-          //  }
-
-          //if we made it here, we need to display this polygon
-          //mark polygon as displayed
-          // displayedPolygons[poly.id] = true;
-
-          //color the zone
-          // polyColor = '0,0,0';
-          // if (poly.rules[0]) {
-          //   polyColor = poly.rules[0].color;
-          // }
-
-          //make a geoJSON object to be placed on the map
-          //http://geojson.org/geojson-spec.html
-          //google maps accepts this type of data
-
-          //boundary = JSON.parse(poly.boundary);  //previous implemenation that painted updated streets/polygons
 
           var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
 
           if (poly.rules && poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
             //we have a line
 
-            // convert the time so it can be used in a calculation
+            // convert the time string so it can be used in a calculation
             convStartTime = convertTime(poly.rules[0].startTime);
             convEndTime = convertTime(poly.rules[0].endTime);
 
-            // console.log(convPreviewTime, convStartTime, convEndTime);
+            // remove leading zeros, if exist
+            convStartTime = removeLeadingZero(convStartTime);
+            convEndTime = removeLeadingZero(convEndTime);
 
-            console.log('\n\n\nthe rules of each line: ', poly.rules[0]);
+            // convert the number strings to integers
+            convStartTime = Number(convStartTime);
+            convEndTime = Number(convEndTime);
+
+
+            // console.log('\n\n\nthe rules of each line: ', poly.rules[0]);
 
             // All Street sweeping day possiblilities
             var streetSweepingObj = {
@@ -380,14 +364,9 @@ angular.module('MapServices', ['AdminServices'])
             // this first if statement is prob not needed
             if (streetSweepingObj[poly.rules[0].days]) {
 
-              testSweepingIDArray.push(poly.id);
-
               // Check for Sat or Sunday
               if (userDay === 0 || userDay === 6) {
                 // paint the object green because no street sweeping on the weekends
-                console.log('all street sweeping should be green');
-                //polyColor = '0,255,0';
-                console.log('Polygon map color is: ', feature.getProperty('color'));
                 feature.setProperty('color', '0,255,0');
               } else {
 
@@ -403,73 +382,72 @@ angular.module('MapServices', ['AdminServices'])
                 // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
                 var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
 
-                // console.log('Correct day: ', weekdayOfTheMonth);
-                // console.log('Street Sweeping day is: ', polygonRules.days);
-
-                // Check if the preview date and time, matches the sweeping date and time
+                // Check if the preview date and time, intersect with the sweeping date and time
                 if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
-                  // parkingMessage = 'WARNING: Street sweeping is occuring here <br> on the date and time you entered.';
-                  console.log('parking during street sweeping time, so paint street sweeping lines red');
-                  // polyColor = '255,0,0';
+                  // parking during street sweeping time, so paint street sweeping lines red
                   feature.setProperty('color', '255,0,0');
 
 
                 } else {
-                  console.log('parking on a weekday, but outside of sweeping time so paint street sweeping lines green');
-                  // polyColor = '0,255,0';
-                  feature.setProperty('color', '0,255,0');
+
+                  if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) > convStartTime) && ((convPreviewTime + convPreviewDuration) < convEndTime)) {
+                    // parking BEFORE street sweeping time, BUT duration goes into ss time, so paint street sweeping lines red');
+                    feature.setProperty('color', '255,0,0');
+
+                  } else if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convEndTime) && ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
+                    // parking AFTER street sweeping time, BUT duration goes into ss time so paint street sweeping lines red
+                    feature.setProperty('color', '255,0,0');
+
+                  } else {
+                    //parking on a weekday, but outside of sweeping time so paint street sweeping lines green
+                    feature.setProperty('color', '0,255,0');
+                  }
 
                 }
 
-                // rulesToDisplay += '<br>' + '<strong style="color:red">' + parkingMessage + '</strong>';
               }
 
             }
 
-            // boundary = JSON.parse(poly.boundary);  //previous implemenation that painted updated streets/polygons
 
-            // Nick line drawing code
-            p = {
-              type: 'Feature',
-              properties:{
-                rules: poly.rules,
-                index: i,
-                color: polyColor,
-                id: poly.id,
-                parkingCode:poly.parkingCode,
-              },
-              geometry:{
-                type: 'LineString',
-                coordinates: boundary,
-              },
-            };
+            // // Nick line drawing code
+            // p = {
+            //   type: 'Feature',
+            //   properties:{
+            //     rules: poly.rules,
+            //     index: i,
+            //     color: polyColor,
+            //     id: poly.id,
+            //     parkingCode:poly.parkingCode,
+            //   },
+            //   geometry:{
+            //     type: 'LineString',
+            //     coordinates: boundary,
+            //   },
+            // };
 
-            //actually put it on the map
-            console.log('going to add it to the map: ', p);
-            // factory.map.data.addGeoJson(p);   //previous implemenation that painted updated streets/polygons
-          }
-          else {
+          } else {
             //we have a polygon
-
-            // write the code
             if (poly.rules && poly.rules[0] !== undefined) {
 
-              var daysArray = poly.rules[0].days.split(',');  //Grab the permit days and put them in an array
-              //console.log('Days array', daysArray);
+              //Grab the permit days (M,T,W...) and put them in an array
+              var daysArray = poly.rules[0].days.split(',');
 
               // convert the time so it can be used in a calculation
               convStartTime = convertTime(poly.rules[0].startTime);
               convEndTime = convertTime(poly.rules[0].endTime);
 
-              // console.log(convPreviewTime, convStartTime, convEndTime);
+              // remove leading zeros, if exist
+              convStartTime = removeLeadingZero(convStartTime);
+              convEndTime = removeLeadingZero(convEndTime);
 
-              console.log('\n\n\nthe rules of each polygon: ', poly.rules[0]);
+              //convert number strings into actual integers
+              convStartTime = Number(convStartTime);
+              convEndTime = Number(convEndTime);
 
               // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
               if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
-                // parkingMessage = 'NO PERMIT REQUIRED TO PARK HERE for the date entered.';
-                console.log('Its Sat or Sunday, no permit needed so paint the polygons green.');
-                // polyColor = '0,255,0';
+                //On Sat or Sunday, no permit needed so paint the polygons green.');
                 feature.setProperty('color', '0,255,0');
               }  else {
 
@@ -477,32 +455,32 @@ angular.module('MapServices', ['AdminServices'])
                 // SOLA FIX THIS TO USE DURATION ALSO!!!!
                 if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
                   // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
-                  console.log('parking outside of permit time, so paint street sweeping lines green (for now)');
+                  console.log('parking outside of permit time, so paint the permit zones green (for now)');
                   // polyColor = '255,192,203';  // pink fix later, need to consider duration
                   // polyColor = '0,255,0';
                   feature.setProperty('color', '0,255,0');
                 } else {
                   // parkingMessage = 'You can park here for two hours only';
-                  console.log('parking during permit time, so paint street sweeping lines yellow');
+                  console.log('parking during permit time, so so paint the permit zones yellow');
                   // polyColor = '255,255,0';  // yellow
                   feature.setProperty('color', '255,255,0');
                 }
               }
 
-              p = {
-                type: 'Feature',
-                properties:{
-                  rules: poly.rules,
-                  index: i,
-                  color: polyColor,
-                  id: poly.id,
-                  parkingCode:poly.parkingCode,
-                },
-                geometry:{
-                  type: 'MultiPolygon',
-                  coordinates: [[boundary]],
-                },
-              };
+              // p = {
+              //   type: 'Feature',
+              //   properties:{
+              //     rules: poly.rules,
+              //     index: i,
+              //     color: polyColor,
+              //     id: poly.id,
+              //     parkingCode:poly.parkingCode,
+              //   },
+              //   geometry:{
+              //     type: 'MultiPolygon',
+              //     coordinates: [[boundary]],
+              //   },
+              // };
 
               //actually put it on the map
               // factory.map.data.addGeoJson(p);  //previous implemenation that painted updated streets/polygons
@@ -514,8 +492,8 @@ angular.module('MapServices', ['AdminServices'])
 
         });
 
-        console.log('\nLength of array: ', testSweepingIDArray.length);
-        console.log('\nAll sweeping IDs: ', testSweepingIDArray.sort());
+        // console.log('\nLength of array: ', testSweepingIDArray.length);
+        // console.log('\nAll sweeping IDs: ', testSweepingIDArray.sort());
 
         //how to set the color based on the rule table
         factory.map.data.setStyle(function (feature) {
