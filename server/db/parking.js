@@ -49,6 +49,19 @@ db.saveRule = function (zoneId, ruleAttrs) {
   });
 };
 
+db.unlinkRulefromZone = function (zoneId, ruleId) {
+
+  console.log('about to delete it', zoneId, ruleId);
+
+  return new Zones({ id:zoneId }).fetch({ withRelated:['rules'] })
+  .then(function (item) {
+    return item.related('rules').detach(ruleId).then(function (data) {
+      return data;
+    });
+
+  });
+};
+
 // Based on the google coordinates, find the corresponding WorldGrid square
 // then find the permit zones that are part of that WorldGrid Square
 db.findPermitZones = function (coordinates) {

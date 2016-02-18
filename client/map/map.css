@@ -27,7 +27,7 @@ html, body {
   position: absolute;
   top: 48px;
   left: 300px;
-  width: 600px;
+  width: 400px;
   border-radius: 5px;
   background: #76b52d; /* Old browsers */
   background: -moz-linear-gradient(top,  #76b52d 0%, #c3dc90 100%); /* FF3.6-15 */
@@ -74,10 +74,10 @@ html, body {
   font-family: Roboto;
   font-size: 15px;
   font-weight: 300;
-  margin-left: 12px;
+  margin: 5px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
-  width: 300px;
+  width: 95%;
 }
 
 #pac-input:focus {
@@ -105,4 +105,21 @@ html, body {
   padding: 28% 45%;
   z-index: 1000;
   background-color: rgba(255, 253, 250, 0.4);
+}
+
+.delete-rule{
+  color: #f00;
+  cursor: pointer;
+  text-align: center;
+  background-color: #FFC7C7;
+  padding: 1px;
+  width: 60%;
+}
+
+.delete-polygon{
+  color: #f00;
+  cursor: pointer;
+  text-align: center;
+  background-color: #FFC7C7;
+  padding: 1px;
 }

@@ -9,6 +9,10 @@
   z-index: 2;
 }
 
+.donation label {
+  padding-right: 10px;
+}
+
 .stripeForm {
   position: absolute;
   top: 20%;

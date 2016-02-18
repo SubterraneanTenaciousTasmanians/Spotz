@@ -1,19 +1,85 @@
 'use strict';
 angular.module('DrawingServices', [])
 
-.factory('DrawingFactory', ['$http', 'MapFactory', '$cookies',function ($http, MapFactory, $cookies) {
+.factory('DrawingFactory', ['$http', 'MapFactory', '$cookies', function ($http, MapFactory, $cookies) {
   var factory = {};
-  var pointsDrawn = [];
-  var drawnShape = [];
+
+  //newly created feature
+  var newFeature = {
+    points: [],
+    shape: [],
+    handle: undefined,
+  };
+
+  //currrently selected feature
+  var selectedFeature = {
+    feature: undefined,
+    flashingColorEventhandle: undefined,
+    id:-1,
+    color:'0,0,0',
+  };
+
   var geoPoly = {};
+
+  //click handles
   var addPointOnClickHandle;
   var addPointOnDataClickHandle;
   var selectPolygonOnClickHandle;
-  var shapeHandle;
-  var selectedPolygonId;
-  var flashingPolygonHandle;
-  var selectedFeature;
-  var selectedColor;
+
+  function setSelectedFeature(feature) {
+    //default values
+    var id = -1;
+    var color = '0,0,0';
+
+    if (feature) {
+      id = feature.getProperty('id').toString();
+      color = feature.getProperty('color');
+    }
+
+    //set the map factory so other UI components know about it
+    MapFactory.selectedFeature = {
+      feature:feature,
+      id:id,
+      color:color,
+    };
+
+    //set local short-hand variable
+    selectedFeature = MapFactory.selectedFeature;
+  }
+
+  function selectPolygon(feature) {
+    //restore the last selected object
+    if (selectedFeature.feature) {
+      clearInterval(selectedFeature.flashingColorEventhandle);
+      selectedFeature.feature.setProperty('color', selectedFeature.color);
+    }
+
+    //update the previous feature to the currently selected feature
+    setSelectedFeature(feature);
+
+    //make the newly selected object flash
+    var flashColorId = 0;
+    selectedFeature.flashingColorEventhandle = setInterval(function () {
+      if (flashColorId === 0) {
+        feature.setProperty('color', '0,0,255');
+        flashColorId = 1;
+      } else {
+        feature.setProperty('color', '0,255,0');
+        flashColorId = 0;
+      }
+    }, 500);
+
+  }
+
+  function deselectPolygon() {
+    //restore the last selected object
+    if (selectedFeature.feature) {
+      clearInterval(selectedFeature.flashingColorEventhandle);
+      selectedFeature.feature.setProperty('color', selectedFeature.color);
+    }
+
+    setSelectedFeature();
+  }
 
   factory.selectPolygonOnClick = function (enabled) {
 
@@ -29,40 +95,24 @@ angular.module('DrawingServices', [])
     }
 
     function selectPolygonOnClick(event) {
-
-      //restore the last selected object
-      if (selectedFeature) {
-        clearInterval(flashingPolygonHandle);
-        selectedFeature.setProperty('color', selectedColor);
-      }
-
-      //make the newly selected object flash
-      var flashColorId = 0;
-      flashingPolygonHandle = setInterval(function () {
-        if (flashColorId === 0) {
-          event.feature.setProperty('color', '0,0,255');
-          flashColorId = 1;
-        } else {
-          event.feature.setProperty('color', '0,255,0');
-          flashColorId = 0;
-        }
-      }, 500);
-
-      //update the previous feature to the currently selected feature
-      selectedFeature = event.feature;
-      selectedPolygonId = event.feature.getProperty('id').toString();
-      selectedColor = event.feature.getProperty('color');
+      selectPolygon(event.feature);
     }
 
     function nudgePolygonOnArrow(event) {
       var code = (event.keyCode ? event.keyCode : event.which);
-      console.log(code);
+
       var keyCodes = {
         38:'up',
         40:'down',
         37:'left',
         39:'right',
       };
+
+      //check if the arrowkeys are pressed
+      if (!keyCodes[code]) {
+        return;
+      }
+
       var stepSize = 0.00001;
 
       var movement = {
@@ -84,7 +134,7 @@ angular.module('DrawingServices', [])
         },
       };
 
-      selectedFeature.toGeoJson(function (geoJson) {
+      selectedFeature.feature.toGeoJson(function (geoJson) {
 
         console.log('geoJson', geoJson);
         if (geoJson.properties.rules[0] && geoJson.properties.rules[0].permitCode.indexOf('sweep') !== -1) {
@@ -102,13 +152,13 @@ angular.module('DrawingServices', [])
         }
 
         //remove the existing feature from the map
-        MapFactory.map.data.remove(selectedFeature);
+        MapFactory.map.data.remove(selectedFeature.feature);
+
+        //add the new feature to the map
         var newFeatures = MapFactory.map.data.addGeoJson(geoJson);
 
         //update the selected feature to the one we just created
-        selectedFeature = newFeatures[0];
-        selectedPolygonId = newFeatures[0].getProperty('id').toString();
-        selectedColor = newFeatures[0].getProperty('color');
+        selectPolygon(newFeatures[0]);
       });
 
     }
@@ -117,17 +167,20 @@ angular.module('DrawingServices', [])
 
   factory.removeSelectedPolygon = function () {
 
-    if (!selectedPolygonId) {
-      console.log('need to select a polygon first');
+    if (parseInt(selectedFeature.id) === -1) {
+      console.log('need to select a polygon that can be deleted');
+      return;
     }
 
+    console.log('requesting to remove', selectedFeature.id);
+
     if (confirm('Are you sure you want to delete this shape?')) {
-      factory.deletePolygon(selectedPolygonId).then(function () {
-        MapFactory.map.data.remove(selectedFeature);
+      factory.deletePolygon(selectedFeature.id).then(function () {
+        MapFactory.map.data.remove(selectedFeature.feature);
         console.log('deleted!');
       });
     } else {
-      event.feature.setProperty('color', selectedColor);
+      event.feature.setProperty('color', selectedFeature.color);
     }
   };
 
@@ -135,43 +188,68 @@ angular.module('DrawingServices', [])
 
     if (enabled) {
       console.log('points add mode enabled');
+      deselectPolygon();
       addPointOnClickHandle = MapFactory.map.addListener('click', addPointOnClick);
       addPointOnDataClickHandle = MapFactory.map.data.addListener('click', addPointOnClick);
     } else {
+      console.log('points add mode disabled');
       if (addPointOnClickHandle) {
-        MapFactory.mapEvents.removeListener(addPointOnClickHandle);
-        MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+        if (newFeature.handle &&  newFeature.handle.getProperty('id') === -1) {
+          if (confirm('You have a drawn shape which is not yet saved, would you like to save it?')) {
+            factory.savePolygon().then(function () {
+              MapFactory.mapEvents.removeListener(addPointOnClickHandle);
+              MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+              addPointOnClickHandle = undefined;
+              addPointOnDataClickHandle = undefined;
+            });
+          }
+        } else {
+          console.log('removing add listeners');
+          MapFactory.mapEvents.removeListener(addPointOnClickHandle);
+          MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+          addPointOnClickHandle = undefined;
+          addPointOnDataClickHandle = undefined;
+        }
+
       }
     }
 
     function addPointOnClick(event) {
 
       var coordinates = [event.latLng.lng(), event.latLng.lat()];
-      pointsDrawn.push(coordinates.slice());
+      newFeature.points.push(coordinates.slice());
 
-      if (shapeHandle) {
-        console.log('removing', shapeHandle[0]);
-        MapFactory.map.data.remove(shapeHandle[0]);
+      if (newFeature.handle) {
+        console.log('removing', newFeature.handle);
+        MapFactory.map.data.remove(newFeature.handle);
+        newFeature.handle = undefined;
       }
 
-      drawnShape = pointsDrawn.slice();
-      drawnShape.push(drawnShape[0].slice());
-      console.log('painting', [drawnShape]);
+      newFeature.shape = newFeature.points.slice();
+      newFeature.shape.push(newFeature.shape[0].slice());
+      console.log('painting', [newFeature.shape]);
 
       geoPoly = {
         type: 'Feature',
-        properties:{},
+        properties:{
+          rules: [],
+          color: '0,0,0',
+          id: -1,
+          parkingCode:'',
+        },
         geometry:{
           type:'MultiPolygon',
-          coordinates: [[drawnShape]],
+          coordinates: [[newFeature.shape]],
         },
       };
-      shapeHandle = MapFactory.map.data.addGeoJson(geoPoly);
+      newFeature.handle = MapFactory.map.data.addGeoJson(geoPoly)[0];
+      selectPolygon(newFeature.handle);
     }
 
   };
 
   factory.deletePolygon = function (polyId) {
+
     var token = $cookies.get('credentials');
 
     return $http.delete('/api/zones/' + polyId + '/' + token)
@@ -187,11 +265,12 @@ angular.module('DrawingServices', [])
   };
 
   factory.erasePolygon = function () {
-    pointsDrawn = [];
-    drawnShape = [];
-    if (shapeHandle) {
-      console.log('removing', shapeHandle[0]);
-      MapFactory.map.data.remove(shapeHandle[0]);
+    if (newFeature.handle) {
+      console.log('removing', newFeature.handle);
+      MapFactory.map.data.remove(newFeature.handle);
+      newFeature.handle = undefined;
+      newFeature.points = [];
+      newFeature.shape = [];
     }
   };
 
@@ -200,21 +279,29 @@ angular.module('DrawingServices', [])
     var payload = {
       polygons:[
         {
-          coordinates:[drawnShape],
+          coordinates:[newFeature.shape],
         },
       ],
       token: token,
     };
 
-    $http.post('/api/zones', payload)
+    return $http.post('/api/zones', payload)
     .success(function (data) {
       console.log('saved!', data);
+      //save the id from the server so it can be updated
+      newFeature.handle.setProperty('id', data.id);
+
+      //reset the points drawn so a new polygon can be created
+      newFeature.handle = undefined;
+      newFeature.points = [];
+      newFeature.shape = [];
+
+      deselectPolygon();
     })
     .error(function (err) {
       console.log('save failed', err);
     });
 
-    console.log('saved');
   };
 
   return factory;
