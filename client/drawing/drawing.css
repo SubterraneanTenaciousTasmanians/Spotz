@@ -1,11 +1,15 @@
 .drawing{
-  min-width:100px;
-  min-height:100px;
-  background-color: #fff;
+  min-width: 100px;
+  min-height: 100px;
+  background-color: #FFFFFF;
   position: absolute;
-  right:0;
+  right: 0;
   top: 60px;
-  z-index: 5;
+  z-index: 1;
+  padding: 15px;
+  border: 3px solid#93C452;
+  margin-right: 8px;
+  border-radius: 5px;
 }
 
 .drawing button{
