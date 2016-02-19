@@ -29,7 +29,7 @@ var env = require('node-env-file');
  * comment out before deployment
  */
 
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
