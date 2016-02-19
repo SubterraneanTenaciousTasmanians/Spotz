@@ -123,24 +123,24 @@ verifyToken.post('/photo', function (req, res) {
       return console.error(err);
     }
 
-    gm(__dirname + '/../tmp/123.jpg')
+    gm(__dirname + '/../tmp/copy1.jpeg')
     .monochrome()
-      .write(__dirname + '/../tmp/copy3.jpeg', function (err) {
-        if (err) {
-          return console.dir(arguments);
-        }
+    .write(__dirname + '/../tmp/copy3.jpeg', function (err) {
+      if (err) {
+        return console.dir(arguments);
+      }
 
-        tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
-            if (err) {
-              console.error(err);
-              res.send(err);
-            } else {
-              res.send(text);
-            }
-          });
+      tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
+          if (err) {
+            console.error(err);
+            res.send(err);
+          } else {
+            res.send(text);
+          }
+        });
 
-        console.log('SUCCESSSSS');
-      });
+      console.log('SUCCESSSSS');
+    });
 
   });
 });
