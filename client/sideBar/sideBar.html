@@ -10,12 +10,14 @@
     <span>timeLimit</span><input type="text" ng-model="rule.timeLimit" placeholder="2">
     <span>startTime</span><input type="text" ng-model="rule.startTime" placeholder="07:00">
     <span>endTime</span><input type="text" ng-model="rule.endTime" placeholder="19:00">
+    <span>costPerHour</span><input type="text" ng-model="rule.costPerHour" placeholder="2.00">
     <span>color</span><input type="text" ng-model="rule.color" placeholder="128,0,255">
+    <button ng-click="addRule()">Add Rule to Selected Feature</button>
   </div>
 
 
   <ul>
-    <button ng-click="toggleAddRule()">Add rule on click</button>
+    <button ng-click="toggleAddRuleMenu()">Show/Hide Add Rule Menu</button>
     <button ng-click="showHideGrid()">Show/Hide Grid</button>
     <button ng-click="showHidePermitZones()">Show/Hide Permit Zones</button>
     <button ng-click="showHideStreetSweeping()">Show/Hide Street Sweeping</button>
