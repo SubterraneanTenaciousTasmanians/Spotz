@@ -22,7 +22,7 @@ var tesseract = require('node-tesseract');
 var ParkingDB = require('./../db/parking.js');
 
 //DEV ONLY
-// var env = require('node-env-file');
+var env = require('node-env-file');
 
 /**
  * environment file for developing under a local server
@@ -151,24 +151,24 @@ verifyToken.post('/photo', function (req, res) {
       return console.error(err);
     }
 
-    gm(__dirname + '/../tmp/copy1.jpeg')
+    gm(__dirname + '/../tmp/123.jpg')
     .monochrome()
-    .write(__dirname + '/../tmp/copy3.jpeg', function (err) {
-      if (err) {
-        return console.dir(arguments);
-      }
+      .write(__dirname + '/../tmp/copy3.jpeg', function (err) {
+        if (err) {
+          return console.dir(arguments);
+        }
 
-      tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
-          if (err) {
-            console.error(err);
-            res.send(err);
-          } else {
-            res.send(text);
-          }
-        });
+        tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
+            if (err) {
+              console.error(err);
+              res.send(err);
+            } else {
+              res.send(text);
+            }
+          });
 
-      console.log('SUCCESSSSS');
-    });
+        console.log('SUCCESSSSS');
+      });
 
   });
 });
