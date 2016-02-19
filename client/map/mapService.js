@@ -341,7 +341,7 @@ angular.module('MapServices', ['AdminServices'])
         }
 
         return ({
-           strokeColor: 'rgb(' + feature.getProperty('color') + ')',    // color will be given as '255, 123, 7'
+           strokeColor: 'rgba(' + feature.getProperty('color') + ', 1.0)',    // color will be given as '255, 123, 7'
            fillColor:'rgba(' + feature.getProperty('color')  + ', 0.7)',
            strokeWeight: weight,
          });
