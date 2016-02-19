@@ -24,9 +24,7 @@ module.exports = assignToken;
 /**
  * environment file for developing under a local server
  * comment out before deployment
- */
-
-// env(__dirname + '/../.env');
+ */// env(__dirname + '/../.env');
 
 //KEYS REQUIRED FOR THIRD PARTY API AUTHENTICATION
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
