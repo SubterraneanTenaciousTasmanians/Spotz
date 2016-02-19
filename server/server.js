@@ -36,8 +36,8 @@ app.use(function (req, res, next) {
 //MIDDLEWARE
 app.use(morgan('combined'));
 app.use(express.static(__dirname + '/../client/'));
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyparser.json({ limit: '50mb' }));
+app.use(bodyparser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(device.capture());
 app.use(passport.initialize());
