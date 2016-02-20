@@ -93,6 +93,7 @@ angular.module('MapServices', ['AdminServices'])
     var token = $cookies.get('credentials');
 
     //check if we already downloaded this gridzone
+
     if (downloadedGridZones[JSON.stringify(computeGridNumbers(coordinates))]) {
       console.log('already got it');
       return;
@@ -331,6 +332,7 @@ angular.module('MapServices', ['AdminServices'])
       // thus polygon rules will be a street sweeping day
       // that is listed in the streetSweepingObj (Example: 4th Fri, 2nd Weds, etc)
       if (streetSweepingObj[polygonRules.days]) {
+        // console.log('sweeping cost: ', polygonRules.costPerHour);
 
         // Check for Sat or Sunday
         if (userDay === 0 || userDay === 6) {
@@ -365,6 +367,8 @@ angular.module('MapServices', ['AdminServices'])
         // If user clicked a Permit Zone polygon (changed from 'mouse over')
         // thus polygonRuls.days will be (M, T, W, Th, F and possibly Sat)
 
+        // console.log('polygon cost: ', polygonRules.costPerHour);
+
         // console.log('\n\nRules:', polygonRules);
         var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
         //console.log('Days array', daysArray);
@@ -394,7 +398,6 @@ angular.module('MapServices', ['AdminServices'])
     return rulesToDisplay;
   }
 
-
   function determineMobilePreviewColor(feature) {
 
     var preview = {
@@ -416,6 +419,13 @@ angular.module('MapServices', ['AdminServices'])
         preview.duration = $rootScope.userPreview.duration;
       }
     }
+
+    // TODO Polygon Rules will need to have a parking hours variable!!!
+    // Using a temp variable in the meantime.  DELETE WHEN DB HAS BEEN UPDATED
+    var TEMPmeterStartTime = '04:00:00';  // 4am
+    var TEMPmeterEndTime = '06:00:00'; // 6am
+    var convTEMPmeterStartTime = convertTime(TEMPmeterStartTime);
+    var convTEMPmeterEndTime = convertTime(TEMPmeterEndTime);
 
     // Convert time format form 08:12:10 to 0812
     var convPreviewTime = convertTime(preview.time);
@@ -440,142 +450,189 @@ angular.module('MapServices', ['AdminServices'])
 
     var userDay = preview.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
 
-    if (poly.rules && poly.rules[0] && poly.rules[0].permitCode.indexOf('sweep') !== -1) {
-      //we have a line
+    if (poly.rules && poly.rules[0]) {
 
-      // convert the time string so it can be used in a calculation
-      convStartTime = convertTime(poly.rules[0].startTime);
-      convEndTime = convertTime(poly.rules[0].endTime);
+      // Loop through all of the rules for each polygon
+      for (var i = 0; i < poly.rules.length; i++) {
+        if (poly.rules && poly.rules[i] && poly.rules[i].permitCode.indexOf('sweep') !== -1) {
+          //we have a line
 
-      // remove leading zeros, if exist
-      convStartTime = removeLeadingZero(convStartTime);
-      convEndTime = removeLeadingZero(convEndTime);
+          // convert the time string so it can be used in a calculation
+          convStartTime = convertTime(poly.rules[i].startTime);
+          convEndTime = convertTime(poly.rules[i].endTime);
 
-      // convert the number strings to integers
-      convStartTime = Number(convStartTime);
-      convEndTime = Number(convEndTime);
+          // remove leading zeros, if exist
+          convStartTime = removeLeadingZero(convStartTime);
+          convEndTime = removeLeadingZero(convEndTime);
 
-      // console.log('\n\n\nthe rules of each line: ', poly.rules[0]);
+          // convert the number strings to integers
+          convStartTime = Number(convStartTime);
+          convEndTime = Number(convEndTime);
 
-      // All Street sweeping day possiblilities
-      var streetSweepingObj = {
-        '1st Mon': true, '2nd Mon': true, '3rd Mon': true, '4th Mon': true,
-        '1st Tue': true, '2nd Tue': true, '3rd Tue': true, '4th Tue': true,
-        '1st Wed': true, '2nd Wed': true, '3rd Wed': true, '4th Wed': true,
-        '1st Thurs': true, '2nd Thurs': true, '3rd Thurs': true, '4th Thurs': true,
-        '1st Fri': true, '2nd Fri': true, '3rd Fri': true, '4th Fri': true,
-      };
+          // console.log('\n\n\nthe rules of each line: ', poly.rules[0]);
 
-      // this first if statement is prob not needed
-      if (streetSweepingObj[poly.rules[0].days]) {
-
-        // Check for Sat or Sunday
-        if (userDay === 0 || userDay === 6) {
-          // paint the object green because no street sweeping on the weekends
-          return {
-            color: color.green,
-            show: false,
+          // All Street sweeping day possiblilities
+          var streetSweepingObj = {
+            '1st Mon': true, '2nd Mon': true, '3rd Mon': true, '4th Mon': true,
+            '1st Tue': true, '2nd Tue': true, '3rd Tue': true, '4th Tue': true,
+            '1st Wed': true, '2nd Wed': true, '3rd Wed': true, '4th Wed': true,
+            '1st Thurs': true, '2nd Thurs': true, '3rd Thurs': true, '4th Thurs': true,
+            '1st Fri': true, '2nd Fri': true, '3rd Fri': true, '4th Fri': true,
           };
 
-        } else {
+          // this first if statement is prob not needed
+          if (streetSweepingObj[poly.rules[i].days]) {
 
-          // This block of code will convert the user submitted date into
-          // the weekday of the month it is (Example: 3rd Monday of the month)
-          var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
-
-          // Ex: Mon Feb 15 2016 00:00:00
-          var date = preview.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
-          var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
-
-          // take the date, divide by 7 and round up
-          // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
-          var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
-
-          // Check if the preview date and time, intersect with the sweeping date and time
-          if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
-            // parking during street sweeping time, so paint street sweeping lines red
-            return {
-              color: color.red,
-              show: true,
-            };
-          } else {
-
-            if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) > convStartTime) && ((convPreviewTime + convPreviewDuration) < convEndTime)) {
-              // parking BEFORE street sweeping time, BUT duration goes into ss time, so paint street sweeping lines red');
-              return {
-                color: color.red,
-                show: true,
-              };
-            } else if ((poly.rules[0].days === weekdayOfTheMonth) && (convPreviewTime > convEndTime) && ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
-              // parking AFTER street sweeping time, BUT duration goes into ss time so paint street sweeping lines red
-              return {
-                color: color.red,
-                show: true,
-              };
-            } else {
-              //parking on a weekday, but outside of sweeping time so paint street sweeping lines green
+            // Check for Sat or Sunday
+            if (userDay === 0 || userDay === 6) {
+              // paint the object green because no street sweeping on the weekends
               return {
                 color: color.green,
                 show: false,
               };
+
+            } else {
+
+              // This block of code will convert the user submitted date into
+              // the weekday of the month it is (Example: 3rd Monday of the month)
+              var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
+
+              // Ex: Mon Feb 15 2016 00:00:00
+              var date = preview.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
+              var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
+
+              // take the date, divide by 7 and round up
+              // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
+              var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
+
+              // Check if the preview date and time, intersect with the sweeping date and time
+              if ((poly.rules[i].days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
+                // parking during street sweeping time, so paint street sweeping lines red
+                return {
+                  color: color.red,
+                  show: true,
+                };
+              } else {
+
+                if ((poly.rules[i].days === weekdayOfTheMonth) && (convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) > convStartTime) && ((convPreviewTime + convPreviewDuration) < convEndTime)) {
+                  // parking BEFORE street sweeping time, BUT duration goes into ss time, so paint street sweeping lines red');
+                  return {
+                    color: color.red,
+                    show: true,
+                  };
+                } else if ((poly.rules[i].days === weekdayOfTheMonth) && (convPreviewTime > convEndTime) && ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
+                  // parking AFTER street sweeping time, BUT duration goes into ss time so paint street sweeping lines red
+                  return {
+                    color: color.red,
+                    show: true,
+                  };
+                } else {
+                  //parking on a weekday, but outside of sweeping time so paint street sweeping lines green
+                  return {
+                    color: color.green,
+                    show: false,
+                  };
+                }
+
+              }
+
             }
 
           }
 
-        }
+        } else {
+          //we have a polygon
+          if (poly.rules && poly.rules[i] !== undefined) {
 
-      }
+            //Grab the permit days (M,T,W...) and put them in an array
+            var daysArray = poly.rules[i].days.split(',');
 
-    } else {
-      //we have a polygon
-      if (poly.rules && poly.rules[0] !== undefined) {
+            // convert the time so it can be used in a calculation
+            convStartTime = convertTime(poly.rules[i].startTime);
+            convEndTime = convertTime(poly.rules[i].endTime);
 
-        //Grab the permit days (M,T,W...) and put them in an array
-        var daysArray = poly.rules[0].days.split(',');
+            // remove leading zeros, if exist
+            convStartTime = removeLeadingZero(convStartTime);
+            convEndTime = removeLeadingZero(convEndTime);
 
-        // convert the time so it can be used in a calculation
-        convStartTime = convertTime(poly.rules[0].startTime);
-        convEndTime = convertTime(poly.rules[0].endTime);
+            //convert number strings into actual integers
+            convStartTime = Number(convStartTime);
+            convEndTime = Number(convEndTime);
 
-        // remove leading zeros, if exist
-        convStartTime = removeLeadingZero(convStartTime);
-        convEndTime = removeLeadingZero(convEndTime);
+            // Testing only.  Remove when done.
+            if (poly.rules[i].costPerHour > 0) {
+              console.log('\npolygon with costPerHour > 0', poly.id);
+            }
 
-        //convert number strings into actual integers
-        convStartTime = Number(convStartTime);
-        convEndTime = Number(convEndTime);
+            // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
+            if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
+              if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
+                console.log('Sat/Sun parking outside of permit time, but within METER time, so paint the permit zone yellow');
+                return {
+                  color: color.yellow,  //parking during meter hours
+                  show: true,
+                };
 
-        // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
-        if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
-          //On Sat or Sunday, no permit needed so paint the polygons green.');
-          return {
-            color: color.green,
-            show: true,
-          };
-        }  else {
+              } else {
+                //On Sat or Sunday, no permit needed so paint the polygons green.');
+                return {
+                  color: color.green,
+                  show: true,
+                };
+              }
 
-          if ( ((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
-            ((convPreviewTime > convEndTime) &&  ((convPreviewTime + convPreviewDuration - 2400) < convStartTime))) {
-            // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
-            console.log('parking outside of permit time, so paint the permit zones green');
+            }  else {
+              // console.log('inside block to check the weekday time for permit polygon');
+              // console.log('convPreviewTime convPreviewDuration convStartTime convEndTime')
+              if ( ((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
+                ((convPreviewTime > convEndTime) &&  ((convPreviewTime + convPreviewDuration - 2400) < convStartTime))) {
+                // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
+                // console.log('inside block that says its outside the permit zone limit');
 
-            // polyColor = '255,192,203';  // pink fix later, need to consider duration
-            return {
-              color: color.green,
-              show: true,
-            };
-          } else {
-            // parkingMessage = 'You can park here for two hours only';
-            return {
-              color: color.yellow,
-              show: true,
-            };
+                // check possible situation that its not permit hours, but it is parking meter hours
+                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convTEMPmeterStartTime) && (convPreviewTime < convTEMPmeterEndTime)) ) {
+                  console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone yellow');
+                  return {
+                    color: color.yellow,  //parking during meter hours
+                    show: true,
+                  };
+                }
+
+                // Not within parking meter time, so set the color to green
+                // console.log('parking outside of permit time and meter time, so paint the permit zone green');
+
+                // polyColor = '255,192,203';  // pink fix later, need to consider duration
+                return {
+                  color: color.green,
+                  show: true,
+                };
+
+              } else {  // preview time intersects with PERMIT time
+                // console.log('inside block that says were inside the permit time');
+
+                // check if preview time ALSO intersects with meter hours
+                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
+                  // parkingMessage = 'You can park here for two hours only AND there is a meter';
+                  console.log('you can park here for two hours AND THERE IS A METER', poly.id);
+                  return {
+                    color: color.yellow,
+                    show: true,
+                  };
+                }
+
+                // NOTE: This block is only reached if parking during PERMIT zone hours but not parking METER hours
+                // parkingMessage = 'You can park here for two hours only';
+                return {
+                  color: color.yellow,
+                  show: true,
+                };
+              }
+            }
+
           }
         }
-
       }
     }
-
   }
 
   //to save a parking rule for a given zone id
@@ -629,6 +686,7 @@ angular.module('MapServices', ['AdminServices'])
         center: { lng: -122.26156639099121, lat: 37.86434903305901 },
       });
       factory.mapEvents = google.maps.event;
+
       //save the infowindow in a local variable
       //tooltip
       infowindow = new google.maps.InfoWindow();
