@@ -16,7 +16,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Bcrypt = require('bcrypt');
 
 //DEV ONLY
-// var env = require('node-env-file');
+var env = require('node-env-file');
 
 //EXPORTING HANDLERS
 module.exports = assignToken;

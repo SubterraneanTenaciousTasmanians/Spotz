@@ -74,18 +74,27 @@ angular.module('MapServices', ['AdminServices'])
 
   // listener so we can repaint the map based on user submitted date/time/duration
   // TODO: Update logic to read parking data
+
   $rootScope.$on('previewRequested', function () {
+    setColorBasedOnLogic(determineMobilePreviewColor);
+  });
+
+  factory.filterFeaturesByPermitCodeText = function (text) {
+    setColorBasedOnLogic(filterRulesByPermitCodeText, { text:text });
+  };
+
+  function setColorBasedOnLogic(colorFunction, options) {
     var color;
 
     // loop through each polygon/line and change its color
     factory.map.data.forEach(function (feature) {
-      color = determineMobilePreviewColor(feature);
+      color = colorFunction(feature, options);
       if (color) {
         feature.setProperty('color', color.color);
         feature.setProperty('show', color.show);
       }
     });
-  });
+  }
 
   //get parking polygons + rules from server
   factory.fetchParkingZones = function (coordinates) {
@@ -394,7 +403,6 @@ angular.module('MapServices', ['AdminServices'])
     return rulesToDisplay;
   }
 
-
   function determineMobilePreviewColor(feature) {
 
     var preview = {
@@ -578,6 +586,30 @@ angular.module('MapServices', ['AdminServices'])
 
   }
 
+  function filterRulesByPermitCodeText(feature, options) {
+
+    var rules = feature.getProperty('rules') || [];
+
+    //look for any rules with the input text
+    for (var i = 0; i < rules.length; i++) {
+
+      //color them with their color if it contains the text
+      if (rules[i].permitCode.indexOf(options.text) !== -1) {
+        return {
+          color: rules[i].color,
+          show: true,
+        };
+      }
+    }
+
+    //didn't find it, so just default the color to black
+    return {
+      color:'0,0,0',
+      show:false,
+    };
+
+  }
+
   //to save a parking rule for a given zone id
   factory.sendRule = function (id, rule) {
     //send off the request to store the data
@@ -670,6 +702,7 @@ angular.module('MapServices', ['AdminServices'])
         if (!show) {
           strokeOpacity = 0.3;
           fillOpacity = 0.1;
+          weight = 1;
         }
 
         return ({
@@ -773,7 +806,11 @@ angular.module('MapServices', ['AdminServices'])
         while (currentLine < topRightX) {
           f = {
             type: 'Feature',
-            properties:{},
+            properties:{
+              rules:{
+                permitCode:'gridLine',
+              },
+            },
             geometry:{
               type:'LineString',
               coordinates: [[currentLine, topRightY], [currentLine, bottomLeftY]],
@@ -791,7 +828,11 @@ angular.module('MapServices', ['AdminServices'])
           //line
           f = {
             type: 'Feature',
-            properties:{},
+            properties:{
+              rules:{
+                permitCode:'gridLine',
+              },
+            },
             geometry:{
               type:'LineString',
               coordinates: [[topRightX, currentLine], [bottomLeftX, currentLine]],
