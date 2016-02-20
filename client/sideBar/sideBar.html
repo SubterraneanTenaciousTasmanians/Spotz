@@ -18,11 +18,11 @@
 
   <ul>
     <button ng-click="toggleAddRuleMenu()">Show/Hide Add Rule Menu</button>
-    <button ng-click="showHideGrid()">Show/Hide Grid</button>
-    <button ng-click="showOnly('permit')">Show/Hide Permit Zones</button>
-    <button ng-click="showOnly('meter')">Show/Hide Metered Zones</button>
-    <button ng-click="showOnly('sweep')">Show/Hide Street Sweeping</button>
-    <button ng-click="mobilePreview()">Mobile Preview</button>
+    <button class="{{style.grid}}" ng-click="showOnly('grid')">Hide All</button>
+    <button class="{{style.permit}}" ng-click="showOnly('permit')">Show Only Permit Zones</button>
+    <button class="{{style.meter}}" ng-click="showOnly('meter')">Show Only Meter Zones</button>
+    <button class="{{style.sweep}}" ng-click="showOnly('sweep')">Show Only Street Sweeping</button>
+    <button class="{{style.mobile}}" ng-click="showOnly('mobile')">Mobile Preview</button>
 
     <div class="mobilePreviewFields" ng-show="showMobilePreview">
       <form>

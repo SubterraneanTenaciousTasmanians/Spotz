@@ -6,23 +6,24 @@ var express = require('express');
 var jwt = require('jsonwebtoken');
 
 //RAPH'S STUFF (IMAGE UPLOAD)
-var multer = require('multer');
-var upload = multer({
-   dest: __dirname + '/tmp/',
-   limits: { fileSize: 10000000, files:1 }, //limits filesize to 10mb
- });
-var fs = require('fs');
-var gm = require('gm').subClass({ imageMagick: true });
+// var multer = require('multer');
+// var upload = multer({
+//    dest: __dirname + '/tmp/',
+//    limits: { fileSize: 10000000, files:1 }, //limits filesize to 10mb
+//  });
+// var fs = require('fs');
+// var gm = require('gm').subClass({ imageMagick: true });
 
-var tesseract = require('node-tesseract');
+// var tesseract = require('node-tesseract');
 
 // var okrabyte = require('okrabyte');
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
+var ocrData = require('./../db/ocrData.js');
 
 //DEV ONLY
-var env = require('node-env-file');
+// var env = require('node-env-file');
 
 /**
  * environment file for developing under a local server
@@ -117,30 +118,7 @@ verifyToken.delete('/rule/:polyId/:ruleId/:token', verify, function (req, res) {
 
 //TODO: PHOTO UPLOAD upload.single(''),
 verifyToken.post('/photo', function (req, res) {
-  var decode = new Buffer(req.body.data, 'base64');
-  var copy = fs.writeFile(__dirname + '/../tmp/copy1.jpeg', decode, function (err) {
-    if (err) {
-      return console.error(err);
-    }
-
-    gm(__dirname + '/../tmp/copy1.jpeg')
-    .monochrome()
-    .write(__dirname + '/../tmp/copy3.jpeg', function (err) {
-      if (err) {
-        return console.dir(arguments);
-      }
-
-      tesseract.process(__dirname + '/../tmp/copy3.jpeg', function (err, text) {
-          if (err) {
-            console.error(err);
-            res.send(err);
-          } else {
-            res.send(text);
-          }
-        });
-
-      console.log('SUCCESSSSS');
-    });
-
+  ocrData.create(req.body.data).then(function (res) {
+    res.send(res);
   });
 });
