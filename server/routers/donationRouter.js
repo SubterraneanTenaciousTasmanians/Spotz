@@ -2,13 +2,14 @@
 
 var express = require('express');
 var donationRouter = express.Router();
-var env = require('node-env-file');
+
+// var env = require('node-env-file');
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
 
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 var SECRET_KEY = process.env.SECRETKEY;
 
