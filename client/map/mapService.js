@@ -610,6 +610,57 @@ angular.module('MapServices', ['AdminServices'])
 
   }
 
+  function paintGridLines(map, bottomLeftX, topRightX, bottomLeftY, topRightY) {
+    //these values determine the step size of the grid lines
+    var stepX = 0.018;
+    var stepY = 0.018;
+
+    //paint the vertical grid lines of only what is in the display
+    var currentLine = Math.ceil(bottomLeftX / stepX) * stepX;
+    var f;
+
+    while (currentLine < topRightX) {
+      f = {
+        type: 'Feature',
+        properties:{
+          rules:{
+            permitCode:'gridLine',
+          },
+        },
+        geometry:{
+          type:'LineString',
+          coordinates: [[currentLine, topRightY], [currentLine, bottomLeftY]],
+        },
+      };
+
+      //data format line = [ [point 1], [point 2], ....]
+      factory.map.data.addGeoJson(f);
+      currentLine = currentLine + stepX;
+    }
+
+    //paint the horizontal grid lines of only what is in the display
+    currentLine = Math.ceil(bottomLeftY / stepY) * stepY;
+    while (currentLine < topRightY) {
+      //line
+      f = {
+        type: 'Feature',
+        properties:{
+          rules:{
+            permitCode:'gridLine',
+          },
+        },
+        geometry:{
+          type:'LineString',
+          coordinates: [[topRightX, currentLine], [bottomLeftX, currentLine]],
+        },
+      };
+
+      //data format line = [ [point 1], [point 2], ....]
+      factory.map.data.addGeoJson(f);
+      currentLine = currentLine + stepY;
+    }
+  }
+
   //to save a parking rule for a given zone id
   factory.sendRule = function (id, rule) {
     //send off the request to store the data
@@ -795,54 +846,7 @@ angular.module('MapServices', ['AdminServices'])
         //=======================================
         //display gridlines
 
-        //these values determine the step size of the grid lines
-        var stepX = 0.018;
-        var stepY = 0.018;
-
-        //paint the vertical grid lines of only what is in the display
-        var currentLine = Math.ceil(bottomLeftX / stepX) * stepX;
-        var f;
-
-        while (currentLine < topRightX) {
-          f = {
-            type: 'Feature',
-            properties:{
-              rules:{
-                permitCode:'gridLine',
-              },
-            },
-            geometry:{
-              type:'LineString',
-              coordinates: [[currentLine, topRightY], [currentLine, bottomLeftY]],
-            },
-          };
-
-          //data format line = [ [point 1], [point 2], ....]
-          factory.map.data.addGeoJson(f);
-          currentLine = currentLine + stepX;
-        }
-
-        //paint the horizontal grid lines of only what is in the display
-        currentLine = Math.ceil(bottomLeftY / stepY) * stepY;
-        while (currentLine < topRightY) {
-          //line
-          f = {
-            type: 'Feature',
-            properties:{
-              rules:{
-                permitCode:'gridLine',
-              },
-            },
-            geometry:{
-              type:'LineString',
-              coordinates: [[topRightX, currentLine], [bottomLeftX, currentLine]],
-            },
-          };
-
-          //data format line = [ [point 1], [point 2], ....]
-          factory.map.data.addGeoJson(f);
-          currentLine = currentLine + stepY;
-        }
+        paintGridLines(bottomLeftX,bottomLeftY,factory.map);
 
       });
 
