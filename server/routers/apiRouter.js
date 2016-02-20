@@ -23,7 +23,7 @@ var ParkingDB = require('./../db/parking.js');
 var ocrData = require('./../db/ocrData.js');
 
 //DEV ONLY
-// var env = require('node-env-file');
+var env = require('node-env-file');
 
 /**
  * environment file for developing under a local server

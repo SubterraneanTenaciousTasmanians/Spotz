@@ -419,6 +419,7 @@ angular.module('MapServices', ['AdminServices'])
       green:'0,255,0',
       red:'255,0,0',
       yellow:'255,255,0',
+      orange:'255,165,0',
     };
 
     if ($rootScope.userPreview !== undefined) {
@@ -429,12 +430,6 @@ angular.module('MapServices', ['AdminServices'])
       }
     }
 
-    // TODO Polygon Rules will need to have a parking hours variable!!!
-    // Using a temp variable in the meantime.  DELETE WHEN DB HAS BEEN UPDATED
-    var TEMPmeterStartTime = '04:00:00';  // 4am
-    var TEMPmeterEndTime = '06:00:00'; // 6am
-    var convTEMPmeterStartTime = convertTime(TEMPmeterStartTime);
-    var convTEMPmeterEndTime = convertTime(TEMPmeterEndTime);
 
     // Convert time format form 08:12:10 to 0812
     var convPreviewTime = convertTime(preview.time);
@@ -461,6 +456,10 @@ angular.module('MapServices', ['AdminServices'])
 
     if (poly.rules && poly.rules[0]) {
 
+      // added to keep orange from changing back to yellow in the case of:
+      // one rule turns orange (parking meter cost), but then another rule on
+      // the same polygon (permitzone hours) tries to turn it back to yellow
+      var permitZoneFound = false;
       // Loop through all of the rules for each polygon
       for (var i = 0; i < poly.rules.length; i++) {
         if (poly.rules && poly.rules[i] && poly.rules[i].permitCode.indexOf('sweep') !== -1) {
@@ -576,9 +575,9 @@ angular.module('MapServices', ['AdminServices'])
             // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
             if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
               if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
-                console.log('Sat/Sun parking outside of permit time, but within METER time, so paint the permit zone yellow');
+                console.log('Sat/Sun parking outside of permit time, but within METER time, so paint the permit zone orange');
                 return {
-                  color: color.yellow,  //parking during meter hours
+                  color: color.orange,  //parking during meter hours
                   show: true,
                 };
 
@@ -599,42 +598,64 @@ angular.module('MapServices', ['AdminServices'])
                 // console.log('inside block that says its outside the permit zone limit');
 
                 // check possible situation that its not permit hours, but it is parking meter hours
-                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convTEMPmeterStartTime) && (convPreviewTime < convTEMPmeterEndTime)) ) {
-                  console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone yellow');
+                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
+                  console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone orange');
                   return {
-                    color: color.yellow,  //parking during meter hours
+                    color: color.orange,  //parking during meter hours
                     show: true,
                   };
                 }
 
-                // Not within parking meter time, so set the color to green
-                // console.log('parking outside of permit time and meter time, so paint the permit zone green');
-
-                // polyColor = '255,192,203';  // pink fix later, need to consider duration
-                return {
-                  color: color.green,
-                  show: true,
-                };
-
-              } else {  // preview time intersects with PERMIT time
-                // console.log('inside block that says were inside the permit time');
-
-                // check if preview time ALSO intersects with meter hours
-                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
-                  // parkingMessage = 'You can park here for two hours only AND there is a meter';
-                  console.log('you can park here for two hours AND THERE IS A METER', poly.id);
+                // Not within parking meter time, so set the color to green if a permit zone wasn't found already found
+                // for this polygon
+                if (permitZoneFound){
                   return {
                     color: color.yellow,
                     show: true,
                   };
                 }
 
-                // NOTE: This block is only reached if parking during PERMIT zone hours but not parking METER hours
-                // parkingMessage = 'You can park here for two hours only';
                 return {
-                  color: color.yellow,
+                  color: color.green,
                   show: true,
                 };
+
+              } else {  // preview time intersects with PERMIT/Meter time
+                // console.log('inside block that says were inside the permit time');
+
+                // If there is a meter paint it orange
+                if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
+                  // parkingMessage = 'You can park here for two hours only AND there is a meter';
+                  console.log('There is a meter here, but may / may not be in permit zones.', poly.id);
+                  return {
+                    color: color.orange,
+                    show: true,
+                  };
+                }
+
+                // Handle the possiblity where the there is a meter, but we're not in the meter's time
+                // if ((poly.rules[i].costPerHour > 0)  && !((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))  && permitZoneFound === true) {
+                  // parkingMessage = 'You can park here for two hours only AND there is a meter';
+                //   console.log('There is a meter here, but may / may not be in permit zones.', poly.id);
+                //   meterFound = true;  // used to make sure permit color doesn't override meter color
+                //   return {
+                //     color: color.orange,
+                //     show: true,
+                //   };
+                // }
+
+
+                // Getting here means, parking during permit zone hours AND parking meter rule not encountered yet
+
+                // parkingMessage = 'You can park here for two hours only';
+                permitZoneFound = true;
+                if (poly.rules[i+1] === undefined){ // no more rules ot check for this polygon
+                  return {
+                  color: color.yellow,
+                  show: true,
+                  };
+                }
+
               }
             }
 
