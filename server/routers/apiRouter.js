@@ -118,7 +118,8 @@ verifyToken.delete('/rule/:polyId/:ruleId/:token', verify, function (req, res) {
 
 //TODO: PHOTO UPLOAD upload.single(''),
 verifyToken.post('/photo', function (req, res) {
-  ocrData.create(req.body.data).then(function (res) {
-    res.send(res);
+  console.log('REQEUST BODY ', req.body);
+  ocrData.create(req.body).then(function (data) {
+    res.send(data);
   });
 });
