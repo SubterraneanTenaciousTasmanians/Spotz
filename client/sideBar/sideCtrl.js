@@ -6,6 +6,23 @@ angular.module('spotz.side', ['MapServices'])
   $scope.ShowAddRuleOnClick = false;
   $scope.showMobilePreview = false;
   $scope.preview = {};
+  $scope.style = {};
+
+  //turn all modes on
+  var mode = {
+    grid:false,
+    meter:false,
+    permit:false,
+    sweep:false,
+    mobile:false,
+  };
+
+  var enabledMode = '';
+
+  var style = {
+    true:'enabled',
+    false:'',
+  };
 
   $scope.toggleAddRule = function () {
     console.log('Add rule was clicked!');
@@ -13,25 +30,28 @@ angular.module('spotz.side', ['MapServices'])
   };
 
   // To do: Add this functionality
-  $scope.showHideGrid = function () {
-    console.log('showHideGrid clicked!');
-  };
+  $scope.showOnly = function (newMode) {
 
-  // To do: Add this functionality
-  $scope.showHidePermitZones = function () {
-    console.log('showHidePermitZones was clicked!');
-  };
+    //turn off last mode
+    if (enabledMode) {
+      mode[enabledMode] = false;
+      $scope.style[enabledMode] = style[mode[enabledMode]];
+    }
 
-  // To do: Add this functionality
-  $scope.showHideStreetSweeping = function () {
-    console.log('showHideStreetSweepingwas clicked!');
-  };
+    //turn on this mode
+    mode[newMode] = true;
 
-  $scope.mobilePreview = function () {
-    console.log('mobilePreview was clicked!');
+    //set newMode as the enabled mode
+    enabledMode = newMode;
 
-    // $rootScope.$broadcast('mobilePreviewClicked', );
-    $scope.showMobilePreview = !$scope.showMobilePreview;
+    //set the newMode
+    $scope.style[newMode] = style[mode[newMode]];
+
+    if (newMode === 'mobile') {
+      $scope.showMobilePreview = !$scope.showMobilePreview;
+    }
+
+    MapFactory.filterFeaturesByPermitCodeText(newMode);
   };
 
   //  Grab the preview date and time
