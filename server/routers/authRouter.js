@@ -109,6 +109,10 @@ assignToken.post('/googleOauth', function (req, res) {
 });
 
 assignToken.post('/facebookOauth', function (req, res) {
+  if (!req.body.id) {
+    res.send(409);
+  }
+
   User.read({ facebookId: req.body.id }).then(function (model) {
     if (!model) {
       User.create({ facebookId: req.body.id }).then(function (user) {
