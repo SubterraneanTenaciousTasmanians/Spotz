@@ -16,17 +16,17 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Bcrypt = require('bcrypt');
 
 //DEV ONLY
-// var env = require('node-env-file');
-
-//EXPORTING HANDLERS
-module.exports = assignToken;
-
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
-
+var env = require('node-env-file');
 // env(__dirname + '/../.env');
+
+
+//EXPORTING HANDLERS
+module.exports = assignToken;
+
 
 //KEYS REQUIRED FOR THIRD PARTY API AUTHENTICATION
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;

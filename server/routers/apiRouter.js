@@ -22,14 +22,13 @@ var jwt = require('jsonwebtoken');
 var ParkingDB = require('./../db/parking.js');
 var ocrData = require('./../db/ocrData.js');
 
-//DEV ONLY
-// var env = require('node-env-file');
 
+//DEV ONLY
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
-
+var env = require('node-env-file');
 // env(__dirname + '/../.env');
 
 //EXPORT ROUTER

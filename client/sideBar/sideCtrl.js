@@ -7,6 +7,7 @@ angular.module('spotz.side', ['MapServices'])
   $scope.showMobilePreview = false;
   $scope.preview = {};
   $scope.style = {};
+  $scope.constraints = {};
 
   //turn all modes on
   var mode = {
@@ -29,7 +30,6 @@ angular.module('spotz.side', ['MapServices'])
     $scope.ShowAddRuleOnClick = !$scope.ShowAddRuleOnClick;
   };
 
-  // To do: Add this functionality
   $scope.showOnly = function (newMode) {
 
     //turn off last mode
@@ -46,19 +46,33 @@ angular.module('spotz.side', ['MapServices'])
 
     //set the newMode
     $scope.style[newMode] = style[mode[newMode]];
-
+    console.log(newMode);
     if (newMode === 'mobile') {
       $scope.showMobilePreview = !$scope.showMobilePreview;
+      $scope.showPreview();
+    }else{
+      //set the root scope to the new mode so that we know
+      //how to color newly fetched features
+      $rootScope.constraints.text = newMode;
+
+      //filter the results
+      console.log('rootScope',$rootScope.constraints);
+      MapFactory.filterFeatures($rootScope.constraints);
     }
 
-    MapFactory.filterFeaturesByPermitCodeText(newMode);
   };
 
   //  Grab the preview date and time
-  $scope.savePreviewInput = function () {
-    $rootScope.userPreview = $scope.preview;
-    console.log('the time, date, duration object: ', $scope.preview);
-    $rootScope.$broadcast('previewRequested');
+  $scope.showPreview = function () {
+
+    //set the rootscope so that other parts of the app know the set contraints
+    $rootScope.constraints = $scope.constraints;
+
+    //filter the results
+    $scope.constraints.text = 'mobile';
+    MapFactory.filterFeatures($rootScope.constraints);
+
+
   };
 
   var saveRule = function (feature) {
@@ -124,5 +138,8 @@ angular.module('spotz.side', ['MapServices'])
     }
 
   };
+
+  //intially show the mobile preview
+  $scope.showOnly('mobile');
 },
 ]);
