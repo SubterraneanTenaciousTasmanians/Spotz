@@ -16,17 +16,17 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Bcrypt = require('bcrypt');
 
 //DEV ONLY
-var env = require('node-env-file');
-
-//EXPORTING HANDLERS
-module.exports = assignToken;
-
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
+var env = require('node-env-file');
+// env(__dirname + '/../.env');
 
-env(__dirname + '/../.env');
+
+//EXPORTING HANDLERS
+module.exports = assignToken;
+
 
 //KEYS REQUIRED FOR THIRD PARTY API AUTHENTICATION
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
@@ -109,6 +109,10 @@ assignToken.post('/googleOauth', function (req, res) {
 });
 
 assignToken.post('/facebookOauth', function (req, res) {
+  if (!req.body.id) {
+    res.send(409);
+  }
+
   User.read({ facebookId: req.body.id }).then(function (model) {
     if (!model) {
       User.create({ facebookId: req.body.id }).then(function (user) {

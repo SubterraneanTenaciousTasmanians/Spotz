@@ -22,15 +22,14 @@ var jwt = require('jsonwebtoken');
 var ParkingDB = require('./../db/parking.js');
 var ocrData = require('./../db/ocrData.js');
 
-//DEV ONLY
-var env = require('node-env-file');
 
+//DEV ONLY
 /**
  * environment file for developing under a local server
  * comment out before deployment
  */
-
-env(__dirname + '/../.env');
+var env = require('node-env-file');
+// env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
@@ -118,8 +117,10 @@ verifyToken.delete('/rule/:polyId/:ruleId/:token', verify, function (req, res) {
 
 //TODO: PHOTO UPLOAD upload.single(''),
 verifyToken.post('/photo', function (req, res) {
-  console.log('REQEUST BODY ', req.body);
   ocrData.create(req.body).then(function (data) {
     res.send(data);
+  }, function (err) {
+
+    res.send(err);
   });
 });
