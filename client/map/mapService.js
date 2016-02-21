@@ -298,12 +298,12 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       searchBox = new google.maps.places.SearchBox(document.getElementById('pac-input'));
 
       //set the initial default mobile preview contraints to the current time and day
-      $rootScope.constraints = {
-        date: new Date(),
-        time: moment().format('H:mm'),
-        duration: 1,
-        text:'mobile',
-      };
+      // $rootScope.constraints = {
+      //   date: new Date(),
+      //   time: moment().format('H:mm'),
+      //   duration: 1,
+      //   text:'mobile',
+      // };
 
       //=====================================================
       //enable tooltip display

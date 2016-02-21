@@ -25,6 +25,15 @@ angular.module('spotz.side', ['MapServices'])
     false:'',
   };
 
+  //set the initial default mobile preview contraints to the current time and day
+  $scope.constraints = {
+    date: new Date(),
+    time: moment().format('H:mm'),
+    duration: 1,
+    text:'mobile',
+  };
+  $rootScope.constraints = $scope.constraints;
+
   $scope.toggleAddRule = function () {
     console.log('Add rule was clicked!');
     $scope.ShowAddRuleOnClick = !$scope.ShowAddRuleOnClick;
@@ -47,10 +56,17 @@ angular.module('spotz.side', ['MapServices'])
     //set the newMode
     $scope.style[newMode] = style[mode[newMode]];
     console.log(newMode);
-    if (newMode === 'mobile') {
-      $scope.showMobilePreview = !$scope.showMobilePreview;
+
+    if (newMode === 'mobile' && !$scope.showMobilePreview) {
+      //only run mode if mobile preview is not already clicked
+      $scope.showMobilePreview = true;
       $scope.showPreview();
+
     }else{
+
+      //hide the mobile preview menu
+      $scope.showMobilePreview = false;
+
       //set the root scope to the new mode so that we know
       //how to color newly fetched features
       $rootScope.constraints.text = newMode;
@@ -69,7 +85,7 @@ angular.module('spotz.side', ['MapServices'])
     $rootScope.constraints = $scope.constraints;
 
     //filter the results
-    $scope.constraints.text = 'mobile';
+    $rootScope.constraints.text = 'mobile';
     MapFactory.filterFeatures($rootScope.constraints);
 
 
