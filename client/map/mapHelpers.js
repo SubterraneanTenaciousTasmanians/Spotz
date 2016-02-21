@@ -191,6 +191,7 @@ angular.module('MapHelpers', ['AdminServices'])
       red:'255,0,0',
       yellow:'255,255,0',
       orange:'255,165,0',
+      black:'0,0,0',
     };
 
     var convPreviewTime = Number(convertTime(contraints.time));
@@ -382,6 +383,11 @@ angular.module('MapHelpers', ['AdminServices'])
         }
       }
     }
+    //this feature has no rules, so color it grey
+    return {
+      color: color.black,
+      show: false,
+    };
   };
 
   helperFactory.getColorOfRule = function(feature, options) {
