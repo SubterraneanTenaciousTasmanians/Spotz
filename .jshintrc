@@ -19,7 +19,6 @@
  "strict"   : true,
  "trailing" : false,
  "smarttabs": true,
- "white"    : false,
  "predef"   : ["moment","google"],
  "globals"   : {
    "$"                    : false,

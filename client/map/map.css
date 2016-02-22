@@ -1,14 +1,14 @@
 html, body {
-  height: 100%;
-  margin: 0;
+  height : 100%;
+  margin : 0;
   padding: 0;
 }
 
 #map {
   height: 100%;
-  width:100%;
-  right: 0;
-  top:0;
+  width : 100%;
+  right : 0;
+  top   : 0;
 }
 
 .tooltip-text{
