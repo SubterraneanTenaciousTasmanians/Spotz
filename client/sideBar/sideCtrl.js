@@ -1,12 +1,14 @@
 'use strict';
 angular.module('spotz.side', ['MapServices'])
 
-.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', '$filter', function ($scope, $rootScope, $cookies, $state, MapFactory, $filter) {
+.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', function ($scope, $rootScope, $cookies, $state, MapFactory) {
+
   // Add rule on click is hidden
   $scope.ShowAddRuleOnClick = false;
   $scope.showMobilePreview = false;
   $scope.preview = {};
   $scope.style = {};
+  $scope.constraints = {};
 
   //turn all modes on
   var mode = {
@@ -24,12 +26,20 @@ angular.module('spotz.side', ['MapServices'])
     false:'',
   };
 
+  //set the initial default mobile preview contraints to the current time and day
+  $scope.constraints = {
+    date: new Date(),
+    time: moment().format('H:mm'),
+    duration: 1,
+    text:'mobile',
+  };
+  $rootScope.constraints = $scope.constraints;
+
   $scope.toggleAddRule = function () {
     console.log('Add rule was clicked!');
     $scope.ShowAddRuleOnClick = !$scope.ShowAddRuleOnClick;
   };
 
-  // To do: Add this functionality
   $scope.showOnly = function (newMode) {
 
     //turn off last mode
@@ -46,19 +56,39 @@ angular.module('spotz.side', ['MapServices'])
 
     //set the newMode
     $scope.style[newMode] = style[mode[newMode]];
+    console.log(newMode);
 
-    if (newMode === 'mobile') {
-      $scope.showMobilePreview = !$scope.showMobilePreview;
+    if (newMode === 'mobile' && !$scope.showMobilePreview) {
+      //only run mode if mobile preview is not already clicked
+      $scope.showMobilePreview = true;
+      $scope.showPreview();
+
+    } else {
+
+      //hide the mobile preview menu
+      $scope.showMobilePreview = false;
+
+      //set the root scope to the new mode so that we know
+      //how to color newly fetched features
+      $rootScope.constraints.text = newMode;
+
+      //filter the results
+      console.log('rootScope', $rootScope.constraints);
+      MapFactory.filterFeatures($rootScope.constraints);
     }
 
-    MapFactory.filterFeaturesByPermitCodeText(newMode);
   };
 
   //  Grab the preview date and time
-  $scope.savePreviewInput = function () {
-    $rootScope.userPreview = $scope.preview;
-    console.log('the time, date, duration object: ', $scope.preview);
-    $rootScope.$broadcast('previewRequested');
+  $scope.showPreview = function () {
+
+    //set the rootscope so that other parts of the app know the set contraints
+    $rootScope.constraints = $scope.constraints;
+
+    //filter the results
+    $rootScope.constraints.text = 'mobile';
+    MapFactory.filterFeatures($rootScope.constraints);
+
   };
 
   var saveRule = function (feature) {
@@ -124,5 +154,8 @@ angular.module('spotz.side', ['MapServices'])
     }
 
   };
+
+  //intially show the mobile preview
+  $scope.showOnly('mobile');
 },
 ]);

@@ -3,3 +3,5 @@ server/.env
 client/bower_components
 .DS_Store
 npm-debug.log
+spotz
+spotz.pub
