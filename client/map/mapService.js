@@ -6,7 +6,8 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //google tooltip
   var tooltip = {};
   var searchBox = {};
-
+  var minZoomLevel = 16;
+  var boxSize = 0.006;  //size of box to display features on the map
   //map view boundary
   var topRightX;
   var topRightY;
@@ -246,14 +247,18 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     });
   };
 
-  factory.removeFeaturesNotCloseTo = function (coordinates) {
-    var gridStr = JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates));
+  factory.removeFeaturesNotIn = function (coordinateArray) {
+
+    var displayedZones = {};
+    for (var i = 0; i < coordinateArray.length; i++) {
+      displayedZones[JSON.stringify(MapHelperFactory.computeGridNumbers(coordinateArray[i]))] = true;
+    }
 
     //search through all download gridzones
     for (var gridZone in downloadedGridZones) {
 
       //hide any gridZones that are not in the current area
-      if (gridZone !== gridStr) {
+      if (!displayedZones[gridZone]) {
         downloadedGridZones[gridZone].forEach(function (feature) {
           factory.map.data.remove(feature);
         });
@@ -400,18 +405,27 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       });
 
       //=====================================================
-      //Google search bar functionality
+      // Listener for loading in data as the map scrolls
 
-      // Bias the SearchBox results towards current map's viewport.
       factory.map.addListener('center_changed', function () {
         var coordinates = [factory.map.getCenter().lng(), factory.map.getCenter().lat()];
+        var boxBoundaries = [
+          [coordinates[0] + boxSize, coordinates[1] + boxSize],
+          [coordinates[0] + boxSize, coordinates[1] - boxSize],
+          [coordinates[0] - boxSize, coordinates[1] + boxSize],
+          [coordinates[0] - boxSize, coordinates[1] - boxSize],
+        ];
 
-
-        factory.fetchAndDisplayParkingZonesAt(coordinates)
-        .then(function () {
-          factory.removeFeaturesNotCloseTo(coordinates);
+        boxBoundaries.forEach(function (coordinates) {
+          factory.fetchAndDisplayParkingZonesAt(coordinates);
         });
+
+        factory.removeFeaturesNotIn(boxBoundaries);
+
       });
+
+      //=====================================================
+      //Google search bar functionality
 
       // Listen for the event fired when the user enters an address
       searchBox.addListener('places_changed', function () {
@@ -435,6 +449,12 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
         //set the zoom level
         factory.map.setZoom(18);
 
+      });
+
+      //=====================================================
+      // Limit the zoom level
+      google.maps.event.addListener(factory.map, 'zoom_changed', function () {
+        if (factory.map.getZoom() < minZoomLevel) { factory.map.setZoom(minZoomLevel); }
       });
 
       //=====================================================
