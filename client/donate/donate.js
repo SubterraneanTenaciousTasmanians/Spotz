@@ -4,9 +4,10 @@ angular.module('spotz.donate', ['DonateServices'])
 .controller('donateCtrl', ['$scope', 'DonateFactory', '$rootScope', '$state', function ($scope, DonateFactory, $rootScope, $state) {
 
   console.log('donate loaded');
-  $scope.transaction = {};
-  $scope.paid = false;
-  $scope.message = '';
+
+  $scope.transaction     = {};
+  $scope.paid            = false;
+  $scope.message         = '';
   $scope.showDonateModal = false;
   $scope.showMessage = false;
   $scope.loading = false;
@@ -42,10 +43,10 @@ angular.module('spotz.donate', ['DonateServices'])
       };
       DonateFactory.requestToken($scope.transaction).then(function (response) {
         console.log('RESPOSNE FROM FACTORY ', response);
-        $scope.loading = !$scope.loading;
+        $scope.loading     = !$scope.loading;
         $scope.showMessage = !$scope.showMessage;
-        $scope.paid = response.paid;
-        $scope.message = response.message;
+        $scope.paid        = response.paid;
+        $scope.message     = response.message;
       });
     }
   };
