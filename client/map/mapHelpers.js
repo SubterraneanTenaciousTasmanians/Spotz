@@ -4,7 +4,6 @@ angular.module('MapHelpers', ['AdminServices'])
 
 .factory('MapHelperFactory', ['$rootScope', function ($rootScope) {
 
-
   //world grid calculations
   var stepX = 0.018;
   var stepY = 0.018;
@@ -25,7 +24,7 @@ angular.module('MapHelpers', ['AdminServices'])
     ];
   };
 
-  helperFactory.createTooltipText = function(feature) {
+  helperFactory.createTooltipText = function (feature) {
 
     var numOfRules;
 
@@ -73,6 +72,7 @@ angular.module('MapHelpers', ['AdminServices'])
       rulesToDisplay +=  '<div class="delete-rule" data-polyId=' + feature.getProperty('id').toString() + ' data-ruleId=' + feature.getProperty('rules')[i].id + '>DELETE RULE</div><br>';
 
       rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
+
     }
 
     if (!numOfRules) {
@@ -171,7 +171,7 @@ angular.module('MapHelpers', ['AdminServices'])
     return rulesToDisplay;
   };
 
-  helperFactory.determineMobilePreviewColor = function(feature, contraints) {
+  helperFactory.determineMobilePreviewColor = function (feature, contraints) {
 
     /*
     constraints = {
@@ -181,7 +181,7 @@ angular.module('MapHelpers', ['AdminServices'])
     };
     */
 
-    if(!contraints){
+    if (!contraints) {
       console.log('cannot determine mobile preview without constraints');
       return;
     }
@@ -326,12 +326,12 @@ angular.module('MapHelpers', ['AdminServices'])
               }
 
             }  else {
-              if ( ((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
+              if (((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
                 ((convPreviewTime > convEndTime) &&  ((convPreviewTime + convPreviewDuration - 2400) < convStartTime))) {
                 // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
 
                 // check possible situation that its not permit zone hours, but it is parking meter hours
-                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
+                if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
                   // console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone orange');
                   return {
                     color: color.orange,  //parking during meter hours
@@ -356,7 +356,7 @@ angular.module('MapHelpers', ['AdminServices'])
               } else {  // contraints time intersects with PERMIT/Meter time
 
                 // If there is a meter paint it orange
-                if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
+                if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
                   // parkingMessage = 'You can park here for two hours only AND there is a meter';
                   // console.log('There is a meter here, but may / may not be in permit zones.', poly.id);
                   return {
@@ -390,11 +390,11 @@ angular.module('MapHelpers', ['AdminServices'])
     };
   };
 
-  helperFactory.getColorOfRule = function(feature, options) {
+  helperFactory.getColorOfRule = function (feature, options) {
 
     var rules = feature.getProperty('rules') || [];
 
-    if(options.text === 'mobile'){
+    if (options.text === 'mobile') {
       return helperFactory.determineMobilePreviewColor(feature, options);
     }
 
@@ -419,12 +419,13 @@ angular.module('MapHelpers', ['AdminServices'])
 
   //=======================================
   //FUNCTIONS THAT MINIPULATE THE MAP
-  helperFactory.setAllFeatureColors = function(map, options) {
+  helperFactory.setAllFeatureColors = function (map, options) {
     var color;
 
-    if(!map){
+    if (!map) {
       return;
     }
+
     // loop through each polygon/line and change its color
     console.log(map);
     map.data.forEach(function (feature) {

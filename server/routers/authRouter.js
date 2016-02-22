@@ -21,7 +21,7 @@ var Bcrypt = require('bcrypt');
  * comment out before deployment
  */
 var env = require('node-env-file');
-// env(__dirname + '/../.env');
+env(__dirname + '/../.env');
 
 
 //EXPORTING HANDLERS

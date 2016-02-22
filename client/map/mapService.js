@@ -6,6 +6,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //google tooltip
   var tooltip = {};
   var searchBox = {};
+
   //map view boundary
   var topRightX;
   var topRightY;
@@ -14,6 +15,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
   //remember what we fetched
   var downloadedGridZones = {};
+  var displayedGridZones = {};
   var displayedPolygons = {};
 
   //what we return
@@ -28,7 +30,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //===================================================
   //MAP FUNCTIONS
 
-  factory.filterFeatures = function(constraints){
+  factory.filterFeatures = function (constraints) {
     // constraints object can have permitCode text
     // or date, time, duration information for mobile preview
 
@@ -41,11 +43,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
   };
 
-  // factory.filterFeaturesByPermitCodeText = function (text) {
-  //   MapHelperFactory.setAllFeatureColors(factory.map, MapHelperFactory.getColorOfRule, { text:text });
-  // };
-
-  factory.setSelectedFeature = function(feature) {
+  factory.setSelectedFeature = function (feature) {
     //default values
     var id = -1;
     var color = '0,0,0';
@@ -77,7 +75,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     factory.addDeleteButtonClickHandlers();
   };
 
-  factory.addDeleteButtonClickHandlers = function() {
+  factory.addDeleteButtonClickHandlers = function () {
 
     //add listeners for the remove rule buttons
     var deleteButtons = document.getElementsByClassName('delete-rule');
@@ -118,22 +116,45 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //===================================================
   //PARKING ZONE FUNCTIONS
 
-  factory.fetchParkingZones = function (coordinates) {
+  factory.fetchAndDisplayParkingZonesAt = function (coordinates) {
 
     var token = $cookies.get('credentials');
+    var gridStr = JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates));
+    var newColor;
 
     //check if we already downloaded this gridzone
+    if (downloadedGridZones[gridStr]) {
 
-    if (downloadedGridZones[JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates))]) {
-      console.log('already got it');
-      return;
+      //check to see if they are displayed, if not, display them
+      if (!displayedGridZones[gridStr]) {
+        downloadedGridZones[gridStr].forEach(function (feature) {
+
+          factory.map.data.add(feature);
+
+          //color it based on the currently selected constraints ($rootScope.constraints)
+          newColor = MapHelperFactory.getColorOfRule(feature, $rootScope.constraints);
+          if (newColor) {
+            feature.setProperty('color', newColor.color);
+            feature.setProperty('show', newColor.show);
+          }
+
+        });
+
+        displayedGridZones[gridStr] = true;
+      }
+
+      //return a promise, passing array of features
+      return new Promise(function (resolve) {
+        resolve(downloadedGridZones[gridStr]);
+      });
+
     }
 
-    //if we made it here, we need to fetch the gridzone
+    //if we made it here, we need to fetch the gridzone from the server
     //mark coordinates as downloaded
-    downloadedGridZones[JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates))] = true;
+    downloadedGridZones[gridStr] = [];
 
-    $http({
+    return $http({
       method:'GET',
       url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
     })
@@ -144,7 +165,10 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       var boundary;
       var p;
       var newFeature;
-      var newColor;
+
+      if (!polygonsFromDb.length) {
+        return [];
+      }
 
       //loop through zone data and put them on the map
       polygonsFromDb.forEach(function (poly, i) {
@@ -211,8 +235,34 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
           newFeature.setProperty('show', newColor.show);
         }
 
+        downloadedGridZones[gridStr].push(newFeature);
+
       });
+
+      //resolve promise, return array of features
+      displayedGridZones[gridStr] = true;
+      return downloadedGridZones[gridStr];
+
     });
+  };
+
+  factory.removeFeaturesNotCloseTo = function (coordinates) {
+    var gridStr = JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates));
+
+    //search through all download gridzones
+    for (var gridZone in downloadedGridZones) {
+
+      //hide any gridZones that are not in the current area
+      if (gridZone !== gridStr) {
+        downloadedGridZones[gridZone].forEach(function (feature) {
+          factory.map.data.remove(feature);
+        });
+
+        // set the display value to false so that the zones will be
+        // displayed next time they are fetched
+        displayedGridZones[gridZone] = false;
+      }
+    }
   };
 
   factory.deleteParkingZone = function (polyId) {
@@ -291,14 +341,14 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       //events will allow us to access and remove event listeners
       factory.mapEvents = google.maps.event;
 
-      //save the tooltip (tooltip) in a local variable
+      //save the tooltip (infowindow) in a local variable
       tooltip = new google.maps.InfoWindow();
 
       // Create the search box and link it to the UI element.
       searchBox = new google.maps.places.SearchBox(document.getElementById('pac-input'));
 
       //=====================================================
-      //enable tooltip display
+      //enable tooltip display on click
 
       factory.map.data.addListener('click', function (event) {
         console.log(event.feature.getProperty('id'));
@@ -353,8 +403,14 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       //Google search bar functionality
 
       // Bias the SearchBox results towards current map's viewport.
-      factory.map.addListener('bounds_changed', function () {
-        searchBox.setBounds(factory.map.getBounds());
+      factory.map.addListener('center_changed', function () {
+        var coordinates = [factory.map.getCenter().lng(), factory.map.getCenter().lat()];
+
+
+        factory.fetchAndDisplayParkingZonesAt(coordinates)
+        .then(function () {
+          factory.removeFeaturesNotCloseTo(coordinates);
+        });
       });
 
       // Listen for the event fired when the user enters an address
@@ -375,6 +431,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
         //change the map location
         factory.map.fitBounds(bounds);
+
         //set the zoom level
         factory.map.setZoom(18);
 
@@ -392,14 +449,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
         MapHelperFactory.paintGridLines(factory.map, bottomLeftX, topRightX, bottomLeftY, topRightY);
 
-      });
-
-      //===================================================
-      //click handler to load data into the world grid squares
-      factory.map.addListener('click', function (event) {
-        $rootScope.$broadcast('loadMap');
-        var coordinates = [event.latLng.lng(), event.latLng.lat()];
-        factory.fetchParkingZones(coordinates);
       });
 
       //finally, we are at the end of init
