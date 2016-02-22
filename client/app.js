@@ -31,10 +31,17 @@ angular.module('spotz', [
           'drawing@main': { templateUrl: '/drawing/drawing.html', controller:'drawingCtrl' },
         },
       })
+
   .state('login', {
     url: '/login',
     templateUrl: '/authentication/login.html',
     controller: 'loginCtrl',
+  })
+
+  .state('donate', {
+    url: '/donate',
+    templateUrl: '/donate/donate.html',
+    controller: 'donateCtrl',
   });
 
   // .state('donate', {

@@ -1,7 +1,7 @@
 'use strict';
 angular.module('spotz.donate', ['DonateServices'])
 
-.controller('donateCtrl', ['$scope', 'DonateFactory', '$rootScope', function ($scope, DonateFactory, $rootScope) {
+.controller('donateCtrl', ['$scope', 'DonateFactory', '$rootScope', '$state', function ($scope, DonateFactory, $rootScope, $state) {
 
   console.log('donate loaded');
   $scope.transaction = {};
@@ -10,14 +10,23 @@ angular.module('spotz.donate', ['DonateServices'])
   $scope.showDonateModal = false;
   $scope.showMessage = false;
   $scope.loading = false;
-  $scope.toggleModal = function () {
-    $scope.showDonateModal = !$scope.showDonateModal;
-    console.log('shown?', $scope.showDonateModal);
-  };
 
-  $rootScope.$on('donateClicked', function () {
-    $scope.toggleModal();
-  });
+  // removed because donation is now a route
+  // $scope.toggleModal = function () {
+  //   $scope.showDonateModal = !$scope.showDonateModal;
+  //   console.log('shown?', $scope.showDonateModal);
+  //
+  // };
+
+  // $rootScope.$on('donateClicked', function () {
+  //   // $scope.toggleModal();
+  //   console.log('donate clicked broadcast recieved in donate.js');
+  //   $state.go('donate');
+  // });
+
+  $scope.closeDonationView = function(){
+    $state.go('main');
+  };
 
   $scope.stripeCallback = function (status, response) {
     console.log('2nd STRIPE RESPONSE', response);
