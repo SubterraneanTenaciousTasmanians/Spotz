@@ -29,7 +29,7 @@ var ocrData = require('./../db/ocrData.js');
  * comment out before deployment
  */
 var env = require('node-env-file');
-// env(__dirname + '/../.env');
+env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
