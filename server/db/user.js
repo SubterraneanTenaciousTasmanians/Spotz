@@ -1,16 +1,17 @@
 'use strict';
 
-var db = require('./db.js');
+var DB = require('./db.js');
 var bcrypt = require('bcrypt');
 var Q = require('q');
 var SALT_FACTOR = 10;
 
-db.User = db.Model.extend({
+//accessing functions
+var db = {};
+module.exports = db;
+
+db.User = DB.Model.extend({
   tableName: 'users',
 });
-
-//accessing functions
-module.exports = db;
 
 //BELOW ARE CRUD FUNCTIONS FOR USER TABLE
 
@@ -99,7 +100,7 @@ db.read = function (userinfo) {
 };
 
 db.update = function (userinfo) {
-  db.knex('users')
+  DB.knex('users')
     .where({
       username: userinfo.username,
     })

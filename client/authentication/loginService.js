@@ -18,11 +18,14 @@ angular.module('LoginService', [])
   authentication.checkCredentials = function () {
     $rootScope.$broadcast('signin');
     var token = $cookies.get('credentials');
-
     return $http.post('/api/verify', { token: token })
-    .then(
-    function success(response) {
+    .then(function success(response) {
       if (response.data.success) {
+        if (response.data.admin) {
+          $cookies.put('privileges', 'tasmanianDevils');
+          $rootScope.$broadcast('admin');
+        }
+
         return true;
       } else {
         return false;
@@ -32,7 +35,6 @@ angular.module('LoginService', [])
       console.log('verify failed: ', response);
       return false;
     });
-
   };
 
   return authentication;

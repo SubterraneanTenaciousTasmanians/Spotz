@@ -9,6 +9,7 @@ angular.module('spotz.side', ['MapServices'])
   $scope.preview = {};
   $scope.style = {};
   $scope.constraints = {};
+  $scope.privileges = false;
 
   //turn all modes on
   var mode = {
@@ -25,6 +26,12 @@ angular.module('spotz.side', ['MapServices'])
     true:'enabled',
     false:'',
   };
+
+  $rootScope.$on('admin', function(){
+    if ($cookies.get('privileges') === 'tasmanianDevils') {
+      $scope.privileges = true;
+    }
+  });
 
   //set the initial default mobile preview contraints to the current time and day
   $scope.constraints = {
