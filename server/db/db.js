@@ -125,10 +125,10 @@ bookShelf.knex.schema.hasTable('users').then(function (exists) {
 
 bookShelf.knex.schema.hasTable('contribution').then(function (exists) {
   if (!exists) {
-    return bookShelf.knex.schema.createTable('contribution', function (user) {
-     user.increments('id').primary();
-     user.string('post');
-     user.text('coordinates', 'mediumtext');
+    return bookShelf.knex.schema.createTable('contribution', function (post) {
+     post.increments('id').primary();
+     post.string('post');
+     post.text('coordinates', 'mediumtext');
    }).then(function (table) {
      console.log('Created Table', table);
    });
