@@ -2,9 +2,9 @@
 > An app that protects the user by providing parking rules based on location.
 ## Team
 
-  - __Product Owner__: Sola Harrison
+  - __Product Owner__: Adesola Harrison
   - __Scrum Master__: Daniel Kim
-  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer
+  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer, Adesola Harrison, Daniel Kim
 
 ## Table of Contents
 
