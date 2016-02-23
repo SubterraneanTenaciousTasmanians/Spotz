@@ -11,18 +11,15 @@ angular.module('spotz.map', ['MapServices'])
     $scope.mapLoading = false;
   });
 
-  $rootScope.$on('loadMap', function () {
-    $scope.mapLoading = true;
-  });
+  // $rootScope.$on('loadMap', function () {
+  //   $scope.mapLoading = true;
+  // });
 
   $rootScope.$on('mapLoaded', function () {
     $scope.mapLoading = false;
   });
 
   $rootScope.$on('maxZoomOutReached', function () {
-    console.log('max zoom level reached.  Please use the search bar');
-    console.log("$scope.maxZoomOut right before setting to true", $scope.maxZoomOut)
-    // $scope.maxZoomOut = true;
     $scope.maxZoomOut = true;
     $scope.$apply();
   });

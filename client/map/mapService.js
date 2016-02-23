@@ -6,7 +6,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //google tooltip
   var tooltip = {};
   var searchBox = {};
-  var minZoomLevel = 16;
+  var minZoomLevel = 14;
   var boxSize = 0.006;  //size of box to display features on the map
   //map view boundary
   var topRightX;
