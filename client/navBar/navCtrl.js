@@ -12,6 +12,10 @@ angular.module('spotz.nav', ['NavServices'])
     // remove credentials from local cookies and return to the login screen
     $rootScope.$broadcast('logOut');
     $cookies.remove('credentials');
+    if ($cookies.get('privileges')) {
+      $cookies.remove('privileges');
+    }
+
     $state.go('login');
   };
 

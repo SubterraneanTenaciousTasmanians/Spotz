@@ -28,6 +28,7 @@ var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
 var FACEBOOK_CLIENT_ID = process.env.FACEBOOKCLIENTID;
 var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
 var JWT_SECRET = process.env.JWTSECRET;
+var JWT_ADMINSECRET = process.env.JWTADMINSECRET;
 
 //sign in API, all signin requests should come here!
 assignToken.post('/signin', function (req, res) {
@@ -47,7 +48,7 @@ assignToken.post('/signin', function (req, res) {
         } else {
           //check if the user in one of the admins
           if (model.attributes.admin) {
-            var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS384', expiresIn: '14 days' });
+            var token = jwt.sign({ _id: model.attributes.id }, JWT_ADMINSECRET, { algorithm: 'HS512', expiresIn: '14 days' });
             res.status(200).json({ message: 'Here is your admin token', token: token });
           } else {
             //assign a token for this session

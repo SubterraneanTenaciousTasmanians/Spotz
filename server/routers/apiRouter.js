@@ -19,14 +19,13 @@ module.exports = verifyToken;
 
 //REQUIRED KEYS
 var JWT_SECRET = process.env.JWTSECRET;
-
+var JWT_ADMINSECRET = process.env.JWTADMINSECRET;
 //verify before running function
 
 var verifyUser = function (req, res, next) {
 
   //token is either in the body or the request params
   var token = req.body.token || req.params.token;
-
   if (!token) {
     res.status(403).json({
       success: false,
@@ -34,10 +33,9 @@ var verifyUser = function (req, res, next) {
     });
     return;
   }
-
-  jwt.verify(token, JWT_SECRET, { algorithm: 'HS256' }, function (err) {
+  jwt.verify(token, JWT_ADMINSECRET, { algorithm: 'HS512' }, function (err, decoded) {
     if (err) {
-      jwt.verify(token, JWT_SECRET, { algorithm: 'HS384' }, function (err) {
+      jwt.verify(token, JWT_SECRET, { algorithm: 'HS256' }, function (err) {
         if (err) {
           res.status(401).json({ success: false, message: 'your token has expired' });
         } else {
@@ -51,32 +49,15 @@ var verifyUser = function (req, res, next) {
 
 };
 
-var verifyAdmin = function (req, res, next) {
-
-  //token is either in the body or the request params
-  var token = req.body.token || req.params.token;
-
-  if (!token) {
-    res.status(403).json({
-      success: false,
-      message: 'No token was provided',
-    });
-    return;
-  }
-
-  jwt.verify(token, JWT_SECRET, { algorithm: 'HS384' }, function (err) {
-    if (err) {
-      res.status(401).json({ success: false, message: 'you are not an admin' });
-    } else {
-      next();
-    }
-  });
-
-};
-
 //TO CONFIRM THAT A USER HAS A TOKEN (IS LOGGED IN)
 verifyToken.post('/verify', verifyUser, function (req, res) {
-  res.status(200).json({ success: true, message: 'your token has been verified' });
+  jwt.verify(req.body.token, JWT_ADMINSECRET, { algorithm: 'HS512' }, function (err, decoded) {
+    if (err) {
+      res.status(200).json({ success: true, message: 'your token has been verified' });
+    } else {
+      res.status(200).json({ success: true, admin: true });
+    }
+  });
 });
 
 //===========================
@@ -90,14 +71,14 @@ verifyToken.get('/zones/:xCoord/:yCoord/:token', verifyUser, function (req, res)
 
 // Add new parking zones from the front end when a post request to /zones is made
 // this should be an an admin only feature
-verifyToken.post('/zones', verifyAdmin, function (req, res) {
+verifyToken.post('/zones', verifyUser, function (req, res) {
   ParkingDB.savePermitZones(req.body.polygons).then(function (data) {  //function is in parking.js)
     res.status(201).send(data);
   });
 });
 
 //delete a parking zone
-verifyToken.delete('/zones/:id/:token', verifyAdmin, function (req, res) {
+verifyToken.delete('/zones/:id/:token', verifyUser, function (req, res) {
   ParkingDB.destroyParkingZone(req.params.id).then(function (data) {  //function is in parking.js)
     res.status(201).send(data);
   });
@@ -106,14 +87,14 @@ verifyToken.delete('/zones/:id/:token', verifyAdmin, function (req, res) {
 //===========================
 //RULE CRUD
 //save new rule
-verifyToken.post('/rule/:polyId', verifyAdmin, function (req, res) {
+verifyToken.post('/rule/:polyId', verifyUser, function (req, res) {
   ParkingDB.saveRule(req.params.polyId, req.body.rule).then(function (data) {  //function is in parking.js)
     res.status(201).send(data);
   });
 });
 
 //delete a rule association
-verifyToken.delete('/rule/:polyId/:ruleId/:token', verifyAdmin, function (req, res) {
+verifyToken.delete('/rule/:polyId/:ruleId/:token', verifyUser, function (req, res) {
   console.log('going to delete it', req.params.polyId, req.params.ruleId);
   ParkingDB.unlinkRulefromZone(req.params.polyId, req.params.ruleId).then(function (data) {  //function is in parking.js)
     res.status(201).send(data);
