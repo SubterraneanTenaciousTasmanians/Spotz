@@ -22,8 +22,8 @@
 
 ## Requirements
 *NEW*
-    "node": "5.4.1"
     
+    "node": "5.4.1"
     "npm": "3.3.12"
 
 
