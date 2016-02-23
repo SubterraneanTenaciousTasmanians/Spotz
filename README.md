@@ -21,7 +21,12 @@
 > Some usage instructions
 
 ## Requirements
+*NEW*
+    "node": "5.4.1",
+    "npm": "3.3.12"
 
+
+*OLD*
 - Node 0.10.x
 - Redis 2.6.x
 - Postgresql 9.1.x
