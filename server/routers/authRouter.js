@@ -16,17 +16,12 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Bcrypt = require('bcrypt');
 
 //DEV ONLY
-/**
- * environment file for developing under a local server
- * comment out before deployment
- */
 var env = require('node-env-file');
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 
 //EXPORTING HANDLERS
 module.exports = assignToken;
-
 
 //KEYS REQUIRED FOR THIRD PARTY API AUTHENTICATION
 var GOOGLE_CLIENT_ID = process.env.GOOGLECLIENTID;
@@ -34,6 +29,7 @@ var GOOGLE_CLIENT_SECRET = process.env.GOOGLECLIENTSECRET;
 var FACEBOOK_CLIENT_ID = process.env.FACEBOOKCLIENTID;
 var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
 var JWT_SECRET = process.env.JWTSECRET;
+var JWT_ADMINSECRET = process.env.JWTADMINSECRET;
 
 //sign in API, all signin requests should come here!
 assignToken.post('/signin', function (req, res) {
@@ -43,6 +39,7 @@ assignToken.post('/signin', function (req, res) {
     if (!model) {
       res.status(401).json({ message: 'Sign in failed. User not found' });
     } else if (model) {
+      console.log('MODELLL', model);
 
       //encrypt the recieved password and compare it to the one saved in SQL user table
       Bcrypt.compare(req.body.password, model.attributes.password, function (err, result) {
@@ -50,16 +47,15 @@ assignToken.post('/signin', function (req, res) {
         if (!result) {
           res.status(401).json({ message: 'Sign in failed. Invalid Password' });
         } else {
-
-          //check if JWT_SECRET is defined
-          //if it is not defined, then jwt.sign fails without error (super annoying)
-          if (!JWT_SECRET) {
-            res.status(401).send({ message: 'Login service is broken :(' });
+          //check if the user in one of the admins
+          if (model.attributes.admin) {
+            var token = jwt.sign({ _id: model.attributes.id }, JWT_ADMINSECRET, { algorithm: 'HS512', expiresIn: '14 days' });
+            res.status(200).json({ message: 'Here is your admin token', token: token });
+          } else {
+            //assign a token for this session
+            var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' });
+            res.status(200).json({ message: 'Here is your token', token: token });
           }
-
-          //assign a token for this session
-          var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 });
-          res.status(200).json({ message: 'Here is your token', token: token });
         }
       });
     }
@@ -74,6 +70,7 @@ assignToken.post('/signup', function (req, res) {
   User.create(req.body)
   .then(function (model) {
     //if we got in here, then the create succeeded
+    console.log('CREATED USER', model);
 
     //check if JWT_SECRET is defined
     //if it is not defined, then jwt.sign fails without error (super annoying)
@@ -82,7 +79,7 @@ assignToken.post('/signup', function (req, res) {
     }
 
     //assign a token for this sesssion
-    var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 });
+    var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' });
     res.status(201).json({ message: 'Here is your token', token: token });
 
   })
@@ -96,12 +93,12 @@ assignToken.post('/googleOauth', function (req, res) {
   User.read({ googleId: req.body.id }).then(function (model) {
     if (!model) {
       User.create({ googleId: req.body.id }).then(function (model) {
-        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
           res.send(token);
         });
       });
     } else if (model) {
-      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
         res.send(token);
       });
     }
@@ -116,12 +113,12 @@ assignToken.post('/facebookOauth', function (req, res) {
   User.read({ facebookId: req.body.id }).then(function (model) {
     if (!model) {
       User.create({ facebookId: req.body.id }).then(function (user) {
-        var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
           res.send(token);
         });
       });
     } else if (model) {
-      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
         res.send(token);
       });
     }
@@ -195,13 +192,13 @@ assignToken.get('/google/callback',
   User.read({ googleId: req.user.attributes.googleId }).then(function (model) {
     if (!model) {
       User.create({ googleId: req.user.attributes.googleId }).then(function (model) {
-        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
           res.cookie('credentials', token);
           res.redirect('/');
         });
       });
     } else if (model) {
-      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+      var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
         res.cookie('credentials', token);
         res.redirect('/');
       });
@@ -221,13 +218,13 @@ assignToken.get('/facebook/callback',
     User.read({ facebookId: req.user.attributes.facebookId }).then(function (model) {
       if (!model) {
         User.create({ facebookId: req.user.attributes.facebookId }).then(function (user) {
-          var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+          var token = jwt.sign({ _id: user.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
             res.cookie('credentials', token);
             res.redirect('/');
           });
         });
       } else if (model) {
-        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: 10080 }, function (token) {
+        var token = jwt.sign({ _id: model.attributes.id }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '14 days' }, function (token) {
           res.cookie('credentials', token);
           res.redirect('/');
         });
