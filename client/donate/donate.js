@@ -2,7 +2,7 @@
 angular.module('spotz.donate', ['DonateServices'])
 
 .controller('donateCtrl', ['$scope', 'DonateFactory', '$rootScope', '$state', function ($scope, DonateFactory, $rootScope, $state) {
-
+// test comment
   console.log('donate loaded');
 
   $scope.transaction     = {};

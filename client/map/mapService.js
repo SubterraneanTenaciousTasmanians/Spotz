@@ -6,7 +6,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //google tooltip
   var tooltip = {};
   var searchBox = {};
-  var minZoomLevel = 16;
+  var minZoomLevel = 14;
   var boxSize = 0.006;  //size of box to display features on the map
   //map view boundary
   var topRightX;
@@ -454,7 +454,16 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       //=====================================================
       // Limit the zoom level
       google.maps.event.addListener(factory.map, 'zoom_changed', function () {
-        if (factory.map.getZoom() < minZoomLevel) { factory.map.setZoom(minZoomLevel); }
+
+        var currentZoomLevel = factory.map.getZoom();
+
+        if (currentZoomLevel < minZoomLevel) {
+          factory.map.setZoom(minZoomLevel);
+          $rootScope.$broadcast('maxZoomOutReached');
+        }
+        else if (currentZoomLevel > minZoomLevel)  {
+          $rootScope.$broadcast('lessThanMaxZoomOut');
+        }
       });
 
       //=====================================================
