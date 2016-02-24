@@ -117,6 +117,7 @@ bookShelf.knex.schema.hasTable('users').then(function (exists) {
      user.string('password');
      user.string('googleId').unique();
      user.string('facebookId').unique();
+     user.boolean('admin').defaultTo(false);
    }).then(function (table) {
      console.log('Created Table', table);
    });
