@@ -28,24 +28,23 @@ required dependencies. <br>You need to configure a MongoDB connection in server/
 run node server/server.js and the server should be up and running.
 
 ## Usage
-
-
-<b>Mobile and Desktop Version</b>
-<br>Getting started:
-<br>Login or signup with Google or Facebook account...or create an account with Spotz.
+<h2>Mobile and Desktop Version</h2>
+<b>Getting started:</b>
+<br>Login or signup with a Google or Facebook account...or create an account with Spotz.
 <br><br>
+<b>Navigating the map.</b>
 <br>1. Zoom in or out with  +/- buttons.
 <br>2. Click and drag the map in any direction.
 <br>3. Click any highlighted area to display a tool tip with detailed parking info.
 <br><br>
-<br>Options for displaying parking information by location:
-<br>1. Enter a time, date and duration in the mobile preview field and click submit. 
+<b>Options for displaying parking information by location:</b>
+<br>1. Enter a time, date and duration in the mobile preview field and click submit.
 <br>2. Enter an address into the search bar.
 <br>Note: Use the show and hide to limit the info that is displayed.
 
 <br><br>
-<b>Admin</b>
-<br><i>To enable admin privildges for a user (Desktop version only):</i>
+<h2>Admin</h2><i>To enable admin privildges for a user (Desktop version only):</i>
+<br>
 <br>Go into the database and set the "admin" column for the user to "true".
 <br><br>
 <b>Admin Options</b>
@@ -55,11 +54,11 @@ run node server/server.js and the server should be up and running.
 <br>3. Enter the rule info and click the "add rule to selected feature" button..
 <br>
 <br>
-<br>Delete a rule:
+<b>Delete a rule:</b>
 <br>1. Click the object to open its tooltip.
 <br>2. Click the delete rule for the rule of interest.
 <br><br>
-<br>Add a new polygon:
+<b>Add a new polygon:</b>
 <br>1. Click the "Add Feature" button.
 <br>2. Click "enable" button.
 <br>3. Click the map on at least 3 points to make the polygon.
