@@ -19,7 +19,9 @@
 
 ## Usage
 
-> Some usage instructions
+> 
+Mobile and Desktop Version: 
+Desktop Version (with Admin priviledges)
 
 ## Requirements
 *NEW*
@@ -41,6 +43,8 @@
 - etc
 
 ## Development
+
+
 
 ### Installing Dependencies
 
