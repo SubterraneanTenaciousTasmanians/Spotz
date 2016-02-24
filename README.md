@@ -28,9 +28,9 @@
     "npm": "3.3.12"
     
     Spotz is a MEAN application, so you need to install node *add a link** (version 5.4.1 or higher). 
-    Then, download the above repo and run npm install from the root directory to download all required dependencies. You need to configure a MongoDB connection in server/db.js. After that, run node server/server.js
-
-and the server should be up and running.
+    Then, download the above repo and run npm install from the root directory to download all 
+    required dependencies. You need to configure a MongoDB connection in server/db.js. After that, 
+    run node server/server.js and the server should be up and running.
 
 
 *OLD*
