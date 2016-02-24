@@ -2,11 +2,27 @@
 
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
+.controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state','MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
   $scope.mapLoading = true;
+
+  $scope.maxZoomOut = false;
 
   $rootScope.$on('googleMapLoaded', function () {
     $scope.mapLoading = false;
+  });
+
+  $rootScope.$on('mapLoaded', function () {
+    $scope.mapLoading = false;
+  });
+
+  $rootScope.$on('maxZoomOutReached', function () {
+    $scope.maxZoomOut = true;
+    $scope.$apply();
+  });
+
+  $rootScope.$on('lessThanMaxZoomOut', function () {
+    $scope.maxZoomOut = false;
+    $scope.$apply();
   });
 
   $scope.deleteRule = function (zoneId, ruleId) {

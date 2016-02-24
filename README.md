@@ -1,10 +1,11 @@
 # Spotz
-> An app that protects the user by providing parking rules based on location.
+> An application designed to display parking options based on location, date and time of day.
+
 ## Team
 
-  - __Product Owner__: Sola Harrison
+  - __Product Owner__: Adesola Harrison
   - __Scrum Master__: Daniel Kim
-  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer
+  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer, Adesola Harrison, Daniel Kim
 
 ## Table of Contents
 
@@ -21,7 +22,13 @@
 > Some usage instructions
 
 ## Requirements
+*NEW*
+    
+    "node": "5.4.1"
+    "npm": "3.3.12"
 
+
+*OLD*
 - Node 0.10.x
 - Redis 2.6.x
 - Postgresql 9.1.x

@@ -4,6 +4,11 @@
 <div class="searchBar">
   <h1>Search bar</h1>
   <input id="pac-input" class="controls" type="text" placeholder="Google Maps Search">
+
+  <div class="warning" ng-if="maxZoomOut">
+	<span>Max Zoom out reached.</span>
+  </div>
+
 </div>
 
 <div ng-show="mapLoading" class="mapLoading">
