@@ -1,6 +1,8 @@
 # Spotz
 > An application designed to display parking options based on location, date and time of day.
 
+<img src="screenshot1.png" style="height: 500px; width:500px;">
+<br>
 ## Team
 
   - __Product Owner__: Adesola Harrison
@@ -44,7 +46,6 @@ run node server/server.js and the server should be up and running.
 
 <br><br>
 <h4>Admin</h4><i>To enable admin privildges for a user (Desktop version only):</i>
-<br>
 <br>Go into the database and set the "admin" column for the user to "true".
 <br><br>
 <b>Admin Options</b>
