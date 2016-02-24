@@ -9,7 +9,6 @@ angular.module('spotz', [
 'spotz.nav',
 'spotz.side',
 'spotz.donate',
-'spotz.drawing',
 ])
 
 .config(function ($stateProvider, $urlRouterProvider) {
