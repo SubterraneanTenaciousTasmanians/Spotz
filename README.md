@@ -19,7 +19,13 @@
 
 ## Usage
 
-> Some usage instructions
+> 
+Mobile and Desktop Version: 
+
+Desktop Version (with Admin priviledges)
+tel;aflaljfdaljd
+a;ldfjdajlf
+ljafldja
 
 ## Requirements
 *NEW*
@@ -41,6 +47,8 @@
 - etc
 
 ## Development
+
+
 
 ### Installing Dependencies
 
