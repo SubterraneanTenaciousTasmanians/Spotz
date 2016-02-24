@@ -1,7 +1,7 @@
 'use strict';
 angular.module('spotz.drawing', ['DrawingServices'])
 
-.controller('drawingCtrl', ['$scope', '$rootScope', 'DrawingFactory', function ($scope, $rootScope, DrawingFactory) {
+.controller('drawingCtrl', ['$scope', '$rootScope', 'DrawinggFactory', function ($scope, $rootScope, DrawinggFactory) {
 
   $scope.addModeEnabled = false;
   $scope.selectModeEnabled = false;

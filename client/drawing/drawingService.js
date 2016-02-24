@@ -1,7 +1,7 @@
 'use strict';
 angular.module('DrawingServices', [])
 
-.factory('DrawingFactory', ['$http', 'MapFactory', '$cookies', function ($http, MapFactory, $cookies) {
+.factory('DrawinggFactory', ['$http', 'MapFactory', '$cookies', function ($http, MapFactory, $cookies) {
   var factory = {};
 
   //newly created feature
@@ -24,38 +24,13 @@ angular.module('DrawingServices', [])
   //click handles
   var addPointOnClickHandle;
   var addPointOnDataClickHandle;
-  var selectPolygonOnClickHandle;
 
-  function setSelectedFeature(feature) {
-    //default values
-    var id = -1;
-    var color = '0,0,0';
-
-    if (feature) {
-      id = feature.getProperty('id').toString();
-      color = feature.getProperty('color');
-    }
-
-    //set the map factory so other UI components know about it
-    MapFactory.selectedFeature = {
-      feature:feature,
-      id:id,
-      color:color,
-    };
-
-    //set local short-hand variable
-    selectedFeature = MapFactory.selectedFeature;
-  }
-
-  function selectPolygon(feature) {
+  function makeFlash(feature) {
     //restore the last selected object
     if (selectedFeature.feature) {
       clearInterval(selectedFeature.flashingColorEventhandle);
       selectedFeature.feature.setProperty('color', selectedFeature.color);
     }
-
-    //update the previous feature to the currently selected feature
-    setSelectedFeature(feature);
 
     //make the newly selected object flash
     var flashColorId = 0;
@@ -71,118 +46,74 @@ angular.module('DrawingServices', [])
 
   }
 
-  function deselectPolygon() {
-    //restore the last selected object
-    if (selectedFeature.feature) {
-      clearInterval(selectedFeature.flashingColorEventhandle);
-      selectedFeature.feature.setProperty('color', selectedFeature.color);
-    }
+  // MapFactory.mapEvents.addDomListener(document, 'keyup', nudgePolygonOnArrow);
 
-    setSelectedFeature();
-  }
+  function nudgePolygonOnArrow(event) {
+    var code = (event.keyCode ? event.keyCode : event.which);
 
-  factory.selectPolygonOnClick = function (enabled) {
+    var keyCodes = {
+      38:'up',
+      40:'down',
+      37:'left',
+      39:'right',
+    };
 
-    if (enabled) {
-      console.log('select mode enabled');
-      selectPolygonOnClickHandle = MapFactory.map.data.addListener('click', selectPolygonOnClick);
-      MapFactory.mapEvents.addDomListener(document, 'keyup', nudgePolygonOnArrow);
-
-    } else {
-      if (selectPolygonOnClickHandle) {
-        MapFactory.mapEvents.removeListener(selectPolygonOnClickHandle);
-      }
-    }
-
-    function selectPolygonOnClick(event) {
-      selectPolygon(event.feature);
-    }
-
-    function nudgePolygonOnArrow(event) {
-      var code = (event.keyCode ? event.keyCode : event.which);
-
-      var keyCodes = {
-        38:'up',
-        40:'down',
-        37:'left',
-        39:'right',
-      };
-
-      //check if the arrowkeys are pressed
-      if (!keyCodes[code]) {
-        return;
-      }
-
-      var stepSize = 0.00001;
-
-      var movement = {
-        up: {
-          stepX:0,
-          stepY:stepSize,
-        },
-        down: {
-          stepX:0,
-          stepY:-stepSize,
-        },
-        left: {
-          stepX:-stepSize,
-          stepY:0,
-        },
-        right: {
-          stepX:stepSize,
-          stepY:0,
-        },
-      };
-
-      selectedFeature.feature.toGeoJson(function (geoJson) {
-
-        console.log('geoJson', geoJson);
-        if (geoJson.properties.rules[0] && geoJson.properties.rules[0].permitCode.indexOf('sweep') !== -1) {
-          //sweep icoordinateLists
-          console.log('we have a sweep');
-          geoJson.geometry.coordinates = geoJson.geometry.coordinates.map(function (coordinate) {
-            console.log(coordinate);
-            return [coordinate[0] + movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
-          });
-        }else {
-          geoJson.geometry.coordinates[0][0] = geoJson.geometry.coordinates[0][0].map(function (coordinate) {
-            console.log(coordinate);
-            return [coordinate[0] + movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
-          });
-        }
-
-        //remove the existing feature from the map
-        MapFactory.map.data.remove(selectedFeature.feature);
-
-        //add the new feature to the map
-        var newFeatures = MapFactory.map.data.addGeoJson(geoJson);
-
-        //update the selected feature to the one we just created
-        selectPolygon(newFeatures[0]);
-      });
-
-    }
-
-  };
-
-  factory.removeSelectedPolygon = function () {
-
-    if (parseInt(selectedFeature.id) === -1) {
-      console.log('need to select a polygon that can be deleted');
+    //check if the arrowkeys are pressed
+    if (!keyCodes[code]) {
       return;
     }
 
-    console.log('requesting to remove', selectedFeature.id);
+    var stepSize = 0.00001;
 
-    if (confirm('Are you sure you want to delete this shape?')) {
-      factory.deletePolygon(selectedFeature.id).then(function () {
-        MapFactory.map.data.remove(selectedFeature.feature);
-        console.log('deleted!');
-      });
-    } else {
-      event.feature.setProperty('color', selectedFeature.color);
-    }
-  };
+    var movement = {
+      up: {
+        stepX:0,
+        stepY:stepSize,
+      },
+      down: {
+        stepX:0,
+        stepY:-stepSize,
+      },
+      left: {
+        stepX:-stepSize,
+        stepY:0,
+      },
+      right: {
+        stepX:stepSize,
+        stepY:0,
+      },
+    };
+
+    console.log('moving',MapFactory.selectedFeature);
+    MapFactory.selectedFeature.feature.toGeoJson(function (geoJson) {
+
+      console.log('geoJson', geoJson);
+      if (geoJson.properties.rules[0] && geoJson.properties.rules[0].permitCode.indexOf('sweep') !== -1) {
+        //sweep icoordinateLists
+        console.log('we have a sweep');
+        geoJson.geometry.coordinates = geoJson.geometry.coordinates.map(function (coordinate) {
+          console.log(coordinate);
+          return [coordinate[0] + movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
+        });
+      }else {
+        geoJson.geometry.coordinates[0][0] = geoJson.geometry.coordinates[0][0].map(function (coordinate) {
+          console.log(coordinate);
+          return [coordinate[0] + movement[keyCodes[code]].stepX, coordinate[1] + movement[keyCodes[code]].stepY];
+        });
+      }
+
+      //remove the existing feature from the map
+      MapFactory.map.data.remove(MapFactory.selectedFeature.feature);
+
+      //add the new feature to the map
+      var newFeatures = MapFactory.map.data.addGeoJson(geoJson);
+
+      //update the selected feature to the one we just created
+      selectPolygon(newFeatures[0]);
+    });
+
+  }
+
 
   factory.addPolygonOnClick = function (enabled) {
 

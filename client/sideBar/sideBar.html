@@ -15,9 +15,17 @@
     <button ng-click="addRule()">Add Rule to Selected Feature</button>
   </div>
 
-
+<!--  ng-if="privileges" -->
   <ul>
-    <button ng-model="privileges" ng-if="privileges" ng-click="toggleAddRuleMenu()">Show/Hide Add Rule Menu</button>
+    <button ng-model="privileges" ng-click="toggleAddRuleMenu()">Show/Hide Add Rule Menu</button>
+
+    <button class="{{style.addNewFeature}}" ng-click="showOnly('addNewFeature')">Add New Polygon</button>
+    <div class="addBox" ng-show="ShowAddFeatureMenu">
+      <p>Click on the map to define a new feature</p>
+      <button type="button" ng-Click="savePolygon()">Save New Polygon</button>
+      <button type="button" ng-Click="erasePolygon()">Erase New Polygon</button>
+    </div>
+
     <button class="{{style.grid}}" ng-click="showOnly('grid')">Hide All</button>
     <button class="{{style.permit}}" ng-click="showOnly('permit')">Show Only Permit Zones</button>
     <button class="{{style.meter}}" ng-click="showOnly('meter')">Show Only Meter Zones</button>
