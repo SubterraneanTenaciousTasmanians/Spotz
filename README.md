@@ -28,7 +28,7 @@ required dependencies. <br>You need to configure a MongoDB connection in server/
 run node server/server.js and the server should be up and running.
 
 ## Usage
-<h2>Mobile and Desktop Version</h2>
+<h3>Mobile and Desktop Version</h3>
 <b>Getting started:</b>
 <br>Login or signup with a Google or Facebook account...or create an account with Spotz.
 <br><br>
@@ -43,7 +43,7 @@ run node server/server.js and the server should be up and running.
 <br>Note: Use the show and hide to limit the info that is displayed.
 
 <br><br>
-<h2>Admin</h2><i>To enable admin privildges for a user (Desktop version only):</i>
+<h3>Admin</h3><i>To enable admin privildges for a user (Desktop version only):</i>
 <br>
 <br>Go into the database and set the "admin" column for the user to "true".
 <br><br>
