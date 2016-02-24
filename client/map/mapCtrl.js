@@ -9,14 +9,6 @@ angular.module('spotz.map', ['MapServices'])
     $scope.mapLoading = false;
   });
 
-  $rootScope.$on('loadMap', function () {
-    $scope.mapLoading = true;
-  });
-
-  $rootScope.$on('mapLoaded', function () {
-    $scope.mapLoading = false;
-  });
-
   $scope.deleteRule = function (zoneId, ruleId) {
     console.log('deleting rule', ruleId, 'for', zoneId);
     MapFactory.deleteRule(zoneId, ruleId);
@@ -39,6 +31,7 @@ angular.module('spotz.map', ['MapServices'])
 
     // map data ready, broadcast to the sibling controller (sideCtrl)
     $rootScope.$broadcast('googleMapLoaded');
+    $scope.mapLoading = false;
   });
 
 },

@@ -24,6 +24,53 @@ angular.module('MapHelpers', ['AdminServices'])
     ];
   };
 
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds. If `immediate` is passed, trigger the function on the
+  // leading edge, instead of the trailing.
+  helperFactory.debounce = function (func, wait, immediate) {
+    var timeout;
+
+    return function () {
+
+      var _this = this;
+      var args = arguments;
+
+      var later = function () {
+        timeout = null;
+        //if this is true, we already waited, and we are now calling the function
+        if (!immediate) { func.apply(_this, args); }
+      };
+
+      //if callnow is true, we should call the function first, then
+      //block all future calls until a window 'wait' time where no function calls are made
+      //each time the funtion is called, the wait time extends
+      //if callnow is false, we wait for the window first, then call
+      var callNow = immediate && !timeout;
+
+      //clear previous timeout, so that the timer to wait is extended
+      clearTimeout(timeout);
+
+      //set new timeout
+      timeout = setTimeout(later, wait);
+
+      //if this is true, we should call the function first, and then wait
+      if (callNow) { func.apply(_this, args); }
+    };
+
+  };
+
+  var debouceAdd = debouce(add,250);
+
+  debounceAdd(1,2); //set one timeout
+  debounceAdd(3,4); //cancel the last timeout, and set a new one
+
+
+
+  
+  debounceAdd(5,6);
+  debounceAdd(7,8);
+
   helperFactory.createTooltipText = function (feature) {
 
     var numOfRules;
@@ -427,7 +474,6 @@ angular.module('MapHelpers', ['AdminServices'])
     }
 
     // loop through each polygon/line and change its color
-    console.log(map);
     map.data.forEach(function (feature) {
       color = helperFactory.getColorOfRule(feature, options);
       if (color) {

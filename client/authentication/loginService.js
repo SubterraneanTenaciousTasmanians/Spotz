@@ -21,6 +21,10 @@ angular.module('LoginService', [])
     return $http.post('/api/verify', { token: token })
     .then(function success(response) {
       if (response.data.success) {
+
+        //tell the map controller to load the map
+        $rootScope.$broadcast('loadMap');
+
         if (response.data.admin) {
           $cookies.put('privileges', 'tasmanianDevils');
           $rootScope.$broadcast('admin');
