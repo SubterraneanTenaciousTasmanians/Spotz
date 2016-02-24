@@ -1,10 +1,11 @@
 # Spotz
-> An app that protects the user by providing parking rules based on location.
+> An application designed to display parking options based on location, date and time of day.
+
 ## Team
 
-  - __Product Owner__: Sola Harrison
+  - __Product Owner__: Adesola Harrison
   - __Scrum Master__: Daniel Kim
-  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer
+  - __Development Team Members__: Raphael Baskerville, Nicolas Bauer, Adesola Harrison, Daniel Kim
 
 ## Table of Contents
 
@@ -18,10 +19,25 @@
 
 ## Usage
 
-> Some usage instructions
+> 
+<b>Mobile and Desktop Version</b>
+To display parking information by location: Enter a time, date and duration in the mobile preview field. 
+
+
 
 ## Requirements
+*NEW*
+    
+    "node": "5.4.1"
+    "npm": "3.3.12"
+    
+    Spotz is a MEAN application, so you need to install <a href="https://nodejs.org/en/">node</a> (version 5.4.1 or higher). 
+    Then, download the above repo and run npm install from the root directory to download all 
+    required dependencies. You need to configure a MongoDB connection in server/db.js. After that, 
+    run node server/server.js and the server should be up and running.
 
+
+*OLD*
 - Node 0.10.x
 - Redis 2.6.x
 - Postgresql 9.1.x
@@ -29,6 +45,8 @@
 - etc
 
 ## Development
+
+
 
 ### Installing Dependencies
 
