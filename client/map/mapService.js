@@ -154,7 +154,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     //if we made it here, we need to fetch the gridzone from the server
     //mark coordinates as downloaded
     downloadedGridZones[gridStr] = [];
-
+    $rootScope.$emit('fetchingStart');
     return $http({
       method:'GET',
       url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
@@ -242,6 +242,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
       //resolve promise, return array of features
       displayedGridZones[gridStr] = true;
+      $rootScope.$emit('fetchingEnd');
       return downloadedGridZones[gridStr];
 
     });
