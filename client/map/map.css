@@ -102,9 +102,38 @@ html, body {
 
 .mapLoading {
   position: absolute;
-  padding: 28% 45%;
-  z-index: 1000;
-  background-color: rgba(255, 253, 250, 0.4);
+  bottom: 20px;
+  left: 0;
+  width:100%;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&1+0,0+100 */
+  background: -moz-linear-gradient(left,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(left,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to right,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 */
+}
+
+/* Fade-In Effect */
+.visible {
+visibility: visible;
+opacity: 1;
+transition: opacity 0.5s linear;
+}
+/* Fade-Out Effect */
+.hidden {
+visibility: hidden;
+opacity: 0;
+transition: visibility 1s, opacity 1s linear;
+}
+
+.mapLoading img{
+  height: 60px;
+}
+
+.mapLoading span{
+  font-size: 24px;
+  position: relative;
+  top: -20px;
+  color:#79B630;
 }
 
 .delete-rule{
