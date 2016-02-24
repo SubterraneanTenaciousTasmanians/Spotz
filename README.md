@@ -3,6 +3,7 @@
 
 <img src="/screenshot1.png" style="height: 500px; width:500px;">
 <br>
+
 ## Team
 
   - __Product Owner__: Adesola Harrison
@@ -22,6 +23,7 @@
 ## Requirements
 "node": "5.4.1"
 <br>"npm": "3.3.12"
+
 
 ### Installing Dependencies
 Spotz is a MEAN application, so you need to install <a href="https://nodejs.org/en/">node</a> (version 5.4.1 or higher). 
@@ -67,10 +69,6 @@ run node server/server.js and the server should be up and running.
 
 
 ## Development
-
-
-
-
 
 ### Roadmap
 
