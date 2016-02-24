@@ -329,8 +329,10 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
     //jsonp
     // added places library to api request.  Required for searchBar option
+
     $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFactory.map + '&libraries=places&callback=JSON_CALLBACK')
     .success(function () {
+      // The response from the ($http.jsonp request) gets placed on the window object
 
       //=====================================================
       //we have a google.maps object here!
