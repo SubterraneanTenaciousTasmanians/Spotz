@@ -332,7 +332,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //loads the google API and sets up map initial event listeners
 
   factory.init = function (callback) {
-
     //get the google map object
     if (!window.google) {
       //hit the google api to get the google object on the window
@@ -348,7 +347,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     }
 
     function setupMap() {
-
       //=====================================================
       //we have a google.maps object here!
       //SET THE MAIN MAP OBJECTS

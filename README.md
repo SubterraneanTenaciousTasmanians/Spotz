@@ -1,6 +1,9 @@
 # Spotz
 > An application designed to display parking options based on location, date and time of day.
 
+<img src="/screenshot1.png" style="height: 500px; width:500px;">
+<br>
+
 ## Team
 
   - __Product Owner__: Adesola Harrison
@@ -17,48 +20,55 @@
 1. [Team](#team)
 1. [Contributing](#contributing)
 
-## Usage
-
-> 
-Mobile and Desktop Version: 
-
-Desktop Version (with Admin priviledges)
-tel;aflaljfdaljd
-a;ldfjdajlf
-ljafldja
-
 ## Requirements
-*NEW*
-    
-    "node": "5.4.1"
-    "npm": "3.3.12"
-    
-    Spotz is a MEAN application, so you need to install node *add a link** (version 5.4.1 or higher). 
-    Then, download the above repo and run npm install from the root directory to download all 
-    required dependencies. You need to configure a MongoDB connection in server/db.js. After that, 
-    run node server/server.js and the server should be up and running.
-
-
-*OLD*
-- Node 0.10.x
-- Redis 2.6.x
-- Postgresql 9.1.x
-- etc
-- etc
-
-## Development
-
+"node": "5.4.1"
+<br>"npm": "3.3.12"
 
 
 ### Installing Dependencies
+Spotz is a MEAN application, so you need to install <a href="https://nodejs.org/en/">node</a> (version 5.4.1 or higher). 
+<br>Then, download the above repo and run "npm install" from the root directory to download all 
+required dependencies. <br>You need to configure a MongoDB connection in server/db.js. After that, 
+run node server/server.js and the server should be up and running.
 
-From within the root directory:
+## Usage
+<h4>Mobile and Desktop Version</h4>
+<b>Getting started:</b>
+<br>Login or signup with a Google or Facebook account...or create an account with Spotz.
+<br><br>
+<b>Navigating the map.</b>
+<br>1. Zoom in or out with  +/- buttons.
+<br>2. Click and drag the map in any direction.
+<br>3. Click any highlighted area to display a tool tip with detailed parking info.
+<br><br>
+<b>Options for displaying parking information by location:</b>
+<br>1. Enter a time, date and duration in the mobile preview field and click submit.
+<br>2. Enter an address into the search bar.
+<br>Note: Use the show and hide to limit the info that is displayed.
 
-```sh
-sudo npm install -g bower
-npm install
-bower install
-```
+<br><br>
+<h4>Admin</h4><i>To enable admin privildges for a user (Desktop version only):</i>
+<br>Go into the database and set the "admin" column for the user to "true".
+<br><br>
+<b>Admin Options</b>
+<br>Add a rule to street sweeping lines or individual permit zone polygons:
+<br>1. Click the line or polygon.
+<br>2. Click the "Add Rule" button in the sidebar.
+<br>3. Enter the rule info and click the "add rule to selected feature" button..
+<br>
+<br>
+<b>Delete a rule:</b>
+<br>1. Click the object to open its tooltip.
+<br>2. Click the delete rule for the rule of interest.
+<br><br>
+<b>Add a new polygon:</b>
+<br>1. Click the "Add Feature" button.
+<br>2. Click "enable" button.
+<br>3. Click the map on at least 3 points to make the polygon.
+<br>4. Save or delete the new polygon with the respective buttons.
+
+
+## Development
 
 ### Roadmap
 
