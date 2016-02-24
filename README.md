@@ -21,7 +21,11 @@
 
 > 
 Mobile and Desktop Version: 
+
 Desktop Version (with Admin priviledges)
+tel;aflaljfdaljd
+a;ldfjdajlf
+ljafldja
 
 ## Requirements
 *NEW*
