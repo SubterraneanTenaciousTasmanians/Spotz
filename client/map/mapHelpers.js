@@ -2,7 +2,7 @@
 
 angular.module('MapHelpers', ['AdminServices'])
 
-.factory('MapHelperFactory', ['$rootScope', '$cookies', function ($rootScope, $cookies) {
+.factory('MapHelperFactory', ['$rootScope', function ($rootScope) {
 
   //world grid calculations
   var stepX = 0.018;
