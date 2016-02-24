@@ -4,7 +4,7 @@ var express = require('express');
 var donationRouter = express.Router();
 
 var env = require('node-env-file');
-env(__dirname + '/../.env');
+// env(__dirname + '/../.env');
 
 var SECRET_KEY = process.env.SECRETKEY;
 
