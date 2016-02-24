@@ -8,6 +8,16 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
   $scope.showMobilePreview = false;
   $scope.preview = {};
   $scope.style = {};
+  $scope.rule = {
+    permitCode:'',
+    days:'',
+    timeLimit:'',
+    startTime:'',
+    endTime:'',
+    costPerHour:0,
+    color:'',
+  };
+
   $scope.constraints = {};
   $scope.privileges = false;
 
@@ -109,6 +119,11 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
   $scope.toggleAddRuleMenu = function () {
     //toggle drop down
     $scope.ShowAddRuleOnClick = !$scope.ShowAddRuleOnClick;
+
+    //disable the drawing factory mode
+    DrawingFactory.addPolygonOnClick(false);
+    $scope.style.addNewFeature = '';
+
   };
 
   //saves a rule to the database
@@ -118,18 +133,32 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
     if (MapFactory.selectedFeature && MapFactory.selectedFeature.id !== -1) {
       saveRule(MapFactory.selectedFeature.feature);
     } else {
-      console.log('invalid polygon selected.  Try again. ');
+      alert('invalid polygon selected. Please click on a polygon so the tooltip displays so it is selected. ');
     }
   };
 
   //save a newly drawn polygon
   $scope.savePolygon = function () {
-    DrawingFactory.savePolygon();
+    DrawingFactory.savePolygon().then(function(result){
+      if (result) {
+        //turn off drawing mode
+        console.log('turning off drawing mode');
+        $scope.ShowAddFeatureMenu = false;
+        DrawingFactory.addPolygonOnClick(false);
+        $scope.style.addNewFeature = '';
+
+        //deselect the new feature
+        MapFactory.selectedFeature = undefined;
+      }
+    });
   };
 
   //erase a newly drawn polygon
   $scope.erasePolygon = function () {
-    DrawingFactory.erasePolygon();
+    if (DrawingFactory.erasePolygon()) {
+      //reset the selected feature
+      MapFactory.selectedFeature = undefined;
+    }
   };
 
   //function to save a new rule to the currently selected feature
@@ -138,13 +167,15 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
 
     if (window.confirm('Are you sure you want to change the rule?')) {
 
-      if (!$scope.rule.permitCode) {
-        console.log('permit code required');
-        return;
+      var errMsg = '';
+      for (var prop in $scope.rule) {
+        if ($scope.rule[prop] === '') {
+          errMsg += prop + ' is required\n';
+        }
       }
 
-      if (!$scope.rule.color) {
-        console.log('color required');
+      if (errMsg) {
+        alert(errMsg);
         return;
       }
 

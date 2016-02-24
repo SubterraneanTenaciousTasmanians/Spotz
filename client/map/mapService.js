@@ -87,7 +87,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
         if (confirm('Are you sure you want to delete this rule?')) {
           factory.deleteRule(this.dataset.polyid, this.dataset.ruleid).then(function (rules) {
             factory.selectedFeature.feature.setProperty('rules', rules);
-            MapHelperFactory.refreshTooltipText(factory.selectedFeature.feature);
+            factory.refreshTooltipText(factory.selectedFeature.feature);
           });
         }
       });
@@ -104,6 +104,10 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
           if (succeeded) {
             console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
+
+            //reset the selected feature
+            factory.selectedFeature = undefined;
+
             tooltip.close();
             console.log('delete complete');
           } else {

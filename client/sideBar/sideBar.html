@@ -1,23 +1,23 @@
 <div class="sideBar">
 
-
-  <h1>Display Options</h1>
-
-  <div class="ruleBox" ng-if="ShowAddRuleOnClick" ng-model="ShowAddRuleOnClick">
-    <h2>Add Rule</h2>
-    <span>code</span><input type="text" ng-model="rule.permitCode" placeholder="A">
-    <span>days</span><input type="text" ng-model="rule.days" placeholder="M,T,W,TH,F,S">
-    <span>timeLimit</span><input type="text" ng-model="rule.timeLimit" placeholder="2">
-    <span>startTime</span><input type="text" ng-model="rule.startTime" placeholder="07:00">
-    <span>endTime</span><input type="text" ng-model="rule.endTime" placeholder="19:00">
-    <span>costPerHour</span><input type="text" ng-model="rule.costPerHour" placeholder="2.00">
-    <span>color</span><input type="text" ng-model="rule.color" placeholder="128,0,255">
-    <button ng-click="addRule()">Add Rule to Selected Feature</button>
-  </div>
-
 <!--  ng-if="privileges" -->
-  <ul>
-    <button ng-model="privileges" ng-click="toggleAddRuleMenu()">Show/Hide Add Rule Menu</button>
+  <div class="wrapper">
+
+    <h2> Admin</h2>
+
+    <button ng-model="privileges" ng-click="toggleAddRuleMenu()">Add Rule</button>
+
+    <div class="ruleBox" ng-if="ShowAddRuleOnClick" ng-model="ShowAddRuleOnClick">
+      <h2>Add Rule</h2>
+      <span>code</span><input type="text" ng-model="rule.permitCode" placeholder="A">
+      <span>days</span><input type="text" ng-model="rule.days" placeholder="M,T,W,TH,F,S">
+      <span>timeLimit</span><input type="text" ng-model="rule.timeLimit" placeholder="2">
+      <span>startTime</span><input type="text" ng-model="rule.startTime" placeholder="07:00">
+      <span>endTime</span><input type="text" ng-model="rule.endTime" placeholder="19:00">
+      <span>costPerHour</span><input type="text" ng-model="rule.costPerHour" placeholder="2.00">
+      <span>color</span><input type="text" ng-model="rule.color" placeholder="128,0,255">
+      <button ng-click="addRule()">Add Rule to Selected Feature</button>
+    </div>
 
     <button class="{{style.addNewFeature}}" ng-click="showOnly('addNewFeature')">Add New Polygon</button>
     <div class="addBox" ng-show="ShowAddFeatureMenu">
@@ -25,6 +25,9 @@
       <button type="button" ng-Click="savePolygon()">Save New Polygon</button>
       <button type="button" ng-Click="erasePolygon()">Erase New Polygon</button>
     </div>
+
+
+    <h2> View </h2>
 
     <button class="{{style.grid}}" ng-click="showOnly('grid')">Hide All</button>
     <button class="{{style.permit}}" ng-click="showOnly('permit')">Show Only Permit Zones</button>
@@ -49,9 +52,5 @@
     </form>
    </div>
 
-
-
-
-
-  </ul>
+  </div>
 </div>

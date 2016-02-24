@@ -19,7 +19,17 @@
   font-size: 26px;
   text-align: center;
   color: whitesmoke;
+  border-bottom: 2px solid;
 }
+
+.sideBar h2{
+  font-size: 18px;
+  /* text-align: center; */
+  color: whitesmoke;
+  margin: 1px;
+  padding-left: 12px;
+}
+
 .ruleBox{
   position: relative;
   top: 0;
@@ -30,6 +40,7 @@
 }
 .ruleBox h2{
   margin: 3px;
+  color:#000;
 }
 .ruleBox input{
   display: block;
@@ -41,13 +52,13 @@
 
 }
 
-.sideBar ul {
+.sideBar .wrapper {
   width: 100%;
   padding:0;
   margin:0;
 }
 
-.sideBar ul button {
+.sideBar .wrapper button {
   padding: 5px;
   width: 100%;
   font-family: inherit;

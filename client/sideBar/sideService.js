@@ -25,6 +25,7 @@ angular.module('SideServices', [])
   //click handles
   var addPointOnClickHandle;
   var addPointOnDataClickHandle;
+  var movePolygonOnKeyUpHandle;
 
   function makeFlash(feature) {
     //restore the last selected object
@@ -46,8 +47,6 @@ angular.module('SideServices', [])
     }, 500);
 
   }
-
-  //MapFactory.mapEvents.addDomListener(document, 'keyup', nudgePolygonOnArrow);
 
   function nudgePolygonOnArrow(event) {
     var code = (event.keyCode ? event.keyCode : event.which);
@@ -85,8 +84,8 @@ angular.module('SideServices', [])
       },
     };
 
-    console.log('moving',MapFactory.selectedFeature);
-    MapFactory.selectedFeature.feature.toGeoJson(function (geoJson) {
+    console.log('moving',newFeature.handle);
+    newFeature.handle.toGeoJson(function (geoJson) {
 
       console.log('geoJson', geoJson);
       if (geoJson.properties.rules[0] && geoJson.properties.rules[0].permitCode.indexOf('sweep') !== -1) {
@@ -104,25 +103,26 @@ angular.module('SideServices', [])
       }
 
       //remove the existing feature from the map
-      MapFactory.map.data.remove(MapFactory.selectedFeature.feature);
+      MapFactory.map.data.remove(newFeature.handle);
 
       //add the new feature to the map
       var newFeatures = MapFactory.map.data.addGeoJson(geoJson);
 
       //update the selected feature to the one we just created
-      selectPolygon(newFeatures[0]);
+      newFeature.handle = newFeatures[0];
     });
   }
-
 
   factory.addPolygonOnClick = function (enabled) {
 
     if (enabled) {
       console.log('points add mode enabled');
-
+      MapFactory.map.setOptions({draggableCursor:'crosshair'});
       //enable the click listeners
       addPointOnClickHandle = MapFactory.map.addListener('click', addPointOnClick);
       addPointOnDataClickHandle = MapFactory.map.data.addListener('click', addPointOnClick);
+      movePolygonOnKeyUpHandle = MapFactory.mapEvents.addDomListener(document, 'keyup', nudgePolygonOnArrow);
+
     } else {
       console.log('points add mode disabled');
       if (addPointOnClickHandle) {
@@ -132,17 +132,21 @@ angular.module('SideServices', [])
           if (confirm('You have a drawn shape which is not yet saved, would you like to save it?')) {
             factory.savePolygon().then(function () {
 
+              MapFactory.map.setOptions({draggableCursor:'grab'});
               //after saving, remove the click listeners
               MapFactory.mapEvents.removeListener(addPointOnClickHandle);
               MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+              MapFactory.mapEvents.removeListener(movePolygonOnKeyUpHandle);
               addPointOnClickHandle = undefined;
               addPointOnDataClickHandle = undefined;
             });
           }
         } else {
           console.log('removing add listeners');
+          MapFactory.map.setOptions({draggableCursor:'grab'});
           MapFactory.mapEvents.removeListener(addPointOnClickHandle);
           MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
+          MapFactory.mapEvents.removeListener(movePolygonOnKeyUpHandle);
           addPointOnClickHandle = undefined;
           addPointOnDataClickHandle = undefined;
         }
@@ -216,11 +220,23 @@ angular.module('SideServices', [])
       newFeature.handle = undefined;
       newFeature.points = [];
       newFeature.shape = [];
+      return true;
+    }else{
+      alert('you didn\'t create a new feature. Click the map to add gridpoints.');
+      return false;
     }
   };
 
   factory.savePolygon = function () {
     var token = $cookies.get('credentials');
+
+    if (!newFeature.shape.length) {
+      alert('No polygon to save. Click the map to add gridpoints.');
+      return new Promise(function (resolve) {
+        resolve(false);
+      });
+    }
+
     var payload = {
       polygons:[
         {
@@ -233,6 +249,8 @@ angular.module('SideServices', [])
     return $http.post('/api/zones', payload)
     .success(function (data) {
       console.log('saved!', data);
+      alert('Feature saved!');
+
       //save the id from the server so it can be updated
       newFeature.handle.setProperty('id', data.id);
 
@@ -240,11 +258,13 @@ angular.module('SideServices', [])
       newFeature.handle = undefined;
       newFeature.points = [];
       newFeature.shape = [];
+      return true;
 
       //deselectPolygon();
     })
     .error(function (err) {
       console.log('save failed', err);
+      return false;
     });
 
   };
