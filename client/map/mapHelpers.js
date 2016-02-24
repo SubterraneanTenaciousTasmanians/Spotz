@@ -60,7 +60,6 @@ angular.module('MapHelpers', ['AdminServices'])
 
   };
 
-
   helperFactory.createTooltipText = function (feature) {
 
     var numOfRules;

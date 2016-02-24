@@ -3,16 +3,19 @@
 angular.module('spotz.map', ['MapServices'])
 
 .controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state','MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
-  $scope.mapLoading = true;
-
+  $scope.showLoading = 'hidden';
   $scope.maxZoomOut = false;
 
-  $rootScope.$on('googleMapLoaded', function () {
-    $scope.mapLoading = false;
+  $rootScope.$on('fetchingStart', function () {
+    $scope.showLoading = 'visible';
   });
 
-  $rootScope.$on('mapLoaded', function () {
-    $scope.mapLoading = false;
+  $rootScope.$on('fetchingEnd', function () {
+    //set delay to acout for rendering to screen
+    setTimeout(function () {
+      $scope.showLoading = 'hidden';
+      $scope.$apply();
+    },500);
   });
 
   $rootScope.$on('maxZoomOutReached', function () {
@@ -39,7 +42,7 @@ angular.module('spotz.map', ['MapServices'])
 
   //load the google map, then return map object in callback
   MapFactory.init(function (map) {
-    $scope.mapLoading = true;
+    $scope.showLoading = true;
     var center = map.getCenter();
 
     //get the parking zones based on the center point
@@ -47,7 +50,7 @@ angular.module('spotz.map', ['MapServices'])
 
     // map data ready, broadcast to the sibling controller (sideCtrl)
     $rootScope.$broadcast('googleMapLoaded');
-    $scope.mapLoading = false;
+    $scope.showLoading = false;
   });
 
 },

@@ -19,7 +19,13 @@
 
 ## Usage
 
-> Some usage instructions
+> 
+Mobile and Desktop Version: 
+
+Desktop Version (with Admin priviledges)
+tel;aflaljfdaljd
+a;ldfjdajlf
+ljafldja
 
 ## Requirements
 *NEW*
@@ -27,10 +33,10 @@
     "node": "5.4.1"
     "npm": "3.3.12"
     
-    Spotz is a MEAN application, so you need to install node <a href ="">Test</a>(version 5.4.1 or higher). 
-    Then, download the above repo and run npm install from the root directory to download all required dependencies. You need to configure a MongoDB connection in server/db.js. After that, run node server/server.js
-
-and the server should be up and running.
+    Spotz is a MEAN application, so you need to install node *add a link** (version 5.4.1 or higher). 
+    Then, download the above repo and run npm install from the root directory to download all 
+    required dependencies. You need to configure a MongoDB connection in server/db.js. After that, 
+    run node server/server.js and the server should be up and running.
 
 
 *OLD*
@@ -41,6 +47,8 @@ and the server should be up and running.
 - etc
 
 ## Development
+
+
 
 ### Installing Dependencies
 

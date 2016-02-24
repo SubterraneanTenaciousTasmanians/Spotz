@@ -8,11 +8,6 @@ angular.module('spotz.login', ['LoginService'])
     $scope.userinfo = {};
     $scope.showServerMsg = false;
     $scope.serverMsg = '';
-    $scope.loginLoading = false;
-
-    $rootScope.$on('signin', function () {
-      $scope.loginLoading = true;
-    });
 
     //to switch between sign up and sign in on the same Page
     //stores the button text and the question text below the button
@@ -31,7 +26,6 @@ angular.module('spotz.login', ['LoginService'])
     $scope.activeLoginState = loginStates.signUp;
 
     LoginFactory.checkCredentials().then(function (loggedIn) {
-      $scope.loginLoading = false;
       if (loggedIn) {
         $state.go('main');
       }
