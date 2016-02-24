@@ -17,7 +17,7 @@ var Bcrypt = require('bcrypt');
 
 //DEV ONLY
 var env = require('node-env-file');
-// env(__dirname + '/../.env');
+env(__dirname + '/../.env');
 
 //EXPORTING HANDLERS
 module.exports = assignToken;
