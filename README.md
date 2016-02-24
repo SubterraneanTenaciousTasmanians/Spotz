@@ -1,5 +1,6 @@
 # Spotz
-> An app that protects the user by providing parking rules based on location.
+> An application designed to display parking options based on location, date and time of day.
+
 ## Team
 
   - __Product Owner__: Adesola Harrison
