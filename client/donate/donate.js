@@ -13,21 +13,20 @@ angular.module('spotz.donate', ['DonateServices'])
   $scope.loading = false;
 
   // removed because donation is now a route
-  // $scope.toggleModal = function () {
-  //   $scope.showDonateModal = !$scope.showDonateModal;
-  //   console.log('shown?', $scope.showDonateModal);
-  //
-  // };
-
-  // $rootScope.$on('donateClicked', function () {
-  //   // $scope.toggleModal();
-  //   console.log('donate clicked broadcast recieved in donate.js');
-  //   $state.go('donate');
-  // });
-
-  $scope.closeDonationView = function(){
-    $state.go('main');
+  $scope.toggleModal = function () {
+    $scope.showDonateModal = !$scope.showDonateModal;
+    // console.log('shown?', $scope.showDonateModal);
   };
+
+  $rootScope.$on('donateClicked', function () {
+    $scope.toggleModal();
+    // console.log('donate clicked broadcast recieved in donate.js');
+    // $state.go('donate');
+  });
+
+  // $scope.closeDonationView = function(){
+  //   $state.go('main');
+  // };
 
   $scope.stripeCallback = function (status, response) {
     console.log('2nd STRIPE RESPONSE', response);
