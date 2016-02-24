@@ -60,16 +60,6 @@ angular.module('MapHelpers', ['AdminServices'])
 
   };
 
-  var debouceAdd = debouce(add,250);
-
-  debounceAdd(1,2); //set one timeout
-  debounceAdd(3,4); //cancel the last timeout, and set a new one
-
-
-
-  
-  debounceAdd(5,6);
-  debounceAdd(7,8);
 
   helperFactory.createTooltipText = function (feature) {
 
