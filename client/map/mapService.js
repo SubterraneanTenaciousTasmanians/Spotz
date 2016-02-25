@@ -26,6 +26,16 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     console.log('clearing downloaded info');
     downloadedGridZones = {};
     displayedPolygons = {};
+    privileges = false;
+  });
+
+  //restrict admin options based on privledges
+  var privileges = false;
+
+  $rootScope.$on('admin', function () {
+    if ($cookies.get('privileges') === 'tasmanianDevils') {
+      privileges = true;
+    }
   });
 
   //===================================================
@@ -73,18 +83,22 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //===================================================
   //TOOLTIP FUNCTIONS
 
-  factory.refreshTooltipText = function (feature) {
+  factory.refreshTooltipText = function (feature, privileges) {
 
-    var rulesToDisplay = MapHelperFactory.createTooltipText(feature);
+    var rulesToDisplay = MapHelperFactory.createTooltipText(feature, privileges);
 
     //tooltip points to a google map tooltip object
     //append the content and set the location, then display it
     tooltip.setContent('<span class="tooltip-text">' + rulesToDisplay + '</span>', event);
     tooltip.open(factory.map);
-    factory.addDeleteButtonClickHandlers();
+    factory.addDeleteButtonClickHandlers(privileges);
   };
 
-  factory.addDeleteButtonClickHandlers = function () {
+  factory.addDeleteButtonClickHandlers = function (privileges) {
+
+    if (!privileges) {
+      return;
+    }
 
     //add listeners for the remove rule buttons
     var deleteButtons = document.getElementsByClassName('delete-rule');
@@ -95,7 +109,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
         if (confirm('Are you sure you want to delete this rule?')) {
           factory.deleteRule(this.dataset.polyid, this.dataset.ruleid).then(function (rules) {
             factory.selectedFeature.feature.setProperty('rules', rules);
-            MapHelperFactory.refreshTooltipText(factory.selectedFeature.feature);
+            factory.refreshTooltipText(factory.selectedFeature.feature, true);
           });
         }
       });
@@ -112,6 +126,10 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
           if (succeeded) {
             console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
+
+            //reset the selected feature
+            factory.selectedFeature = undefined;
+
             tooltip.close();
             console.log('delete complete');
           } else {
@@ -336,7 +354,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //loads the google API and sets up map initial event listeners
 
   factory.init = function (callback) {
-
     //get the google map object
     if (!window.google) {
       //hit the google api to get the google object on the window
@@ -352,7 +369,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     }
 
     function setupMap() {
-
       //=====================================================
       //we have a google.maps object here!
       //SET THE MAIN MAP OBJECTS
@@ -382,7 +398,8 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       factory.map.data.addListener('click', function (event) {
         console.log(event.feature.getProperty('id'));
         factory.setSelectedFeature(event.feature);
-        factory.refreshTooltipText(event.feature);
+        console.log(privileges);
+        factory.refreshTooltipText(event.feature, privileges);
         tooltip.setPosition(event.latLng);
       });
 

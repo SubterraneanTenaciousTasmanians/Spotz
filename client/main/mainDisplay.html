@@ -1,6 +1,8 @@
 <div class='nav' ui-view="nav"></div>
 <div class='side' ui-view="side"></div>
 <div class='map' ui-view="map"></div>
-<!-- Removed because the donate page will have its own route -->
-<!-- <div class="donation" ui-view="donate" ng-show="showDonateModal"></div> -->
+
+<!-- NOTE: Mobile version has the following line removed, because on MOBILE, donation has its own route where the donation.html/css fills the entire page  -->
+<div class="donation" ui-view="donate" ng-show="showDonateModal"></div>
+
 <div class="drawing" ui-view="drawing"></div>

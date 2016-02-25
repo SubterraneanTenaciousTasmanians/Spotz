@@ -60,7 +60,7 @@ angular.module('MapHelpers', ['AdminServices'])
 
   };
 
-  helperFactory.createTooltipText = function (feature) {
+  helperFactory.createTooltipText = function (feature, privileged) {
 
     var numOfRules;
 
@@ -105,7 +105,9 @@ angular.module('MapHelpers', ['AdminServices'])
       polygonRules.costPerHour = feature.getProperty('rules')[i].costPerHour;
       rulesToDisplay +=  'cost: $' + polygonRules.costPerHour + '<br>';
 
-      rulesToDisplay +=  '<div class="delete-rule" data-polyId=' + feature.getProperty('id').toString() + ' data-ruleId=' + feature.getProperty('rules')[i].id + '>DELETE RULE</div><br>';
+      if (privileged) {
+        rulesToDisplay +=  '<div class="delete-rule" data-polyId=' + feature.getProperty('id').toString() + ' data-ruleId=' + feature.getProperty('rules')[i].id + '>DELETE RULE</div><br>';
+      }
 
       rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
 
@@ -202,7 +204,10 @@ angular.module('MapHelpers', ['AdminServices'])
     }
 
     rulesToDisplay += '<br>';
-    rulesToDisplay +=  '<div class="delete-polygon" data-polyId=' + feature.getProperty('id').toString() + '>DELETE FEATURE</div><br>';
+
+    if (privileged) {
+      rulesToDisplay +=  '<div class="delete-polygon" data-polyId=' + feature.getProperty('id').toString() + '>DELETE FEATURE</div><br>';
+    }
 
     return rulesToDisplay;
   };

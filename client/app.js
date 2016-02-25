@@ -9,7 +9,6 @@ angular.module('spotz', [
 'spotz.nav',
 'spotz.side',
 'spotz.donate',
-'spotz.drawing',
 ])
 
 .config(function ($stateProvider, $urlRouterProvider) {
@@ -28,7 +27,6 @@ angular.module('spotz', [
           'side@main': { templateUrl: '/sideBar/sideBar.html', controller: 'sideCtrl' },
           'map@main': { templateUrl: '/map/map.html', controller:'mapCtrl' },
           'donate@main': { templateUrl: '/donate/donate.html', controller:'donateCtrl' },
-          'drawing@main': { templateUrl: '/drawing/drawing.html', controller:'drawingCtrl' },
         },
       })
 
@@ -38,11 +36,11 @@ angular.module('spotz', [
     controller: 'loginCtrl',
   })
 
-  .state('donate', {
-    url: '/donate',
-    templateUrl: '/donate/donate.html',
-    controller: 'donateCtrl',
-  });
+  // .state('donate', {
+  //   url: '/donate',
+  //   templateUrl: '/donate/donate.html',
+  //   controller: 'donateCtrl',
+  // });
 
   // .state('donate', {
   //   url: '/donate',
