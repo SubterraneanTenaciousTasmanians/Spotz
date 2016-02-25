@@ -7,7 +7,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   var tooltip = {};
   var searchBox = {};
   var minZoomLevel = 14;
-  var boxSize = 0.006;  //size of box to display features on the map
+  var boxSize = 0.02;  //size of box to display features on the map
   //map view boundary
   var topRightX;
   var topRightY;
@@ -145,7 +145,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
   factory.fetchAndDisplayParkingZonesAt = function (coordinates) {
 
-    var token = $cookies.get('credentials');
     var gridStr = JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates));
     var newColor;
 
@@ -178,37 +177,73 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     }
 
     //if we made it here, we need to fetch the gridzone from the server
-    //mark coordinates as downloaded
     downloadedGridZones[gridStr] = [];
+
+    return fetchGridZones(coordinates).then(function (geoJsonData) {
+
+      var recursiveForLoop = function (i) {
+
+        return new Promise(function (resolve) {
+
+          if (i === geoJsonData.length - 1 || geoJsonData.length === 0) {
+            resolve();
+            return;
+          }
+
+          setTimeout(function () {
+
+            if (displayedPolygons[geoJsonData[i].properties.id]) {
+              //this feature is already displayed
+              resolve(recursiveForLoop(i + 1));
+            }else {
+              //create the feature and display it
+              displayedPolygons[geoJsonData[i].properties.id] = true;
+              var newFeature = putOnTheMap(geoJsonData[i]);
+              downloadedGridZones[gridStr].push(newFeature);
+              resolve(recursiveForLoop(i + 1));
+            }
+
+          }, 0);
+
+        });
+      };
+
+      return recursiveForLoop(0);
+
+    }).then(function () {
+      //console.log('done painting');
+      displayedGridZones[gridStr] = true;
+      $rootScope.$emit('fetchingEnd');
+      return downloadedGridZones[gridStr];
+    });
+  };
+
+  function fetchGridZones(coordinates) {
+    //if we made it here, we need to fetch the gridzone from the server
+    //mark coordinates as downloaded
+    var downloadedPolygons = [];
+    var token = $cookies.get('credentials');
+
+    //turn on loading icon
     $rootScope.$emit('fetchingStart');
-    return $http({
-      method:'GET',
-      url: '/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token,
-    })
-    .success(function (polygonsFromDb) {
+
+    return $http.get('/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token)
+    .then(function (response) {
+
+      var polygonsFromDb = response.data;
 
       $rootScope.$broadcast('mapLoaded');
 
       var boundary;
       var p;
-      var newFeature;
 
+      //no data for these coordinates
       if (!polygonsFromDb.length) {
-        return [];
+        return downloadedPolygons;
       }
 
       //loop through zone data and put them on the map
       polygonsFromDb.forEach(function (poly, i) {
-
-        //check if we already displayed this polygon
-        if (displayedPolygons[poly.id]) {
-          console.log('already displayed this polygon');
-          return;
-        }
-
-        //if we made it here, we need to display this polygon
-        //mark polygon as displayed
-        displayedPolygons[poly.id] = true;
 
         //make a geoJSON object to be placed on the map
         //http://geojson.org/geojson-spec.html
@@ -252,27 +287,26 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
         }
 
-        //actually put it on the map
-        newFeature = factory.map.data.addGeoJson(p)[0];
-
-        //color it based on the currently selected constraints ($rootScope.constraints)
-        newColor = MapHelperFactory.getColorOfRule(newFeature, $rootScope.constraints);
-        if (newColor) {
-          newFeature.setProperty('color', newColor.color);
-          newFeature.setProperty('show', newColor.show);
-        }
-
-        downloadedGridZones[gridStr].push(newFeature);
-
+        downloadedPolygons.push(p);
       });
 
-      //resolve promise, return array of features
-      displayedGridZones[gridStr] = true;
-      $rootScope.$emit('fetchingEnd');
-      return downloadedGridZones[gridStr];
+      return downloadedPolygons;
 
     });
-  };
+  }
+
+  function putOnTheMap(geoJson) {
+    var newFeature = factory.map.data.addGeoJson(geoJson)[0];
+
+    //color it based on the currently selected constraints ($rootScope.constraints)
+    var newColor = MapHelperFactory.getColorOfRule(newFeature, $rootScope.constraints);
+    if (newColor) {
+      newFeature.setProperty('color', newColor.color);
+      newFeature.setProperty('show', newColor.show);
+    }
+
+    return newFeature;
+  }
 
   factory.removeFeaturesNotIn = function (coordinateArray) {
 
@@ -296,6 +330,27 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
         displayedGridZones[gridZone] = false;
       }
     }
+  };
+
+  factory.refreshDisplayedFeatures = function () {
+
+    var top = factory.map.getBounds().getNorthEast().lat();
+    var right = factory.map.getBounds().getNorthEast().lng();
+    var bottom = factory.map.getBounds().getSouthWest().lat();
+    var left = factory.map.getBounds().getSouthWest().lng();
+
+    var topRight    = [right, top];
+    var bottomRight = [right, bottom];
+    var topLeft     = [left, top];
+    var bottomLeft  = [left, bottom];
+
+    var boxBoundaries = MapHelperFactory.fillInterior(topLeft, bottomRight, topRight, bottomLeft, factory.map);
+
+    boxBoundaries.forEach(function (coordinates) {
+      factory.fetchAndDisplayParkingZonesAt(coordinates);
+    });
+
+    factory.removeFeaturesNotIn(boxBoundaries);
   };
 
   factory.deleteParkingZone = function (polyId) {
@@ -377,8 +432,8 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       //create a new map and center to downtown Berkeley
       console.log('loading map');
       factory.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 18,
-        center: { lng: -122.26156639099121, lat: 37.86434903305901 },
+        zoom: 14,
+        center: { lng: -122.27556639099121, lat: 37.86934903305901 },
       });
 
       //events will allow us to access and remove event listeners
@@ -386,7 +441,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
       //save the tooltip (infowindow) in a local variable
       console.log('creating tooltip');
-      tooltip = new google.maps.InfoWindow();
+      tooltip = new google.maps.InfoWindow({ maxWidth: 200 });
 
       // Create the search box and link it to the UI element.
       console.log('creating searchbar');
@@ -448,24 +503,8 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       //=====================================================
       // Listener for loading in data as the map scrolls
 
-      function refreshDisplayedFeatures() {
-        var coordinates = [factory.map.getCenter().lng(), factory.map.getCenter().lat()];
-        var boxBoundaries = [
-          [coordinates[0] + boxSize, coordinates[1] + boxSize],
-          [coordinates[0] + boxSize, coordinates[1] - boxSize],
-          [coordinates[0] - boxSize, coordinates[1] + boxSize],
-          [coordinates[0] - boxSize, coordinates[1] - boxSize],
-        ];
-
-        boxBoundaries.forEach(function (coordinates) {
-          factory.fetchAndDisplayParkingZonesAt(coordinates);
-        });
-
-        factory.removeFeaturesNotIn(boxBoundaries);
-      }
-
       //add listenter to debounced version of refreshDisplayedFeatures (front end optimization)
-      factory.map.addListener('center_changed', MapHelperFactory.debounce(refreshDisplayedFeatures, 250));
+      factory.map.addListener('center_changed', MapHelperFactory.debounce(factory.refreshDisplayedFeatures, 250));
 
 
       //=====================================================
@@ -504,8 +543,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
         if (currentZoomLevel < minZoomLevel) {
           factory.map.setZoom(minZoomLevel);
           $rootScope.$broadcast('maxZoomOutReached');
-        }
-        else if (currentZoomLevel > minZoomLevel)  {
+        } else if (currentZoomLevel > minZoomLevel)  {
           $rootScope.$broadcast('lessThanMaxZoomOut');
         }
       });
@@ -520,8 +558,11 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
         bottomLeftY = factory.map.getBounds().getSouthWest().lat();
         bottomLeftX = factory.map.getBounds().getSouthWest().lng();
 
+        //paint gridlines
         MapHelperFactory.paintGridLines(factory.map, bottomLeftX, topRightX, bottomLeftY, topRightY);
 
+        //load initial data onto map
+        factory.refreshDisplayedFeatures();
       });
 
       //finally, we are at the end of init

@@ -1,7 +1,7 @@
 # Spotz
 > An application designed to display parking options based on location, date and time of day.
 
-<img src="/screenshot1.png" style="height: 500px; width:500px;">
+<img src="/readme_images/screenshot1.png" style="height: 500px; width:500px;">
 <br>
 
 ## Team
@@ -74,6 +74,8 @@ run node server/server.js and the server should be up and running.
 
 View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
 
+###Deployed Site
+<a href="https://spotz.herokuapp.com">https://spotz.herokuapp.com</a>
 
 ## Contributing
 

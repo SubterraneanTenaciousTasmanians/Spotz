@@ -24,6 +24,33 @@ angular.module('MapHelpers', ['AdminServices'])
     ];
   };
 
+  helperFactory.fillInterior = function (topLeft, bottomRight, topRight, bottomLeft, map) {
+    var startX = topLeft[0];
+    var startY = topLeft[1];
+    var curX = startX;
+    var curY = startY;
+    var filledIn = [];
+
+    //include edgepoints
+    filledIn = [bottomRight, topRight, bottomLeft];
+
+    //fill in grid points inbetween
+    var i = 0;
+    while (curX < bottomRight[0]) {
+      while (curY > bottomRight[1]) {
+        filledIn.push([curX, curY]);
+        i++;
+        curY -= stepY;
+      }
+
+      curY = startY;
+      curX += stepX;
+    }
+
+    return filledIn;
+
+  };
+
   // Returns a function, that, as long as it continues to be invoked, will not
   // be triggered. The function will be called after it stops being called for
   // N milliseconds. If `immediate` is passed, trigger the function on the
@@ -76,25 +103,23 @@ angular.module('MapHelpers', ['AdminServices'])
     var rulesToDisplay = '';
 
     // Capture the user submitted time and date
-    var contraints = {
+    var constraints = {
       time: '',
       date: '',
     };
 
     if ($rootScope.constraints) {
-      contraints = $rootScope.constraints;
+      constraints = $rootScope.constraints;
     }
 
     var polygonRules = {};
 
     for (var i = 0; i < numOfRules; i++) {
-      rulesToDisplay += 'Permit code: ' + feature.getProperty('rules')[i].permitCode + '<br>';
+      rulesToDisplay += '<div class="rule-box">';
+      rulesToDisplay += '<span class="permit-code">' + feature.getProperty('rules')[i].permitCode + '</span><br>';
 
       polygonRules.days = feature.getProperty('rules')[i].days;
-      rulesToDisplay += 'Days: ' + feature.getProperty('rules')[i].days + '<br>';
-
-      polygonRules.timeLimit = feature.getProperty('rules')[i].timeLimit;
-      rulesToDisplay += polygonRules.timeLimit + 'hrs' + '<br>';
+      rulesToDisplay += feature.getProperty('rules')[i].days + '<br>';
 
       polygonRules.startTime = feature.getProperty('rules')[i].startTime;
       rulesToDisplay +=  polygonRules.startTime + ' to ';
@@ -102,31 +127,34 @@ angular.module('MapHelpers', ['AdminServices'])
       polygonRules.endTime = feature.getProperty('rules')[i].endTime;
       rulesToDisplay += polygonRules.endTime + '<br>';
 
+      polygonRules.timeLimit = feature.getProperty('rules')[i].timeLimit;
+      rulesToDisplay += '<span class="time-limit">' + polygonRules.timeLimit + 'hrs max' + '</span>';
+
       polygonRules.costPerHour = feature.getProperty('rules')[i].costPerHour;
-      rulesToDisplay +=  'cost: $' + polygonRules.costPerHour + '<br>';
+      rulesToDisplay +=  '<span class="cost">$' + polygonRules.costPerHour + '/hr</span><br>';
 
       if (privileged) {
         rulesToDisplay +=  '<div class="delete-rule" data-polyId=' + feature.getProperty('id').toString() + ' data-ruleId=' + feature.getProperty('rules')[i].id + '>DELETE RULE</div><br>';
       }
 
-      rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
-
+      //rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
+      rulesToDisplay += '</div>';
     }
 
     if (!numOfRules) {
       rulesToDisplay = 'Parking info not available';
 
-    } else if (contraints.time !== '') {  //Sample Time submitted.  Display parking availability
+    } else if (constraints.time !== '') {  //Sample Time submitted.  Display parking availability
 
       // NOTE update these to use removeLeadingZero function, works without it for now
       // and change them to real integers
       // Convert time format form 08:12:10 to 0812
-      var convPreviewTime = convertTime(contraints.time);
+      var convPreviewTime = convertTime(constraints.time);
       var convStartTime = convertTime(polygonRules.startTime);
       var convEndTime = convertTime(polygonRules.endTime);
 
       // check for Sat or Sunday
-      var userDay = contraints.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
+      var userDay = constraints.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
 
       // All Street sweeping day possiblilities
       var streetSweepingObj = {
@@ -156,7 +184,7 @@ angular.module('MapHelpers', ['AdminServices'])
           var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
 
           // Ex: Mon Feb 15 2016 00:00:00
-          var date = contraints.date.toDateString(); // 'Mon Feb 15 2016 00:00:00'
+          var date = constraints.date.toDateString(); // 'Mon Feb 15 2016 00:00:00'
           var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
 
           // take the date, divide by 7 and round up
@@ -166,7 +194,7 @@ angular.module('MapHelpers', ['AdminServices'])
           // console.log('Correct day: ', weekdayOfTheMonth);
           // console.log('Street Sweeping day is: ', polygonRules.days);
 
-          // Check if the contraints date and time, matches the sweeping date and time
+          // Check if the constraints date and time, matches the sweeping date and time
           if ((polygonRules.days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
             parkingMessage = 'WARNING: Street sweeping is occuring here <br> on the date and time you entered.';
           }
@@ -192,13 +220,13 @@ angular.module('MapHelpers', ['AdminServices'])
         }  else {
 
           if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
-            parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then you there is a two hour limit until' + polygonRules.endTime;
+            parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
           } else {
             parkingMessage = 'You can park here for two hours only';
           }
         }
 
-        rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
+        rulesToDisplay += '<br>' + '<span class="parking-advice">' + parkingMessage + '</span>';
       }
 
     }
@@ -212,7 +240,7 @@ angular.module('MapHelpers', ['AdminServices'])
     return rulesToDisplay;
   };
 
-  helperFactory.determineMobilePreviewColor = function (feature, contraints) {
+  helperFactory.determineMobilePreviewColor = function (feature, constraints) {
 
     /*
     constraints = {
@@ -222,7 +250,7 @@ angular.module('MapHelpers', ['AdminServices'])
     };
     */
 
-    if (!contraints) {
+    if (!constraints) {
       console.log('cannot determine mobile preview without constraints');
       return;
     }
@@ -235,21 +263,21 @@ angular.module('MapHelpers', ['AdminServices'])
       black:'0,0,0',
     };
 
-    var convPreviewTime = Number(convertTime(contraints.time));
+    var convPreviewTime = Number(convertTime(constraints.time));
 
     var convStartTime = '';
     var convEndTime = '';
 
     // change into format HHMM  (hour Min Seconds)
     // example: 2 hours -> 2 changes to 200
-    var convPreviewDuration = Number(convPreviewDuration  + '00'); // number string becomes an integer
+    var convPreviewDuration = Number(constraints.duration  + '00'); // number string becomes an integer
 
     var poly = {
       rules: feature.getProperty('rules'),
       id: feature.getProperty('id'),
     };
 
-    var userDay = contraints.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
+    var userDay = constraints.date.getDay();  // grab the day from the date (0 = Sunday, 1 = Monday... 6 = Saturday)
 
     if (poly.rules && poly.rules[0]) {
 
@@ -296,14 +324,14 @@ angular.module('MapHelpers', ['AdminServices'])
               var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
 
               // Ex: Mon Feb 15 2016 00:00:00
-              var date = contraints.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
+              var date = constraints.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
               var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
 
               // take the date, divide by 7 and round up
               // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
               var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
 
-              // Check if the contraints date and time, intersect with the sweeping date and time
+              // Check if the constraints date and time, intersect with the sweeping date and time
               if ((poly.rules[i].days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
                 // parking during street sweeping time, so paint street sweeping lines red
                 return {
@@ -351,6 +379,7 @@ angular.module('MapHelpers', ['AdminServices'])
 
             // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
             if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
+              // console.log("weekend day chosen");
               if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
                 // console.log('Sat/Sun parking outside of permit time, but within METER time, so paint the permit zone orange');
                 return {
@@ -367,10 +396,10 @@ angular.module('MapHelpers', ['AdminServices'])
               }
 
             }  else {
+
               if (((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
                 ((convPreviewTime > convEndTime) &&  ((convPreviewTime + convPreviewDuration - 2400) < convStartTime))) {
                 // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
-
                 // check possible situation that its not permit zone hours, but it is parking meter hours
                 if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
                   // console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone orange');
@@ -394,7 +423,7 @@ angular.module('MapHelpers', ['AdminServices'])
                   show: true,
                 };
 
-              } else {  // contraints time intersects with PERMIT/Meter time
+              } else {  // constraints time intersects with PERMIT/Meter time
 
                 // If there is a meter paint it orange
                 if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {

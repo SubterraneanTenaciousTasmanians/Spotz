@@ -1,1 +1,0 @@
-compressCoordinates.js
