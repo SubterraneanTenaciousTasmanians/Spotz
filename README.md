@@ -74,6 +74,8 @@ run node server/server.js and the server should be up and running.
 
 View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
 
+###Deployed Site
+<a href="https://spotz.herokuapp.com">https://spotz.herokuapp.com</a>
 
 ## Contributing
 
