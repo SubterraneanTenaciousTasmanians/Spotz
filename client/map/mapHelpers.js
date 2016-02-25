@@ -397,12 +397,9 @@ angular.module('MapHelpers', ['AdminServices'])
 
             }  else {
 
-              console.log('****** permit zone check');
-              console.log(convPreviewTime, convPreviewDuration, convStartTime, convEndTime );
               if (((convPreviewTime < convStartTime) && ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
                 ((convPreviewTime > convEndTime) &&  ((convPreviewTime + convPreviewDuration - 2400) < convStartTime))) {
                 // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
-                console.log('current time is not within permit zone time');
                 // check possible situation that its not permit zone hours, but it is parking meter hours
                 if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
                   // console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone orange');
@@ -415,7 +412,6 @@ angular.module('MapHelpers', ['AdminServices'])
                 // Not within parking meter time, so set the color to green if a permit zone wasn't found already found
                 // for this polygon
                 if (permitZoneFound) {
-                  console.log("PermitZone Found so color it yellow");
                   return {
                     color: color.yellow,
                     show: true,

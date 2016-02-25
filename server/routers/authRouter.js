@@ -6,6 +6,7 @@ var User = require('./../db/user.js');
 //JWT FOR TOKEN ASSIGNMENT
 var jwt = require('jsonwebtoken');
 var assignToken = express.Router();
+require('./env.js');
 
 //THIRD PARTY LOGIN AUTHORIZATION
 var passport = require('passport');
@@ -14,10 +15,6 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 //PASSWORD SALT AND HASH
 var Bcrypt = require('bcrypt');
-
-//DEV ONLY
-var env = require('node-env-file');
-env(__dirname + '/../.env');
 
 //EXPORTING HANDLERS
 module.exports = assignToken;

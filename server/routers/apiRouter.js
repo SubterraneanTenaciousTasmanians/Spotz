@@ -4,14 +4,11 @@ var express = require('express');
 
 //TOKEN AUTH
 var jwt = require('jsonwebtoken');
+require('./env.js');
 
 //DATA BASE
 var ParkingDB = require('./../db/parking.js');
 var ocrData = require('./../db/ocrData.js');
-
-//DEV ONLY
-var env = require('node-env-file');
-env(__dirname + '/../.env');
 
 //EXPORT ROUTER
 var verifyToken = express.Router();
