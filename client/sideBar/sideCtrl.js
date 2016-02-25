@@ -127,6 +127,7 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
     //disable the drawing factory mode
     DrawingFactory.addPolygonOnClick(false);
     $scope.style.addNewFeature = '';
+    $scope.ShowAddFeatureMenu = false;
 
   };
 
