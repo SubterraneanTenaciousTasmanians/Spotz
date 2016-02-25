@@ -24,6 +24,33 @@ angular.module('MapHelpers', ['AdminServices'])
     ];
   };
 
+  helperFactory.fillInterior = function (topLeft, bottomRight, topRight, bottomLeft, map) {
+    var startX = topLeft[0];
+    var startY = topLeft[1];
+    var curX = startX;
+    var curY = startY;
+    var filledIn = [];
+
+    //include edgepoints
+    filledIn = [bottomRight, topRight, bottomLeft];
+
+    //fill in grid points inbetween
+    var i = 0;
+    while (curX < bottomRight[0]) {
+      while (curY > bottomRight[1]) {
+        filledIn.push([curX, curY]);
+        i++;
+        curY -= stepY;
+      }
+
+      curY = startY;
+      curX += stepX;
+    }
+
+    return filledIn;
+
+  };
+
   // Returns a function, that, as long as it continues to be invoked, will not
   // be triggered. The function will be called after it stops being called for
   // N milliseconds. If `immediate` is passed, trigger the function on the
@@ -88,13 +115,11 @@ angular.module('MapHelpers', ['AdminServices'])
     var polygonRules = {};
 
     for (var i = 0; i < numOfRules; i++) {
-      rulesToDisplay += 'Permit code: ' + feature.getProperty('rules')[i].permitCode + '<br>';
+      rulesToDisplay += '<div class="rule-box">';
+      rulesToDisplay += '<span class="permit-code">' + feature.getProperty('rules')[i].permitCode + '</span><br>';
 
       polygonRules.days = feature.getProperty('rules')[i].days;
-      rulesToDisplay += 'Days: ' + feature.getProperty('rules')[i].days + '<br>';
-
-      polygonRules.timeLimit = feature.getProperty('rules')[i].timeLimit;
-      rulesToDisplay += polygonRules.timeLimit + 'hrs' + '<br>';
+      rulesToDisplay += feature.getProperty('rules')[i].days + '<br>';
 
       polygonRules.startTime = feature.getProperty('rules')[i].startTime;
       rulesToDisplay +=  polygonRules.startTime + ' to ';
@@ -102,15 +127,18 @@ angular.module('MapHelpers', ['AdminServices'])
       polygonRules.endTime = feature.getProperty('rules')[i].endTime;
       rulesToDisplay += polygonRules.endTime + '<br>';
 
+      polygonRules.timeLimit = feature.getProperty('rules')[i].timeLimit;
+      rulesToDisplay += '<span class="time-limit">' + polygonRules.timeLimit + 'hrs max' + '</span>';
+
       polygonRules.costPerHour = feature.getProperty('rules')[i].costPerHour;
-      rulesToDisplay +=  'cost: $' + polygonRules.costPerHour + '<br>';
+      rulesToDisplay +=  '<span class="cost">$' + polygonRules.costPerHour + '/hr</span><br>';
 
       if (privileged) {
         rulesToDisplay +=  '<div class="delete-rule" data-polyId=' + feature.getProperty('id').toString() + ' data-ruleId=' + feature.getProperty('rules')[i].id + '>DELETE RULE</div><br>';
       }
 
-      rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
-
+      //rulesToDisplay += 'Maps may contain inaccuracies. <br><br>Not all streets in the area specific <br> maps have opted into the program.<br>';
+      rulesToDisplay += '</div>';
     }
 
     if (!numOfRules) {
@@ -192,13 +220,13 @@ angular.module('MapHelpers', ['AdminServices'])
         }  else {
 
           if (convPreviewTime < convStartTime || convPreviewTime > convEndTime) {
-            parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then you there is a two hour limit until' + polygonRules.endTime;
+            parkingMessage = 'You can park here until ' +  polygonRules.startTime + ', then you there is a two hour limit until' + polygonRules.endTime;
           } else {
             parkingMessage = 'You can park here for two hours only';
           }
         }
 
-        rulesToDisplay += '<br>' + '<strong style="color:green">' + parkingMessage + '</strong>';
+        rulesToDisplay += '<br>' + '<span class="parking-advice">' + parkingMessage + '</span>';
       }
 
     }

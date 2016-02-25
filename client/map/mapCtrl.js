@@ -43,10 +43,6 @@ angular.module('spotz.map', ['MapServices'])
   //load the google map, then return map object in callback
   MapFactory.init(function (map) {
     $scope.showLoading = true;
-    var center = map.getCenter();
-
-    //get the parking zones based on the center point
-    MapFactory.fetchAndDisplayParkingZonesAt([center.lng(), center.lat()]);
 
     // map data ready, broadcast to the sibling controller (sideCtrl)
     $rootScope.$broadcast('googleMapLoaded');

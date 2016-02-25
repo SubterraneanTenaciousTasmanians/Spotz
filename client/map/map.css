@@ -12,8 +12,28 @@ html, body {
 }
 
 .tooltip-text{
-  font-size:18px;
+  font-size:15px;
+  width:100px;
 }
+
+.tooltip-text .rule-box{
+  border-bottom: 1px solid;
+}
+
+.tooltip-text .permit-code{
+  color:#f00;
+}
+
+.tooltip-text .parking-advice{
+  color:#4CAF50;
+  font-weight:bold;
+}
+
+.tooltip-text .cost {
+  display: inline-block;
+  float: right;
+}
+
 
 .searchBar{
   /*position: absolute;
