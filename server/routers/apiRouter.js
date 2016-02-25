@@ -17,8 +17,8 @@ module.exports = verifyToken;
 //REQUIRED KEYS
 var JWT_SECRET = process.env.JWTSECRET;
 var JWT_ADMINSECRET = process.env.JWTADMINSECRET;
-//verify before running function
 
+//Verify Token before running function
 var verifyUser = function (req, res, next) {
 
   //token is either in the body or the request params

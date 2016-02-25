@@ -41,6 +41,14 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //===================================================
   //MAP FUNCTIONS
 
+  factory.clearDisplayed = function () {
+    console.log('CLEARING');
+    downloadedGridZones = {};
+    displayedGridZones = {};
+    displayedPolygons = {};
+    console.log('CLEARED', displayedGridZones, displayedPolygons);
+  };
+
   factory.filterFeatures = function (constraints) {
     // constraints object can have permitCode text
     // or date, time, duration information for mobile preview

@@ -27,7 +27,7 @@ var FACEBOOK_CLIENT_SECRET = process.env.FACEBOOKCLIENTSECRET;
 var JWT_SECRET = process.env.JWTSECRET;
 var JWT_ADMINSECRET = process.env.JWTADMINSECRET;
 
-//sign in API, all signin requests should come here!
+//Sign in API, all signin requests should come here!
 assignToken.post('/signin', function (req, res) {
   //check if username exists in SQL user table
   User.read({ username: req.body.username }).then(function (model) {
@@ -35,7 +35,6 @@ assignToken.post('/signin', function (req, res) {
     if (!model) {
       res.status(401).json({ message: 'Sign in failed. User not found' });
     } else if (model) {
-      console.log('MODELLL', model);
 
       //encrypt the recieved password and compare it to the one saved in SQL user table
       Bcrypt.compare(req.body.password, model.attributes.password, function (err, result) {
@@ -58,15 +57,13 @@ assignToken.post('/signin', function (req, res) {
   });
 });
 
-//sign up API, all signup requests should come here!
+//Sign up API, all signup requests should come here!
 assignToken.post('/signup', function (req, res) {
 
   //call 'create' from db/user.js
   //create can reject the promise, so we need a catch block
   User.create(req.body)
   .then(function (model) {
-    //if we got in here, then the create succeeded
-    console.log('CREATED USER', model);
 
     //check if JWT_SECRET is defined
     //if it is not defined, then jwt.sign fails without error (super annoying)
@@ -85,6 +82,7 @@ assignToken.post('/signup', function (req, res) {
   });
 });
 
+//Authentification for Mobile
 assignToken.post('/googleOauth', function (req, res) {
   User.read({ googleId: req.body.id }).then(function (model) {
     if (!model) {
@@ -101,6 +99,7 @@ assignToken.post('/googleOauth', function (req, res) {
   });
 });
 
+//Authentification for Mobile
 assignToken.post('/facebookOauth', function (req, res) {
   if (!req.body.id) {
     res.send(409);
