@@ -10,7 +10,6 @@ require('./env.js');
 var ParkingDB = require('./../db/parking.js');
 var ocrData = require('./../db/ocrData.js');
 
-
 //EXPORT ROUTER
 var verifyToken = express.Router();
 module.exports = verifyToken;
