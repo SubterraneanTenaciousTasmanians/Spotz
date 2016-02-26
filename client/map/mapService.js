@@ -443,9 +443,9 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
       //enable tooltip display on click
 
       factory.map.data.addListener('click', function (event) {
-        console.log(event.feature.getProperty('id'));
+        // console.log(event.feature.getProperty('id'));
         factory.setSelectedFeature(event.feature);
-        console.log(privileges);
+        // console.log(privileges);
         factory.refreshTooltipText(event.feature, privileges);
         tooltip.setPosition(event.latLng);
       });
