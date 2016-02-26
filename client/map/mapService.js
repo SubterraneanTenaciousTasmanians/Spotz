@@ -1,7 +1,7 @@
 'use strict';
 angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
-.factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'KeyFactory', 'MapHelperFactory',  function ($rootScope, $http, $window, $timeout, $cookies, KeyFactory, MapHelperFactory) {
+.factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'KeyFactory', 'MapHelperFactory', function ($rootScope, $http, $window, $timeout, $cookies, KeyFactory, MapHelperFactory) {
 
   //google tooltip
   var tooltip = {};
@@ -23,7 +23,6 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   var factory = {};
 
   $rootScope.$on('logOut', function () {
-    console.log('clearing downloaded info');
     downloadedGridZones = {};
     displayedPolygons = {};
     privileges = false;
@@ -112,20 +111,20 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     var deletePolygon = document.getElementsByClassName('delete-polygon');
 
     factory.mapEvents.addDomListener(deletePolygon[0], 'click', function () {
-      console.log('Map was clicked!', this.dataset.polyid);
+      // console.log('Map was clicked!', this.dataset.polyid);
       if (confirm('Are you sure you want to delete this polygon?')) {
         factory.deleteParkingZone(this.dataset.polyid).then(function (succeeded) {
           if (succeeded) {
-            console.log('removing', factory.selectedFeature.feature);
+            // console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
 
             //reset the selected feature
             factory.selectedFeature = undefined;
 
             tooltip.close();
-            console.log('delete complete');
+            // console.log('delete complete');
           } else {
-            console.log('delete failed');
+            // console.log('delete failed');
           }
         });
       }
