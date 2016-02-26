@@ -342,6 +342,7 @@ angular.module('MapHelpers', ['AdminServices'])
 
 
                 if (poly.rules[i].days === weekdayOfTheMonth) {
+                // day of the month matches the street sweeping day for this polygon
 
 
                   // Check if the constraints date and time, intersect with the sweeping date and time
@@ -380,7 +381,8 @@ angular.module('MapHelpers', ['AdminServices'])
 
                   } else {
 
-                    //parking on a weekday, but outside of sweeping time so paint street sweeping lines green
+                    // parking on a weekday, but outside of sweeping time
+                    // so paint street sweeping lines green
                     return {
                       color: color.green,
                       show: false,
@@ -392,7 +394,8 @@ angular.module('MapHelpers', ['AdminServices'])
 
         } else {
 
-          // poly is a polygon (not street sweeping segment), check for permit and parking meter rules
+          // poly is a polygon (not street sweeping segment), check
+          // for permit and parking meter rules
           if (poly.rules && poly.rules[i] !== undefined) {
 
             //Grab the permit days (M,T,W...) and put them in an array
@@ -425,6 +428,7 @@ angular.module('MapHelpers', ['AdminServices'])
 
             }  else {
 
+              // Its a weekday (or this polygon has a Saturday permit zone)
               if (((convPreviewTime < convStartTime) &&
                 ((convPreviewTime + convPreviewDuration) < convStartTime)) ||
                 ((convPreviewTime > convEndTime) &&
@@ -460,7 +464,8 @@ angular.module('MapHelpers', ['AdminServices'])
               } else {  // constraints time intersects with PERMIT/Meter time
 
                 // If there is a meter paint it orange
-                if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
+                if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime)
+                  && (convPreviewTime < convEndTime))) {
 
                   // User can park here for two hours only AND there is a meter
                   return {
@@ -469,11 +474,14 @@ angular.module('MapHelpers', ['AdminServices'])
                   };
                 }
 
-                // Getting here means, parking during permit zone hours AND parking meter rule not encountered yet
+                // Getting here means, parking during permit zone hours
+                // AND parking meter rule not encountered yet
 
                 // User can park here for two hours only';
                 permitZoneFound = true;
-                if (poly.rules[i + 1] === undefined) { // no more rules ot check for this polygon
+                if (poly.rules[i + 1] === undefined) { 
+
+                // no more rules ot check for this polygon
                   return {
                     color: color.yellow,
                     show: true,
