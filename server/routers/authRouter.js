@@ -242,7 +242,7 @@ auth.get('/facebook', passport.authenticate('facebook', { scope: 'email' }));
 
 auth.get('/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
-  createUserIfNotExists('googleId', function (status, res) {
+  createUserIfNotExists('facebookId', function (status, res) {
     res.redirect('/');
   })
 );
