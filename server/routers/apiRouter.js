@@ -24,26 +24,27 @@ function mustBeAdmin(req, res, next) {
 
 //===========================
 //ZONE CRUD
-// using x,y Google Maps coordinates, find and return all the permit zones for that area
+// using x,y coordinates, find and return all the permit zones for that area
 api.get('/zones/:xCoord/:yCoord', function (req, res) {
-  console.log(req.user);
-  ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord]).then(function (data) {
+  ParkingDB.findPermitZones([req.params.xCoord, req.params.yCoord])
+  .then(function (data) {
     res.status(200).send(data);
   });
 });
 
-// Add new parking zones from the front end when a post request to /zones is made
+// Add new parking zone
 // this should be an an admin only feature
 api.post('/zones', mustBeAdmin, function (req, res) {
-  console.log(req.user);
-  ParkingDB.savePermitZones(req.body.polygons).then(function (data) {  //function is in parking.js)
+  ParkingDB.savePermitZones(req.body.polygons)
+  .then(function (data) {
     res.status(201).send(data);
   });
 });
 
 //delete a parking zone
 api.delete('/zones/:id', mustBeAdmin, function (req, res) {
-  ParkingDB.destroyParkingZone(req.params.id).then(function (data) {  //function is in parking.js)
+  ParkingDB.destroyParkingZone(req.params.id)
+  .then(function (data) {
     res.status(201).send(data);
   });
 });
@@ -52,7 +53,8 @@ api.delete('/zones/:id', mustBeAdmin, function (req, res) {
 //RULE CRUD
 //save new rule
 api.post('/rule/:polyId', mustBeAdmin, function (req, res) {
-  ParkingDB.saveRule(req.params.polyId, req.body.rule).then(function (data) {  //function is in parking.js)
+  ParkingDB.saveRule(req.params.polyId, req.body.rule)
+  .then(function (data) {
     res.status(201).send(data);
   });
 });
@@ -60,7 +62,8 @@ api.post('/rule/:polyId', mustBeAdmin, function (req, res) {
 //delete a rule association
 api.delete('/rule/:polyId/:ruleId', mustBeAdmin, function (req, res) {
   console.log('going to delete it', req.params.polyId, req.params.ruleId);
-  ParkingDB.unlinkRulefromZone(req.params.polyId, req.params.ruleId).then(function (data) {  //function is in parking.js)
+  ParkingDB.unlinkRulefromZone(req.params.polyId, req.params.ruleId)
+  .then(function (data) {
     res.status(201).send(data);
   });
 });

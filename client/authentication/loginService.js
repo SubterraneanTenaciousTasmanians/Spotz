@@ -2,7 +2,7 @@
 
 angular.module('LoginService', [])
 
-.factory('LoginFactory', ['$rootScope', '$http', '$cookies', function ($rootScope, $http, $cookies) {
+.factory('LoginFactory', ['$rootScope', '$http', '$cookies', '$state', function ($rootScope, $http, $cookies, $state) {
   var authentication = {};
 
   //load in token, if it exists
@@ -22,7 +22,17 @@ angular.module('LoginService', [])
   };
 
   authentication.signout = function () {
+
+    $rootScope.$broadcast('destroyMapData');
+
     $http.defaults.headers.common.Authorization = '';
+
+    var cookies = $cookies.getAll();
+    angular.forEach(cookies, function (v, k) {
+      $cookies.remove(k);
+    });
+
+    $state.go('login');
   };
 
   //check that a user's token is valid
@@ -31,9 +41,8 @@ angular.module('LoginService', [])
     var token = $cookies.get('credentials');
 
     if (!token) {
-      return new Promise(function (resolve) {
-        resolve(false);
-      });
+      $state.go('login');
+      return Promise.reject('no token');
     }
 
     return $http.post('/auth/verify', { token: token })
@@ -50,12 +59,14 @@ angular.module('LoginService', [])
 
         return true;
       } else {
-        return false;
+        $state.go('login');
+        return Promise.reject('bad token');
       }
     }, function error(response) {
 
       console.log('verify failed: ', response);
-      return false;
+      $state.go('login');
+      return Promise.reject('server error');
     });
   };
 

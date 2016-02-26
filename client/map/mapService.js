@@ -170,10 +170,7 @@ angular.module('MapServices', ['MapHelpers'])
       }
 
       //return a promise, passing array of features
-      return new Promise(function (resolve) {
-        resolve(downloadedGridZones[gridStr]);
-      });
-
+      return Promise.resolve(downloadedGridZones[gridStr]);
     }
 
     //if we made it here, we need to fetch the gridzone from the server
@@ -190,7 +187,7 @@ angular.module('MapServices', ['MapHelpers'])
             return;
           }
 
-          setTimeout(function () {
+          $timeout(function () {
 
             if (displayedPolygons[geoJsonData[i].properties.id]) {
               //this feature is already displayed

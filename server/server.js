@@ -7,11 +7,6 @@ var morgan = require('morgan');
 //Device Capturer
 var device = require('express-device');
 
-//DATA BASE
-//not explictly used, but needed for bookshelf depedency
-require('./db/parking.js');
-require('./db/user.js');
-
 //LOGIN
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
