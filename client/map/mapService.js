@@ -23,7 +23,6 @@ angular.module('MapServices', ['MapHelpers'])
   var factory = {};
 
   $rootScope.$on('destroyMapData', function () {
-    console.log('clearing downloaded info');
     downloadedGridZones = {};
     displayedPolygons = {};
     privileges = false;
@@ -120,20 +119,20 @@ angular.module('MapServices', ['MapHelpers'])
     var deletePolygon = document.getElementsByClassName('delete-polygon');
 
     factory.mapEvents.addDomListener(deletePolygon[0], 'click', function () {
-      console.log('Map was clicked!', this.dataset.polyid);
+      // console.log('Map was clicked!', this.dataset.polyid);
       if (confirm('Are you sure you want to delete this polygon?')) {
         factory.deleteParkingZone(this.dataset.polyid).then(function (succeeded) {
           if (succeeded) {
-            console.log('removing', factory.selectedFeature.feature);
+            // console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
 
             //reset the selected feature
             factory.selectedFeature = undefined;
 
             tooltip.close();
-            console.log('delete complete');
+            // console.log('delete complete');
           } else {
-            console.log('delete failed');
+            // console.log('delete failed');
           }
         });
       }
@@ -448,9 +447,9 @@ angular.module('MapServices', ['MapHelpers'])
       //enable tooltip display on click
 
       factory.map.data.addListener('click', function (event) {
-        console.log(event.feature.getProperty('id'));
+        // console.log(event.feature.getProperty('id'));
         factory.setSelectedFeature(event.feature);
-        console.log(privileges);
+        // console.log(privileges);
         factory.refreshTooltipText(event.feature, privileges);
         tooltip.setPosition(event.latLng);
       });

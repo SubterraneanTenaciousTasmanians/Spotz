@@ -219,5 +219,6 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
 
   //intially show the mobile preview
   $scope.showOnly('mobile');
-},
+ },
+
 ]);
