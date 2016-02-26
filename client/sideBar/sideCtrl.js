@@ -1,5 +1,10 @@
 'use strict';
+angular.module('spotz.side', ['MapServices', 'SideServices'])
 
+.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'DrawingFactory', sideCtrl]);
+
+// This function will be hoisted.
+// For future debugging and readability, gunction was named and moved outside ofthe controller declaration.
 function sideCtrl ($scope, $rootScope, $cookies, $state, MapFactory, DrawingFactory) {
 
   // Add rule on click is hidden
@@ -220,6 +225,3 @@ function sideCtrl ($scope, $rootScope, $cookies, $state, MapFactory, DrawingFact
   $scope.showOnly('mobile');
 }
 
-angular.module('spotz.side', ['MapServices', 'SideServices'])
-
-.controller('sideCtrl', ['$scope', '$rootScope', '$cookies', '$state', 'MapFactory', 'DrawingFactory', sideCtrl]);

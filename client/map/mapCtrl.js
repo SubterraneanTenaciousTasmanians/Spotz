@@ -2,7 +2,7 @@
 
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state','MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
+.controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state','MapFactory', 'LoginFactory', function Bob ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
   $scope.showLoading = 'hidden';
   $scope.maxZoomOut = false;
 
