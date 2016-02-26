@@ -1,6 +1,6 @@
 'use strict';
 
-function sideCtrl ($sope, $rootScope, $cookies, $state, MapFactory, DrawingFactory) {
+function sideCtrl ($scope, $rootScope, $cookies, $state, MapFactory, DrawingFactory) {
 
   // Add rule on click is hidden
   $scope.ShowAddRuleOnClick = false;
