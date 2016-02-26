@@ -201,7 +201,7 @@ angular.module('SideServices', [])
 
     var token = $cookies.get('credentials');
 
-    return $http.delete('/api/zones/' + polyId + '/' + token)
+    return $http.delete('/api/zones/' + polyId)
     .success(function (data) {
       console.log('deleted!', data);
       return true;
@@ -221,20 +221,17 @@ angular.module('SideServices', [])
       newFeature.points = [];
       newFeature.shape = [];
       return true;
-    }else{
+    }else {
       alert('you didn\'t create a new feature. Click the map to add gridpoints.');
       return false;
     }
   };
 
   factory.savePolygon = function () {
-    var token = $cookies.get('credentials');
 
     if (!newFeature.shape.length) {
       alert('No polygon to save. Click the map to add gridpoints.');
-      return new Promise(function (resolve) {
-        resolve(false);
-      });
+      return Promise.resolve(false);
     }
 
     var payload = {
@@ -243,7 +240,6 @@ angular.module('SideServices', [])
           coordinates:[newFeature.shape],
         },
       ],
-      token: token,
     };
 
     return $http.post('/api/zones', payload)

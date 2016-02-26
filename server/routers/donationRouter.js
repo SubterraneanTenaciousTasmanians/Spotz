@@ -3,8 +3,7 @@
 var express = require('express');
 var donationRouter = express.Router();
 
-require('./env.js');
-
+require('../env.js');
 var SECRET_KEY = process.env.SECRETKEY;
 
 var stripe = require('stripe')(SECRET_KEY);
@@ -12,7 +11,6 @@ var stripe = require('stripe')(SECRET_KEY);
 donationRouter.post('/donate', function (req, res) {
   var stripeToken = req.body.token;
   var amount = req.body.amount;
-  console.log('REQUEST BODY', req.body);
   stripe.charges.create({
     card: stripeToken,
     currency: 'usd',

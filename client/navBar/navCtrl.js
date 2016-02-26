@@ -1,23 +1,14 @@
 'use strict';
-angular.module('spotz.nav', ['NavServices'])
+angular.module('spotz.nav', ['LoginService'])
 
-.controller('navCtrl', ['$scope', 'NavFactory', '$cookies', '$state', '$rootScope', function ($scope, NavFactory, $cookies, $state, $rootScope) {
+.controller('navCtrl', ['$scope', '$cookies', '$rootScope', 'LoginFactory', function ($scope, $cookies, $rootScope, LoginFactory) {
 
   $scope.donateClicked = function () {
-    // $state.go('donate');
     $rootScope.$broadcast('donateClicked');
-
   };
 
   $scope.logOut = function () {
-    // remove credentials from local cookies and return to the login screen
-    $rootScope.$broadcast('logOut');
-    $cookies.remove('credentials');
-    if ($cookies.get('privileges')) {
-      $cookies.remove('privileges');
-    }
-
-    $state.go('login');
+    LoginFactory.signout();
   };
 
 },
