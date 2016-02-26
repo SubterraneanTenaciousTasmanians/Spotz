@@ -231,9 +231,7 @@ angular.module('SideServices', [])
 
     if (!newFeature.shape.length) {
       alert('No polygon to save. Click the map to add gridpoints.');
-      return new Promise(function (resolve) {
-        resolve(false);
-      });
+      return Promise.resolve(false);
     }
 
     var payload = {

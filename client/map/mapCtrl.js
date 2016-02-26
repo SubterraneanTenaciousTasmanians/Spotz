@@ -2,7 +2,7 @@
 
 angular.module('spotz.map', ['MapServices'])
 
-.controller('mapCtrl', ['$scope', '$rootScope', '$cookies', '$state','MapFactory', 'LoginFactory', function ($scope, $rootScope, $cookies, $state, MapFactory, LoginFactory) {
+.controller('mapCtrl', ['$scope', '$rootScope', 'MapFactory', 'LoginFactory', function ($scope, $rootScope, MapFactory, LoginFactory) {
   $scope.showLoading = 'hidden';
   $scope.maxZoomOut = false;
 
@@ -15,7 +15,7 @@ angular.module('spotz.map', ['MapServices'])
     setTimeout(function () {
       $scope.showLoading = 'hidden';
       $scope.$apply();
-    },500);
+    }, 500);
   });
 
   $rootScope.$on('maxZoomOutReached', function () {
@@ -33,19 +33,16 @@ angular.module('spotz.map', ['MapServices'])
   };
 
   //make sure user is authenticated
-  LoginFactory.checkCredentials().then(function (loggedIn) {
-    if (!loggedIn) {
-      $state.go('login');
-    }
-  });
+  LoginFactory.checkCredentials().then(function () {
+    //load the google map, then return map object in callback
 
-  //load the google map, then return map object in callback
-  MapFactory.init(function (map) {
-    $scope.showLoading = true;
+    MapFactory.init(function () {
+      $scope.showLoading = true;
 
-    // map data ready, broadcast to the sibling controller (sideCtrl)
-    $rootScope.$broadcast('googleMapLoaded');
-    $scope.showLoading = false;
+      // map data ready, broadcast to the sibling controller (sideCtrl)
+      $rootScope.$broadcast('googleMapLoaded');
+      $scope.showLoading = false;
+    });
   });
 
 },
