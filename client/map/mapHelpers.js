@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('MapHelpers', ['AdminServices'])
+angular.module('MapHelpers', [])
 
 .factory('MapHelperFactory', ['$rootScope', function ($rootScope) {
 

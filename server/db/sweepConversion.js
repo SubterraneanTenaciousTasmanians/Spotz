@@ -13,7 +13,7 @@ var extra = {
   formatter: null,
 };
 
-var geocoder = require('node-geocoder')(geocoderProvider, httpAdapter, extra);
+require('node-geocoder')(geocoderProvider, httpAdapter, extra);
 var addressFrom;
 var addressTo;
 

@@ -56,12 +56,10 @@ angular.module('spotz.login', ['LoginService'])
       .then(
       function success(response) {
         //save token from server
-        $cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 
       function error(response) {
-        $scope.loginLoading = false;
         $scope.showServerMsg = true;
         $scope.serverMsg = response.data.message;
         $scope.userinfo.password = '';
@@ -69,20 +67,16 @@ angular.module('spotz.login', ['LoginService'])
     }
 
     function signup(userinfo) {
-      $scope.loginLoading = true;
       $scope.showServerMsg = false;
 
       LoginFactory.signup(userinfo)
       .then(
       function success(response) {
         //save token from server
-        $scope.loginLoading = false;
-        $cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 
       function error(response) {
-        $scope.loginLoading = false;
         $scope.showServerMsg = true;
         $scope.serverMsg = response.data.message;
         $scope.userinfo.password = '';

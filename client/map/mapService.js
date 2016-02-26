@@ -1,7 +1,7 @@
 'use strict';
-angular.module('MapServices', ['AdminServices', 'MapHelpers'])
+angular.module('MapServices', ['MapHelpers'])
 
-.factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'KeyFactory', 'MapHelperFactory',  function ($rootScope, $http, $window, $timeout, $cookies, KeyFactory, MapHelperFactory) {
+.factory('MapFactory', ['$rootScope', '$http', '$window', '$timeout', '$cookies', 'MapHelperFactory',  function ($rootScope, $http, $window, $timeout, $cookies, MapHelperFactory) {
 
   //google tooltip
   var tooltip = {};
@@ -22,7 +22,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   //what we return
   var factory = {};
 
-  $rootScope.$on('logOut', function () {
+  $rootScope.$on('destroyMapData', function () {
     console.log('clearing downloaded info');
     downloadedGridZones = {};
     displayedPolygons = {};
@@ -33,7 +33,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   var privileges = false;
 
   $rootScope.$on('admin', function () {
-    if ($cookies.get('privileges') === 'tasmanianDevils') {
+    if ($cookies.get('privileges') !== '0') {
       privileges = true;
     }
   });
@@ -227,7 +227,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     //turn on loading icon
     $rootScope.$emit('fetchingStart');
 
-    return $http.get('/api/zones/' + coordinates[0] + '/' + coordinates[1] + '/' + token)
+    return $http.get('/api/zones/' + coordinates[0] + '/' + coordinates[1])
     .then(function (response) {
 
       var polygonsFromDb = response.data;
@@ -356,7 +356,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
   factory.deleteParkingZone = function (polyId) {
     var token = $cookies.get('credentials');
 
-    return $http.delete('/api/zones/' + polyId + '/' + token)
+    return $http.delete('/api/zones/' + polyId)
     .success(function (data) {
       console.log('deleted!', data);
       return true;
@@ -394,7 +394,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
 
     return $http({
       method:'DELETE',
-      url:'/api/rule/' + polyId + '/' + ruleId + '/' + token,
+      url:'/api/rule/' + polyId + '/' + ruleId,
     })
     .success(function (data) {
       console.log('delete rule succeeded', data);
@@ -413,7 +413,7 @@ angular.module('MapServices', ['AdminServices', 'MapHelpers'])
     if (!window.google) {
       //hit the google api to get the google object on the window
       console.log('hitting google API');
-      $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + KeyFactory.map + '&libraries=places&callback=JSON_CALLBACK')
+      $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + $cookies.get('googleMapsApiKey') + '&libraries=places&callback=JSON_CALLBACK')
       .success(setupMap)
       .error(function (data) {
         console.log('map load failed', data);
