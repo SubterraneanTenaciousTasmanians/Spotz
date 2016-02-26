@@ -1,5 +1,5 @@
 # Spotz
-> An application designed to display parking options based on location, date and time of day.
+> An application that displays parking options based on location, date and time of day.
 
 <img src="/screenshot1.png" style="height: 500px; width:500px;">
 <br>
