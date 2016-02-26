@@ -23,7 +23,6 @@ angular.module('MapServices', ['MapHelpers'])
   var factory = {};
 
   $rootScope.$on('destroyMapData', function () {
-    console.log('clearing downloaded info');
     downloadedGridZones = {};
     displayedPolygons = {};
     privileges = false;
@@ -42,11 +41,9 @@ angular.module('MapServices', ['MapHelpers'])
   //MAP FUNCTIONS
 
   factory.clearDisplayed = function () {
-    console.log('CLEARING');
     downloadedGridZones = {};
     displayedGridZones = {};
     displayedPolygons = {};
-    console.log('CLEARED', displayedGridZones, displayedPolygons);
   };
 
   factory.filterFeatures = function (constraints) {
@@ -54,7 +51,6 @@ angular.module('MapServices', ['MapHelpers'])
     // or date, time, duration information for mobile preview
 
     if (!constraints) {
-      console.log('you need to supply contraints');
       return;
     }
 
@@ -105,7 +101,6 @@ angular.module('MapServices', ['MapHelpers'])
     for (var i = 0; i < deleteButtons.length; i++) {
 
       factory.mapEvents.addDomListener(deleteButtons[i], 'click', function () {
-        console.log('Map was clicked!', this.dataset.polyid, this.dataset.ruleid);
         if (confirm('Are you sure you want to delete this rule?')) {
           factory.deleteRule(this.dataset.polyid, this.dataset.ruleid).then(function (rules) {
             factory.selectedFeature.feature.setProperty('rules', rules);
@@ -120,20 +115,15 @@ angular.module('MapServices', ['MapHelpers'])
     var deletePolygon = document.getElementsByClassName('delete-polygon');
 
     factory.mapEvents.addDomListener(deletePolygon[0], 'click', function () {
-      console.log('Map was clicked!', this.dataset.polyid);
       if (confirm('Are you sure you want to delete this polygon?')) {
         factory.deleteParkingZone(this.dataset.polyid).then(function (succeeded) {
           if (succeeded) {
-            console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
 
             //reset the selected feature
             factory.selectedFeature = undefined;
 
             tooltip.close();
-            console.log('delete complete');
-          } else {
-            console.log('delete failed');
           }
         });
       }
@@ -211,7 +201,6 @@ angular.module('MapServices', ['MapHelpers'])
       return recursiveForLoop(0);
 
     }).then(function () {
-      //console.log('done painting');
       displayedGridZones[gridStr] = true;
       $rootScope.$emit('fetchingEnd');
       return downloadedGridZones[gridStr];
@@ -358,11 +347,9 @@ angular.module('MapServices', ['MapHelpers'])
 
     return $http.delete('/api/zones/' + polyId)
     .success(function (data) {
-      console.log('deleted!', data);
       return true;
     })
     .error(function (err) {
-      console.log('delete failed', err);
       return false;
     });
   };
@@ -380,27 +367,16 @@ angular.module('MapServices', ['MapHelpers'])
         token: token,
         rule: rule,
       },
-    })
-    .success(function () {
-      //color the space to something
-      console.log('rule saved for', id);
     });
   };
 
   factory.deleteRule = function (polyId, ruleId) {
 
-    console.log('sending of request to detach rule');
     var token = $cookies.get('credentials');
 
     return $http({
       method:'DELETE',
       url:'/api/rule/' + polyId + '/' + ruleId,
-    })
-    .success(function (data) {
-      console.log('delete rule succeeded', data);
-    })
-    .error(function (err) {
-      console.log('delete rule failed', err);
     });
   };
 
@@ -412,12 +388,7 @@ angular.module('MapServices', ['MapHelpers'])
     //get the google map object
     if (!window.google) {
       //hit the google api to get the google object on the window
-      console.log('hitting google API');
-      $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + $cookies.get('googleMapsApiKey') + '&libraries=places&callback=JSON_CALLBACK')
-      .success(setupMap)
-      .error(function (data) {
-        console.log('map load failed', data);
-      });
+      $http.jsonp('https://maps.googleapis.com/maps/api/js?key=' + $cookies.get('googleMapsApiKey') + '&libraries=places&callback=JSON_CALLBACK');
     } else {
       //dont hit the google api, just setup the map
       setupMap();
@@ -430,7 +401,6 @@ angular.module('MapServices', ['MapHelpers'])
       //factory.map, factory.mapEvents, tooltip, searchBox
 
       //create a new map and center to downtown Berkeley
-      console.log('loading map');
       factory.map = new google.maps.Map(document.getElementById('map'), {
         zoom: 14,
         center: { lng: -122.27556639099121, lat: 37.86934903305901 },
@@ -440,20 +410,16 @@ angular.module('MapServices', ['MapHelpers'])
       factory.mapEvents = google.maps.event;
 
       //save the tooltip (infowindow) in a local variable
-      console.log('creating tooltip');
       tooltip = new google.maps.InfoWindow({ maxWidth: 200 });
 
       // Create the search box and link it to the UI element.
-      console.log('creating searchbar');
       searchBox = new google.maps.places.SearchBox(document.getElementById('pac-input'));
 
       //=====================================================
       //enable tooltip display on click
 
       factory.map.data.addListener('click', function (event) {
-        console.log(event.feature.getProperty('id'));
         factory.setSelectedFeature(event.feature);
-        console.log(privileges);
         factory.refreshTooltipText(event.feature, privileges);
         tooltip.setPosition(event.latLng);
       });

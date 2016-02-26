@@ -54,7 +54,6 @@ angular.module('LoginService', [])
       }
     }, function error(response) {
 
-      console.log('verify failed: ', response);
       return false;
     });
   };

@@ -92,7 +92,6 @@ angular.module('MapHelpers', [])
     var numOfRules;
 
     if (!event) {
-      console.log('failed to create the toooltip, no event given');
       return;
     }
 
@@ -171,7 +170,6 @@ angular.module('MapHelpers', [])
       // thus polygon rules will be a street sweeping day
       // that is listed in the streetSweepingObj (Example: 4th Fri, 2nd Weds, etc)
       if (streetSweepingObj[polygonRules.days]) {
-        // console.log('sweeping cost: ', polygonRules.costPerHour);
 
         // Check for Sat or Sunday
         if (userDay === 0 || userDay === 6) {
@@ -191,9 +189,6 @@ angular.module('MapHelpers', [])
           // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
           var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
 
-          // console.log('Correct day: ', weekdayOfTheMonth);
-          // console.log('Street Sweeping day is: ', polygonRules.days);
-
           // Check if the constraints date and time, matches the sweeping date and time
           if ((polygonRules.days === weekdayOfTheMonth) && (convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) {
             parkingMessage = 'WARNING: Street sweeping is occuring here <br> on the date and time you entered.';
@@ -206,11 +201,7 @@ angular.module('MapHelpers', [])
         // If user clicked a Permit Zone polygon (changed from 'mouse over')
         // thus polygonRuls.days will be (M, T, W, Th, F and possibly Sat)
 
-        // console.log('polygon cost: ', polygonRules.costPerHour);
-
-        // console.log('\n\nRules:', polygonRules);
         var daysArray = polygonRules.days.split(',');  //Grab the permit days and put them in an array
-        //console.log('Days array', daysArray);
 
         parkingMessage = '';
 
@@ -251,7 +242,6 @@ angular.module('MapHelpers', [])
     */
 
     if (!constraints) {
-      console.log('cannot determine mobile preview without constraints');
       return;
     }
 
@@ -294,8 +284,6 @@ angular.module('MapHelpers', [])
           // convert the number strings to integers
           convStartTime = Number(convertTime(poly.rules[i].startTime));
           convEndTime = Number(convertTime(poly.rules[i].endTime));
-
-          // console.log('\n\n\nthe rules of each line: ', poly.rules[0]);
 
           // All Street sweeping day possiblilities
           var streetSweepingObj = {
@@ -379,9 +367,7 @@ angular.module('MapHelpers', [])
 
             // No rules on Sunday (0) or Sat (if Sat is not in the daysArray length)
             if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
-              // console.log("weekend day chosen");
               if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime)) ) {
-                // console.log('Sat/Sun parking outside of permit time, but within METER time, so paint the permit zone orange');
                 return {
                   color: color.orange,  //parking during meter hours
                   show: true,
@@ -402,7 +388,6 @@ angular.module('MapHelpers', [])
                 // parkingMessage = 'You can park here until ' +  polygonRules.startTime + ',<br> then there is a two hour limit until' + polygonRules.endTime;
                 // check possible situation that its not permit zone hours, but it is parking meter hours
                 if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
-                  // console.log('Weekday: parking outside of permit time, but within METER time, so paint the permit zone orange');
                   return {
                     color: color.orange,  //parking during meter hours
                     show: true,
@@ -428,7 +413,6 @@ angular.module('MapHelpers', [])
                 // If there is a meter paint it orange
                 if ((poly.rules[i].costPerHour > 0)  && ((convPreviewTime > convStartTime) && (convPreviewTime < convEndTime))) {
                   // parkingMessage = 'You can park here for two hours only AND there is a meter';
-                  // console.log('There is a meter here, but may / may not be in permit zones.', poly.id);
                   return {
                     color: color.orange,
                     show: true,
