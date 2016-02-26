@@ -8,8 +8,11 @@ var polyline = require('polyline');
 var geocoderProvider = 'google';
 var httpAdapter = 'https';
 
+require('./env.js');
+var GOOGLE_MAPS_API_KEY = process.env.GOOGLEMAPSAPIKEY;
+
 var extra = {
-  apiKey: 'AIzaSyC4PGPlEeQU55KSmsEsIjkZmx1UE9QAQig',
+  apiKey: GOOGLE_MAPS_API_KEY,
   formatter: null,
 };
 

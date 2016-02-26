@@ -33,7 +33,7 @@ angular.module('MapServices', ['MapHelpers'])
   var privileges = false;
 
   $rootScope.$on('admin', function () {
-    if ($cookies.get('privileges') !== '0') {
+    if ($cookies.get('privileges') === '1') {
       privileges = true;
     }
   });
