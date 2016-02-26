@@ -90,13 +90,10 @@ auth.post('/signin', function (req, res) {
 
 //sign up API, all signup requests should come here!
 auth.post('/signup', function (req, res) {
-
   //call 'create' from db/user.js
   //create can reject the promise, so we need a catch block
   User.create(req.body)
   .then(function (model) {
-    //if we got in here, then the create succeeded
-    console.log('CREATED USER', model);
 
     responseStatus = 201;
     responseObj.message = 'Here is your token';
@@ -106,6 +103,7 @@ auth.post('/signup', function (req, res) {
   })
   .catch(function (message) {
     //if we got in here, then the create failed
+
     responseObj.message = message;
     res.status(401).send(responseObj);
   });
