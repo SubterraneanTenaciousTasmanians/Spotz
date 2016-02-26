@@ -56,8 +56,6 @@ angular.module('spotz.login', ['LoginService'])
       .then(
       function success(response) {
         //save token from server
-        console.log(response);
-        //$cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 
@@ -75,8 +73,6 @@ angular.module('spotz.login', ['LoginService'])
       .then(
       function success(response) {
         //save token from server
-        console.log(response);
-        //$cookies.put('credentials', response.data.token);
         $state.go('main');
       },
 

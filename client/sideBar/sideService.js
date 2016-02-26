@@ -243,7 +243,6 @@ angular.module('SideServices', [])
         },
       ],
     };
-    console.log('saving');
 
     return $http.post('/api/zones', payload)
     .success(function (data) {

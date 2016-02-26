@@ -39,8 +39,6 @@ angular.module('LoginService', [])
     return $http.post('/auth/verify', { token: token })
     .then(function success(response) {
 
-      console.log('response', response);
-
       if (response.data.success) {
 
         //tell the map controller to load the map

@@ -1,7 +1,7 @@
 'use strict';
 angular.module('spotz.nav', ['LoginService'])
 
-.controller('navCtrl', ['$scope', '$cookies', '$http', '$state', '$rootScope', 'LoginFactory', function ($scope, $cookies, $http, $state, $rootScope, LoginFactory) {
+.controller('navCtrl', ['$scope', '$cookies', '$state', '$rootScope', 'LoginFactory', function ($scope, $cookies, $state, $rootScope, LoginFactory) {
 
   $scope.donateClicked = function () {
     $rootScope.$broadcast('donateClicked');

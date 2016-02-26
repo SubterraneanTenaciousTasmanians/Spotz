@@ -42,7 +42,6 @@ angular.module('spotz.side', ['MapServices', 'SideServices'])
 
   $rootScope.$on('admin', function () {
     if ($cookies.get('privileges') !== '0') {
-      console.log('true!');
       $scope.privileges = true;
     }
   });
