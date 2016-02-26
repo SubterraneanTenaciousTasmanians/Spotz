@@ -92,7 +92,7 @@ angular.module('MapHelpers', ['AdminServices'])
     var numOfRules;
 
     if (!event) {
-      console.log('failed to create the toooltip, no event given');
+      console.log('failed to create the tooltip, no event given');
       return;
     }
 
@@ -120,7 +120,7 @@ angular.module('MapHelpers', ['AdminServices'])
       feature.getProperty('rules')[i].permitCode + '</span><br>';
 
       polygonRules.days = feature.getProperty('rules')[i].days;
-      rulesToDisplay += feature.getProperty('rules')[i].days + '<br>';
+      rulesToDisplay += polygonRules.days + '<br>';
 
       polygonRules.startTime = feature.getProperty('rules')[i].startTime;
       rulesToDisplay +=  polygonRules.startTime + ' to ';
