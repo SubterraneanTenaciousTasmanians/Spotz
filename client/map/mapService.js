@@ -32,7 +32,7 @@ angular.module('MapServices', ['MapHelpers'])
   var privileges = false;
 
   $rootScope.$on('admin', function () {
-    if ($cookies.get('privileges') !== '0') {
+    if ($cookies.get('privileges') === '1') {
       privileges = true;
     }
   });
@@ -115,15 +115,21 @@ angular.module('MapServices', ['MapHelpers'])
     var deletePolygon = document.getElementsByClassName('delete-polygon');
 
     factory.mapEvents.addDomListener(deletePolygon[0], 'click', function () {
+      // console.log('Map was clicked!', this.dataset.polyid);
       if (confirm('Are you sure you want to delete this polygon?')) {
         factory.deleteParkingZone(this.dataset.polyid).then(function (succeeded) {
           if (succeeded) {
+            // console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
 
             //reset the selected feature
             factory.selectedFeature = undefined;
 
             tooltip.close();
+
+            // console.log('delete complete');
+          } else {
+            // console.log('delete failed');
           }
         });
       }
@@ -416,7 +422,10 @@ angular.module('MapServices', ['MapHelpers'])
       //enable tooltip display on click
 
       factory.map.data.addListener('click', function (event) {
+        // console.log(event.feature.getProperty('id'));
         factory.setSelectedFeature(event.feature);
+
+        // console.log(privileges);
         factory.refreshTooltipText(event.feature, privileges);
         tooltip.setPosition(event.latLng);
       });
@@ -468,7 +477,6 @@ angular.module('MapServices', ['MapHelpers'])
 
       //add listenter to debounced version of refreshDisplayedFeatures (front end optimization)
       factory.map.addListener('center_changed', MapHelperFactory.debounce(factory.refreshDisplayedFeatures, 250));
-
 
       //=====================================================
       //Google search bar functionality
