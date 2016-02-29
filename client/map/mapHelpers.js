@@ -65,6 +65,7 @@ angular.module('MapHelpers', [])
 
       var later = function () {
         timeout = null;
+
         //if this is true, we already waited, and we are now calling the function
         if (!immediate) { func.apply(_this, args); }
       };
@@ -258,7 +259,6 @@ angular.module('MapHelpers', [])
     */
 
     if (!constraints) {
-      console.log('cannot determine mobile preview without constraints');
       return;
     }
 
@@ -306,7 +306,6 @@ angular.module('MapHelpers', [])
           convStartTime = Number(convertTime(poly.rules[i].startTime));
           convEndTime = Number(convertTime(poly.rules[i].endTime));
 
-
           // All Street sweeping day possiblilities
           var streetSweepingObj = {
             '1st Mon': true, '2nd Mon': true, '3rd Mon': true, '4th Mon': true,
@@ -328,66 +327,63 @@ angular.module('MapHelpers', [])
 
             } else {
 
-                // This block of code will convert the user submitted date into
-                // the weekday of the month it is (Example: 3rd Monday of the month)
-                var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
+              // This block of code will convert the user submitted date into
+              // the weekday of the month it is (Example: 3rd Monday of the month)
+              var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
 
-                // Ex: Mon Feb 15 2016 00:00:00
-                var date = constraints.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
-                var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
+              // Ex: Mon Feb 15 2016 00:00:00
+              var date = constraints.date.toDateString();  // 'Mon Feb 15 2016 00:00:00'
+              var tokens = date.split(' ');  //[Mon, Feb, 15, 2016, 00:00:00]
 
-                // take the date, divide by 7 and round up
-                // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
-                var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
+              // take the date, divide by 7 and round up
+              // Dividing the day by 7 will give you its number of the month.  Ex: 2nd Mon
+              var weekdayOfTheMonth = ordinals[Math.ceil(tokens[2] / 7)] + ' ' + tokens[0];
 
-
-                if (poly.rules[i].days === weekdayOfTheMonth) {
+              if (poly.rules[i].days === weekdayOfTheMonth) {
                 // day of the month matches the street sweeping day for this polygon
 
+                // Check if the constraints date and time, intersect with the sweeping date and time
+                if ((convPreviewTime > convStartTime) &&
+                  (convPreviewTime < convEndTime)) {
 
-                  // Check if the constraints date and time, intersect with the sweeping date and time
-                  if ((convPreviewTime > convStartTime) &&
-                    (convPreviewTime < convEndTime)) {
-
-                    // parking during street sweeping time, so paint street sweeping lines red
-                    return {
+                  // parking during street sweeping time, so paint street sweeping lines red
+                  return {
                       color: color.red,
                       show: true,
                     };
-                  } else {
+                } else {
 
-                      if ((convPreviewTime < convStartTime) &&
-                        ((convPreviewTime + convPreviewDuration) > convStartTime) &&
-                        ((convPreviewTime + convPreviewDuration) < convEndTime)) {
+                  if ((convPreviewTime < convStartTime) &&
+                    ((convPreviewTime + convPreviewDuration) > convStartTime) &&
+                    ((convPreviewTime + convPreviewDuration) < convEndTime)) {
 
-                        // parking BEFORE street sweeping time, BUT duration goes into ss time,
-                        // so paint street sweeping lines red');
-                        return {
-                          color: color.red,
-                          show: true,
-                        };
-                      } else if ((convPreviewTime > convEndTime) &&
-                        ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
-
-                        // parking AFTER street sweeping time,
-                        // BUT duration goes into ss time so paint street sweeping lines red
-                        return {
-                          color: color.red,
-                          show: true,
-                        };
-                      }
-                    }
-
-
-                  } else {
-
-                    // parking on a weekday, but outside of sweeping time
-                    // so paint street sweeping lines green
+                    // parking BEFORE street sweeping time, BUT duration goes into ss time,
+                    // so paint street sweeping lines red');
                     return {
+                          color: color.red,
+                          show: true,
+                        };
+                  } else if ((convPreviewTime > convEndTime) &&
+                    ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
+
+                    // parking AFTER street sweeping time,
+                    // BUT duration goes into ss time so paint street sweeping lines red
+                    return {
+                          color: color.red,
+                          show: true,
+                        };
+                  }
+                }
+
+              } else {
+
+                // parking on a weekday, but outside of sweeping time
+                // so paint street sweeping lines green
+                return {
                       color: color.green,
                       show: false,
                     };
-                  }
+              }
             }
 
           }
@@ -409,7 +405,7 @@ angular.module('MapHelpers', [])
             if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
 
               if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) &&
-                (convPreviewTime < convEndTime)) ) {
+                (convPreviewTime < convEndTime))) {
 
                 //parking during meter hours
                 return {
@@ -479,9 +475,9 @@ angular.module('MapHelpers', [])
 
                 // User can park here for two hours only';
                 permitZoneFound = true;
-                if (poly.rules[i + 1] === undefined) { 
+                if (poly.rules[i + 1] === undefined) {
 
-                // no more rules ot check for this polygon
+                  // no more rules ot check for this polygon
                   return {
                     color: color.yellow,
                     show: true,
