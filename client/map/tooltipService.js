@@ -18,6 +18,10 @@ angular.module('MapServices')
       privileges = true;
     });
 
+    $rootScope.$on('logOut', function () {
+      privileges = false;
+    });
+
     $rootScope.$on('googleAvailable', function (event, newGoogleObj) {
 
       //save the googeleObj

@@ -145,7 +145,7 @@ angular.module('MapServices')
     factory.addPolygonOnClick = function (enabled) {
 
       if (enabled) {
-        console.log('points add mode enabled');
+
         MapFactory.map.setOptions({ draggableCursor: 'crosshair' });
 
         //enable the click listeners
@@ -154,7 +154,7 @@ angular.module('MapServices')
         movePolygonOnKeyUpHandle = MapFactory.mapEvents.addDomListener(document, 'keyup', nudge);
 
       } else {
-        console.log('points add mode disabled');
+
         if (addPointOnClickHandle) {
 
           //check if there is a shape that hasn't been saved

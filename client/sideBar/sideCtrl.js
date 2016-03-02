@@ -92,7 +92,6 @@ angular.module('spotz.side', ['MapServices'])
 
       //set the newMode
       $scope.style[newMode] = style[mode[newMode]];
-      console.log(newMode);
 
       if (newMode === 'mobile' && !$scope.showMobilePreview) {
         //only run mode if mobile preview is not already clicked
@@ -118,7 +117,6 @@ angular.module('spotz.side', ['MapServices'])
         $rootScope.constraints.text = newMode;
 
         //filter the results
-        console.log('rootScope', $rootScope.constraints);
         MapFactory.filterFeatures($rootScope.constraints);
       }
     };

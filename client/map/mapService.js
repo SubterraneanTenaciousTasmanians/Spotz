@@ -363,8 +363,14 @@ angular.module('MapServices')
       var gridStr = JSON.stringify(MapHelperFactory.computeGridNumbers(coordinates));
 
       //check if we already downloaded this gridzone
-      if (downloadedGridZones[gridStr] && !displayedGridZones[gridStr]) {
-        return displayCachedMapData(gridStr);
+      if (downloadedGridZones[gridStr]) {
+
+        if (!displayedGridZones[gridStr]) {
+          return displayCachedMapData(gridStr);
+        }
+
+        //they are displayed, so return
+        return Promise.resolve(downloadedGridZones[gridStr]);
       }
 
       //if we made it here, we need to fetch the gridzone from the server
