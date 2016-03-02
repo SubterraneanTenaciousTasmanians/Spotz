@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('MapServices')
 
 .factory('MapFactory', [
@@ -178,7 +179,6 @@ angular.module('MapServices')
       //EXPECTED to have a google.maps object here!
 
       //create a new map and center to downtown Berkeley
-      console.log('loading map');
       factory.map = new google.maps.Map(document.getElementById('map'), {
         zoom: initialZoomLevel,
         center: { lng: -122.27556639099121, lat: 37.86934903305901 },

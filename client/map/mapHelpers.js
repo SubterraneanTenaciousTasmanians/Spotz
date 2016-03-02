@@ -105,7 +105,6 @@ angular.module('MapServices')
     */
 
     if (!constraints) {
-      console.log('cannot determine mobile preview without constraints');
       return;
     }
 
@@ -210,6 +209,7 @@ angular.module('MapServices')
                       color: color.red,
                       show: true,
                     };
+
                   } else if ((convPreviewTime > convEndTime) &&
                     ((convPreviewTime + convPreviewDuration - 2400) > convStartTime)) {
 
