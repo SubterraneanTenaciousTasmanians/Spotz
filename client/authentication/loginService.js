@@ -82,7 +82,6 @@ angular.module('LoginService', [])
         }
       }, function error(response) {
 
-        console.log('verify failed: ', response);
         $state.go('login');
         return Promise.reject('server error');
       });

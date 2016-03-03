@@ -73,7 +73,6 @@ angular.module('MapServices')
             var nudgeHorizontal = coordinate[0] + movement[keyCodes[code]].stepX;
             var nudgeVertical = coordinate[1] + movement[keyCodes[code]].stepY;
 
-            console.log(coordinate);
             return [nudgeHorizontal, nudgeVertical];
           });
         }else {
@@ -106,7 +105,6 @@ angular.module('MapServices')
 
       //check if there is an existing feature on the map so it can be removed
       if (newFeature.handle) {
-        console.log('removing', newFeature.handle);
 
         //remove the feature from the map
         MapFactory.map.data.remove(newFeature.handle);
@@ -119,8 +117,6 @@ angular.module('MapServices')
       newFeature.shape.push(newFeature.shape[0].slice());
 
       //construct the geoJson object
-      console.log('painting', [newFeature.shape]);
-
       geoPoly = {
         type: 'Feature',
         properties:{
@@ -174,7 +170,6 @@ angular.module('MapServices')
               });
             }
           } else {
-            console.log('removing add listeners');
             MapFactory.map.setOptions({ draggableCursor:'grab' });
             MapFactory.mapEvents.removeListener(addPointOnClickHandle);
             MapFactory.mapEvents.removeListener(addPointOnDataClickHandle);
@@ -190,7 +185,6 @@ angular.module('MapServices')
 
     factory.erasePolygon = function () {
       if (newFeature.handle) {
-        console.log('removing', newFeature.handle);
         MapFactory.map.data.remove(newFeature.handle);
         newFeature.handle = undefined;
         newFeature.points = [];
@@ -219,7 +213,6 @@ angular.module('MapServices')
 
       return $http.post('/api/zones', payload)
       .success(function (data) {
-        console.log('saved!', data);
         alert('Feature saved!');
 
         //save the id from the server so it can be updated
@@ -236,7 +229,6 @@ angular.module('MapServices')
         //deselectPolygon();
       })
       .error(function (err) {
-        console.log('save failed', err);
         return false;
       });
 

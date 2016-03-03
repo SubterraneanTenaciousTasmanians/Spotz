@@ -37,7 +37,6 @@ angular.module('MapServices')
 
     //=====================================================
     //broadcasted event listeners
-
     $rootScope.$on('destroyMapData', function () {
       downloadedGridZones = {};
       displayedPolygons = {};
@@ -301,9 +300,6 @@ angular.module('MapServices')
       //paint gridlines
       factory.mapEvents.addListenerOnce(factory.map, 'tilesloaded', function () {
 
-        //paint gridlines
-        // gridLines = MapHelperFactory.paintGridLines(factory.map);
-        // console.log(gridLines);
         //load initial data onto map
         factory.refreshDisplayedFeatures();
       });
@@ -350,7 +346,6 @@ angular.module('MapServices')
       // or date, time, duration information for mobile preview
 
       if (!constraints) {
-        console.log('you need to supply contraints');
         return;
       }
 
@@ -442,8 +437,6 @@ angular.module('MapServices')
       //get the google map object
       if (!window.google) {
         //hit the google api to get the google object on the window
-        console.log('hitting google API');
-
         var url = 'https://maps.googleapis.com/maps/api/js';
         url += '?key=' + googleMapsApiKey;
         url += '&libraries=places';

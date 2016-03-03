@@ -116,10 +116,6 @@ angular.module('MapServices', [])
         data: {
           rule: rule,
         },
-      })
-      .success(function () {
-        //color the space to something
-        console.log('rule saved for', selectedFeature.id);
       });
     };
 
@@ -130,17 +126,9 @@ angular.module('MapServices', [])
         return Promise.reject();
       }
 
-      console.log('sending of request to detach', selectedFeature.id, 'from', ruleId);
-
       return $http({
         method:'DELETE',
         url:'/api/rule/' + selectedFeature.id + '/' + ruleId,
-      })
-      .success(function (data) {
-        console.log('delete rule succeeded', data);
-      })
-      .error(function (err) {
-        console.log('delete rule failed', err);
       });
     };
 
@@ -154,11 +142,9 @@ angular.module('MapServices', [])
 
       return $http.delete('/api/zones/' + selectedFeature.id)
       .success(function (data) {
-        console.log('deleted!', data);
         return true;
       })
       .error(function (err) {
-        console.log('delete failed', err);
         return false;
       });
     };
