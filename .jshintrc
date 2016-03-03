@@ -21,7 +21,6 @@
  "smarttabs": true,
  "predef"   : ["moment","google"],
  "globals"   : {
-   "alert"                : true,
    "$"                    : false,
    "angular"              : false,
    "browser"              : false,

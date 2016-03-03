@@ -44,6 +44,8 @@ db.create = function (userinfo) {
     }).then(function () {
 
       //user does not exist, so we can create one
+      console.log('before hashing ', userinfo.password);
+
       bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
         if (err) {
           console.log('error in gensalt', err);
@@ -59,6 +61,7 @@ db.create = function (userinfo) {
 
           userinfo.password = hash;
 
+          console.log('hashed password', userinfo);
           new db.User(userinfo).save().then(function (model) {
 
             if (!model) {
@@ -90,6 +93,7 @@ db.read = function (userinfo) {
       console.log('user does not exist');
       return model;
     } else {
+      console.log(model, 'user has been found');
       return model;
     }
   });
@@ -104,6 +108,7 @@ db.update = function (userinfo) {
       password: userinfo.password,
     })
     .then(function () {
+      console.log('Model has been updated');
     });
 };
 
@@ -112,6 +117,7 @@ db.delete = function (userinfo) {
     new db.User({
       id: model.id,
     }).destroy().then(function (model) {
+      console.log(model, 'user has been deleted');
     });
   });
 };
