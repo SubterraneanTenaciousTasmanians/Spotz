@@ -38,8 +38,6 @@ responseObj.attachCredentials = function (res, model) {
 
   //set cookie for desktop
   res.cookie('credentials', token);
-  res.cookie('googleMapsApiKey', GOOGLE_MAPS_API_KEY);
-  res.cookie('privileges', model.attributes.admin);
 
   //also specify in response.data for mobile
   this.token = token;
@@ -108,7 +106,11 @@ auth.post('/verify', function (req, res) {
     if (err) {
       res.status(200).json({ success: true, message: 'your token has been verified' });
     } else {
-      res.status(200).json({ success: true, admin: true });
+      responseObj.googleMapsApiKey = GOOGLE_MAPS_API_KEY;
+      responseObj.success = true;
+      console.log(decoded);
+      responseObj.admin = decoded.privileges;
+      res.status(200).json(responseObj);
     }
   });
 });

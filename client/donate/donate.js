@@ -1,42 +1,63 @@
 'use strict';
 angular.module('spotz.donate', ['DonateServices'])
 
-.controller('donateCtrl', ['$scope', 'DonateFactory', '$rootScope', '$state', function ($scope, DonateFactory, $rootScope, $state) {
+.controller('donateCtrl', [
+  '$scope',
+  'DonateFactory',
+  '$rootScope',
+  function ($scope, DonateFactory, $rootScope) {
 
-  $scope.transaction     = {};
-  $scope.paid            = false;
-  $scope.message         = '';
-  $scope.showDonateModal = false;
-  $scope.showMessage = false;
-  $scope.loading = false;
+    //=====================================================
+    //$scope properties
 
-  // removed because donation is now a route
-  $scope.toggleModal = function () {
-    $scope.showDonateModal = !$scope.showDonateModal;
-  };
-
-  $rootScope.$on('donateClicked', function () {
-    $scope.toggleModal();
-  });
-
-  $scope.stripeCallback = function (status, response) {
-    $scope.loading = !$scope.loading;
-    $scope.transaction = {
-      token: response.id,
-      amount: $scope.amount,
-    };
-    DonateFactory.requestToken($scope.transaction).then(function (response) {
-      $scope.loading     = !$scope.loading;
-      $scope.showMessage = !$scope.showMessage;
-      $scope.paid        = response.paid;
-      $scope.message     = response.message;
+    angular.extend($scope, {
+      transaction: {},
+      paid: false,
+      message: '',
+      showDonateModal: false,
+      showMessage: false,
+      loading: false,
     });
-  };
 
-  // nothing yet
-  $scope.handleStripe = function (status, response) {
-    var clientToken = Stripe.card.createToken($scope.info, $scope.stripeCallback);
-  };
+    //=====================================================
+    //broadcasted event listeners
 
-},
+    $rootScope.$on('donateClicked', function () {
+      $scope.toggleModal();
+    });
+
+    //=====================================================
+    //$scope functions
+
+    $scope.toggleModal = function () {
+      $scope.showDonateModal = !$scope.showDonateModal;
+    };
+
+    $scope.stripeCallback = function (status, response) {
+      console.log('2nd STRIPE RESPONSE', response);
+      $scope.loading = !$scope.loading;
+      if (response.error) {
+        // there was an error. Fix it.
+        console.log('ERROR', response.error);
+      } else {
+        console.log('AMOUNT', $scope.amount);
+        $scope.transaction = {
+          token: response.id,
+          amount: $scope.amount,
+        };
+        DonateFactory.requestToken($scope.transaction).then(function (response) {
+          console.log('RESPOSNE FROM FACTORY ', response);
+          $scope.loading     = !$scope.loading;
+          $scope.showMessage = !$scope.showMessage;
+          $scope.paid        = response.paid;
+          $scope.message     = response.message;
+        });
+      }
+    };
+
+    $scope.handleStripe = function () {
+      Stripe.card.createToken($scope.info, $scope.stripeCallback);
+    };
+
+  },
 ]);
