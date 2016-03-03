@@ -115,11 +115,9 @@ angular.module('MapServices', ['MapHelpers'])
     var deletePolygon = document.getElementsByClassName('delete-polygon');
 
     factory.mapEvents.addDomListener(deletePolygon[0], 'click', function () {
-      // console.log('Map was clicked!', this.dataset.polyid);
       if (confirm('Are you sure you want to delete this polygon?')) {
         factory.deleteParkingZone(this.dataset.polyid).then(function (succeeded) {
           if (succeeded) {
-            // console.log('removing', factory.selectedFeature.feature);
             factory.map.data.remove(factory.selectedFeature.feature);
 
             //reset the selected feature
@@ -127,9 +125,6 @@ angular.module('MapServices', ['MapHelpers'])
 
             tooltip.close();
 
-            // console.log('delete complete');
-          } else {
-            // console.log('delete failed');
           }
         });
       }
