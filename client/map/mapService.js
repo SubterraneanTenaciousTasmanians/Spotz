@@ -27,6 +27,8 @@ angular.module('MapServices')
     //stores which polygons are on the map
     var displayedPolygons = {};
 
+    var gridLines = [];
+
     //properties that are returned
     var factory = {
       map:{},
@@ -47,6 +49,10 @@ angular.module('MapServices')
 
     //=====================================================
     //private functions
+
+    function removeFeature(feature) {
+      factory.map.data.remove(feature);
+    }
 
     function putSingleFeatureOnTheMap(geoJson) {
       var newFeature = factory.map.data.addGeoJson(geoJson)[0];
@@ -293,17 +299,11 @@ angular.module('MapServices')
 
       //=====================================================
       //paint gridlines
-      factory.map.addListener('tilesloaded', function () {
-
-        //view display bounds
-        var trY = factory.map.getBounds().getNorthEast().lat();
-        var trX = factory.map.getBounds().getNorthEast().lng();
-        var blY = factory.map.getBounds().getSouthWest().lat();
-        var blX = factory.map.getBounds().getSouthWest().lng();
+      factory.mapEvents.addListenerOnce(factory.map, 'tilesloaded', function () {
 
         //paint gridlines
-        MapHelperFactory.paintGridLines(factory.map, blX, trX, blY, trY);
-
+        // gridLines = MapHelperFactory.paintGridLines(factory.map);
+        // console.log(gridLines);
         //load initial data onto map
         factory.refreshDisplayedFeatures();
       });
@@ -399,7 +399,8 @@ angular.module('MapServices')
 
         //hide any gridZones that are not in the current area
         if (!displayedZones[gridZone]) {
-          downloadedGridZones[gridZone].forEach(factory.map.data.remove);
+
+          downloadedGridZones[gridZone].forEach(removeFeature);
 
           // set the display value to false so that the zones will be
           // displayed next time they are fetched
@@ -425,6 +426,10 @@ angular.module('MapServices')
       boxBoundaries.forEach(function (coordinates) {
         factory.fetchAndDisplayParkingZonesAt(coordinates);
       });
+
+      //re-paint gridlines
+      gridLines.forEach(removeFeature);
+      gridLines = MapHelperFactory.paintGridLines(factory.map);
 
       factory.removeFeaturesNotIn(boxBoundaries);
     };

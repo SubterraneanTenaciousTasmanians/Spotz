@@ -375,6 +375,7 @@ angular.module('MapServices')
 
   //=======================================
   //FUNCTIONS THAT MINIPULATE THE MAP
+
   helperFactory.setAllFeatureColors = function (map, options) {
     var color;
 
@@ -392,10 +393,18 @@ angular.module('MapServices')
     });
   };
 
-  helperFactory.paintGridLines = function (map, bottomLeftX, topRightX, bottomLeftY, topRightY) {
+  helperFactory.paintGridLines = function (map) {
     //these values determine the step size of the grid lines
     var stepX = 0.018;
     var stepY = 0.018;
+
+    //view display bounds
+    var topRightY = map.getBounds().getNorthEast().lat();
+    var topRightX = map.getBounds().getNorthEast().lng();
+    var bottomLeftY = map.getBounds().getSouthWest().lat();
+    var bottomLeftX = map.getBounds().getSouthWest().lng();
+
+    var lineFeatures = [];
 
     //paint the vertical grid lines of only what is in the display
     var currentLine = Math.ceil(bottomLeftX / stepX) * stepX;
@@ -416,7 +425,7 @@ angular.module('MapServices')
       };
 
       //data format line = [ [point 1], [point 2], ....]
-      map.data.addGeoJson(f);
+      lineFeatures.push(map.data.addGeoJson(f)[0]);
       currentLine = currentLine + stepX;
     }
 
@@ -438,9 +447,11 @@ angular.module('MapServices')
       };
 
       //data format line = [ [point 1], [point 2], ....]
-      map.data.addGeoJson(f);
+      lineFeatures.push(map.data.addGeoJson(f)[0]);
       currentLine = currentLine + stepY;
     }
+
+    return lineFeatures;
   };
 
   return helperFactory;
