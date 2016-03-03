@@ -47,10 +47,12 @@ exports.createIfNotExists = function (obj) {
   .then(function (model) {
    if (model) {
      // already exists, return true and the existing model
+     //console.log('already have', JSON.stringify(obj.attrs), 'in', obj.table);
      return { alreadyExists:true, model:model };
    }
 
    // does not exists, so create it and save it, and return false
+   //console.log('creating new ', JSON.stringify(obj.attrs), 'in', obj.table);
    return new obj.table(obj.attrs).save().then(function (model) {
      return { alreadyExists:false, model:model };
    });
@@ -61,6 +63,11 @@ exports.createIfNotExists = function (obj) {
 //then joins them based on their ids in the join table
 exports.saveAndJoin = function (obj1, obj2, joinMethodNameForObj2, joinEvenIfBothExist) {
   joinEvenIfBothExist = joinEvenIfBothExist || false;
+
+  // joinObj  = zones.model.worldGrid()
+
+  // joinObj  = zones.model['worldGrid']()
+  // joinObj  = zones.model[joinMethodName]()
 
   /*
   obj1 = {

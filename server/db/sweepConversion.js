@@ -8,15 +8,14 @@ var polyline = require('polyline');
 var geocoderProvider = 'google';
 var httpAdapter = 'https';
 
-require('./env.js');
-var GOOGLE_MAPS_API_KEY = process.env.GOOGLEMAPSAPIKEY;
-
 var extra = {
-  apiKey: GOOGLE_MAPS_API_KEY,
+  apiKey: 'AIzaSyC4PGPlEeQU55KSmsEsIjkZmx1UE9QAQig',
   formatter: null,
 };
 
-require('node-geocoder')(geocoderProvider, httpAdapter, extra);
+var geocoder = require('node-geocoder')(geocoderProvider, httpAdapter, extra);
+var addressFrom;
+var addressTo;
 
 fs.readFile(__dirname + '/zoneData/berkeley/sweeping.json', 'utf8', function (err, data) {
   if (err) {throw err; }
@@ -56,25 +55,13 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweeping.json', 'utf8', function (er
     var rule = {};
     var startTime;
     var endTime;
-    var addressFrom;
-    var addressTo;
-    var url;
 
     console.log('parsing ', pointNr);
-
-    addressFrom = data[pointNr]['Address From'];
-    addressFrom += ' ' + data[pointNr]['Street Name'] + ' Berkeley, CA';
-
-    addressTo = data[pointNr]['Address To'];
-    addressTo += ' ' + data[pointNr]['Street Name'] + ' Berkeley, CA';
-
-    url = 'https://maps.googleapis.com/maps/api/directions/json';
-    url += '?origin=' + encodeURI(addressFrom);
-    url += '&destination=' + encodeURI(addressTo);
-    url += '&key=' + extra.apiKey;
+    addressFrom = data[pointNr]['Address From'] + ' ' + data[pointNr]['Street Name'] + ' Berkeley, CA';
+    addressTo = data[pointNr]['Address To'] + ' ' + data[pointNr]['Street Name'] + ' Berkeley, CA';
 
     //get directions
-    https.get(url, function (res) {
+    https.get('https://maps.googleapis.com/maps/api/directions/json?origin=' + encodeURI(addressFrom) + '&destination=' + encodeURI(addressTo) + '&key=' + extra.apiKey, function (res) {
       //console.log('here are the directions', res.body);
       var allData = '';
 

@@ -51,7 +51,7 @@ db.saveRule = function (zoneId, ruleAttrs) {
 
 db.unlinkRulefromZone = function (zoneId, ruleId) {
 
-  console.log('detaching zone:', zoneId, 'from rule:', ruleId);
+  console.log('about to delete it', zoneId, ruleId);
 
   return new Zones({ id:zoneId }).fetch({ withRelated:['rules'] })
   .then(function (item) {

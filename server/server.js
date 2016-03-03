@@ -7,13 +7,14 @@ var morgan = require('morgan');
 //Device Capturer
 var device = require('express-device');
 
+//DATA BASE
+//not explictly used, but needed for bookshelf depedency
+var ParkingDB = require('./db/parking.js');
+var User = require('./db/user.js');
+
 //LOGIN
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
-var jwt = require('express-jwt');
-
-require('./env.js');
-var JWT_SECRET = process.env.JWTSECRET;
 
 //SUBROUTERS
 var authRouter = require('./routers/authRouter.js');
@@ -47,7 +48,7 @@ app.use(passport.session());
 //gets ran through the subrouter first
 app.use('/', donationRouter);
 app.use('/auth', authRouter);
-app.use('/api', jwt({ secret: JWT_SECRET }), apiRouter);
+app.use('/api', apiRouter);
 
 //START SERVER
 app.listen(port);

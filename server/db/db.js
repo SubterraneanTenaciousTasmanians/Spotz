@@ -44,9 +44,7 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
     return bookShelf.knex.schema.createTable('zones', function (zone) {
       console.log('creating NEW zones table');
       zone.increments('id').primary();
-
-      //boundary is strigified list of all coordinate points that make up a permit zone
-      zone.text('boundary', 'mediumtext');
+      zone.text('boundary', 'mediumtext');  //strigified list of all coordinate points that make up a permit zone
     });
   });
 })
@@ -99,6 +97,16 @@ bookShelf.knex.schema.hasTable('worldGrid').then(function (exists) {
     });
   });
 });
+
+//DATA NOW LOADED FROM spotz.sql
+// ***
+// Import Permit Zone info (using the function defined in parking.js)
+// ***
+// .then(function () {
+//   // return parkingDB.importParkingZone('/zoneData/berkeley.json', function () {
+//   //   console.log('data loaded!!');
+//   // });
+// });
 
 // Create the user schema/table
 bookShelf.knex.schema.hasTable('users').then(function (exists) {
