@@ -36,18 +36,6 @@ angular.module('spotz', [
     controller: 'loginCtrl',
   })
 
-  // .state('donate', {
-  //   url: '/donate',
-  //   templateUrl: '/donate/donate.html',
-  //   controller: 'donateCtrl',
-  // });
-
-  // .state('donate', {
-  //   url: '/donate',
-  //   templateUrl: '/donation/donation.html',
-  //   controller: 'donateCtrl',
-  // });
-
   $urlRouterProvider.otherwise('/');
 
 });
