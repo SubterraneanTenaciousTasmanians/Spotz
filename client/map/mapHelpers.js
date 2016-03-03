@@ -38,7 +38,7 @@ angular.module('MapServices')
     var filledIn = [];
 
     //include edgepoints
-    filledIn = [bottomRight, topRight, bottomLeft];
+    filledIn = [bottomRight, topRight];
 
     //fill in grid points inbetween
     var i = 0;
@@ -50,6 +50,13 @@ angular.module('MapServices')
       }
 
       curY = startY;
+      curX += stepX;
+    }
+
+    //add bottom row
+    curX = bottomLeft[0];
+    while (curX < bottomRight[0]) {
+      filledIn.push([curX, bottomLeft[1]]);
       curX += stepX;
     }
 
@@ -251,7 +258,7 @@ angular.module('MapServices')
             // Check if its Sunday (userDay === 0) or Sat (if Sat is not in the daysArray length)
             if (userDay === 0  || (userDay === 6 && daysArray.length < 6)) {
 
-              if (poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) &&
+              if (userDay !== 0  && poly.rules[i].costPerHour > 0  && ((convPreviewTime > convStartTime) &&
                 (convPreviewTime < convEndTime))) {
 
                 //parking during meter hours
