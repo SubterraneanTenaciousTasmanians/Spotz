@@ -1,7 +1,7 @@
 # Spotz
 
 Spotz is an web + mobile app designed to make street parking easier and avoid unnecessary tickets. It does so by displaying parking permit, meter and street sweeping data on a map, allowing a user to quickly identify where to search for a parking spot given time and monetary constraints.  Features on the map are colored based on the parking data so that a user can quickly identify where to search.
-
+  
 ![Spotz App](readme_images/spotz.png)
 
 
@@ -21,7 +21,8 @@ Spotz is an web + mobile app designed to make street parking easier and avoid un
 
 ## Using the App
 
-Spotz layers information on top of Google Maps, so the Google map controls from zooming and scrolling will work.
+####Map Navigation
+Spotz layers data on top of Google Maps, so a user can navigate around using the standard Google map controls for zooming and scrolling will work.
 
 ####Displaying Parking Information
 Spotz includes three types of parking data: 
@@ -36,17 +37,29 @@ Each of the above data layers can be shown individually via the side panel. The 
 
 
 ####Parking Availability Layer
-The most useful layer is the Parking Availability layer, which is enabled by default. In the dropdown menu below 'Parking Avail', enter a time, date and duration and click submit.
+The most useful layer is the Parking Availability layer, which is enabled by default when the app opens.  The Parking Availability layer indicates what parking is available based on the date, time and duration specified.
+
+For the desktop version, there is a legend provided in the top-right corner, to remind the user of the meaning of each color.
 
 ![Spotz Side Pannel](readme_images/legend.png)
 
-Features are colored as follows:
+The above legend has the following meaning:
 
 * Green - You can park here for the duration specified
 * Yellow - There are time restrictions to park
 * Orange - There is a cost to park
 * Grey - No parking information is availbale
 * Red - Street sweeping is occurring, so you should not park there
+
+Every feature on the map is colored one of the above colors based on the date, time and duration specified. The current date and time are set by default when the app opens. 
+
+In side panel, underneath 'Parking Avail', any date, time and duration can be entered (shown above).
+ 
+####Parking Tooltip
+
+Clicking on any of the features will cause a tooltip to be displayed which shows the rules that are applied to that feature.  The information displays the rule's name in red, days it is enforced, time it is enforced, a time limit and an associated cost per hour.  Below the rules, advice is given based on the current time.
+
+![Spotz Side Pannel](readme_images/tooltip2.png)
 
 ## Admin User
 
@@ -99,6 +112,7 @@ Spotz is a MyEAN application, so you need to:
 - create a MySQL database named 'spotz'
 - configure a MySQL connection in server/db.js
 - import the file spotz-with-two-sided-sweeping-metered.sql to populate the database
+- to run an instance locally, environment variables need to set in server/.env
 - run `node server/server.js` and the server should be up and running
 
 
