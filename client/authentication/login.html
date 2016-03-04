@@ -38,8 +38,11 @@
           Our app shows a map of your surrounding area and overlays parking information. Users can contribute by taking pictures of parking signs when they park.</p>
         <p>This app is currently in development and only includes Berkeley, CA.</p>
       </div>
-      <img class="preview-map" src="../assets/images/preview.png">
+      <img class="preview-small" src="../assets/images/preview2.png" ng-click="toggleModal()">
     </div>
   </div>
 
+  <div class="preview-modal" ng-show="showPreviewModal" ng-click="toggleModal()">
+    <img class="preview-large" src="../assets/images/preview2.png">
+  </div>
 </div>

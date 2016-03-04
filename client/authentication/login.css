@@ -74,13 +74,14 @@
   width:520px;
   color: #76b52d;
 }
-.login-page img.preview-map {
+.login-page img.preview-small {
   height: 250px;
   position: absolute;
   right: 40px;
   top: 0;
   border: 1px solid #989898;
   box-shadow: 1px 1px 3px 1px #B5B5B5;
+  cursor:pointer;
 }
 
 .login-page .description{
@@ -158,4 +159,19 @@
   display: block;
   cursor: pointer;
   color: #94C453;
+}
+
+.preview-modal{
+  background-color: rgba(0,0,0,0.6);
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: inherit;
+  cursor:pointer;
+}
+
+.preview-modal img{
+  margin: 200px auto;
+  display: block;
 }
