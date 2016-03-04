@@ -51,6 +51,9 @@ angular.module('LoginService', [])
         $cookies.remove(k);
       });
 
+      //broadcast logout so other contollers can hear
+      $rootScope.$broadcast('logOut');
+
       $state.go('login');
     };
 
