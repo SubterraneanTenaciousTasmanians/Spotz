@@ -68,6 +68,12 @@ angular.module('MapServices')
 
     function putArrayOnTheMap(gridStr) {
 
+      //number of polygons to add to map at a time
+      var numberToDraw = 3;
+
+      //offset between adding polygons
+      var timeOffset = Math.random() * 20;
+
       return function (geoJsonData) {
 
         //iterate through geoJsonData and add each feature one after the other
@@ -81,20 +87,28 @@ angular.module('MapServices')
               return;
             }
 
-            $timeout(function () {
+            //check the number of things left, to adjust numberToDraw
+            if (i + numberToDraw > geoJsonData.length - 1) {
+              numberToDraw = geoJsonData.length - i;
+            }
 
-              if (displayedPolygons[geoJsonData[i].properties.id]) {
-                //this feature is already displayed
-                resolve(recursiveForLoop(i + 1));
-              }else {
-                //create the feature and display it
-                displayedPolygons[geoJsonData[i].properties.id] = true;
-                var newFeature = putSingleFeatureOnTheMap(geoJsonData[i]);
-                downloadedGridZones[gridStr].push(newFeature);
-                resolve(recursiveForLoop(i + 1));
+            $timeout(function () {
+              var id;
+
+              for (var j = 0; j < numberToDraw; j++) {
+
+                id = geoJsonData[i + j].properties.id;
+                if (displayedPolygons && !displayedPolygons[id]) {
+                  //create the feature and display it
+                  displayedPolygons[id] = true;
+                  var newFeature = putSingleFeatureOnTheMap(geoJsonData[i + j]);
+                  downloadedGridZones[gridStr].push(newFeature);
+                }
               }
 
-            }, 0);
+              resolve(recursiveForLoop(i + numberToDraw));
+
+            }, timeOffset);
 
           });
         };

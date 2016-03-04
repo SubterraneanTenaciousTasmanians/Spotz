@@ -41,7 +41,7 @@ html, body {
   width: 400px;
   border-radius: 3px;
   background: #76b52d; /* Old browsers */
-  box-shadow: 1px 1px 10px 4px #999998;
+  box-shadow: 1px 1px 7px 0px #545454;
   z-index: 5;
   font-family: 'Questrial', sans-serif;
   text-align:center;

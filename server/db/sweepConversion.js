@@ -103,7 +103,7 @@ fs.readFile(__dirname + '/zoneData/berkeley/sweeping.json', 'utf8', function (er
         });
 
         //store corrdinates in db
-        //console.log(pointNr, JSON.stringify([{ coordinates: [coordindates] }]));
+
         parkingDb.savePermitZones([{ coordinates: [coordindates] }]).then(function (zone) {
 
           if (data[pointNr]['AM/PM'] === 'AM') {
