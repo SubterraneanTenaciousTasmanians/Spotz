@@ -1,7 +1,7 @@
 # Spotz
 
 Spotz is an web + mobile app designed to make street parking easier and avoid unnecessary tickets. It does so by displaying parking permit, meter and street sweeping data on a map, allowing a user to quickly identify where to search for a parking spot given time and monetary constraints.  Features on the map are colored based on the parking data so that a user can quickly identify where to search.
-  
+
 ![Spotz App](readme_images/spotz.png)
 
 
@@ -47,7 +47,7 @@ Features are colored as follows:
 * Orange - There is a cost to park
 * Grey - No parking information is availbale
 * Red - Street sweeping is occurring, so you should not park there
- 
+
 ## Admin User
 
 Admins help curate the data that is displayed to the standard users.  Admin users have the ability to create/delete rules and features.  A feature is any polygon that is shown on the map. Parking rules can be applied to features.
