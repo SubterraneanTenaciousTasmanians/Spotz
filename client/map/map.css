@@ -34,26 +34,13 @@ html, body {
   float: right;
 }
 
-
-.searchBar{
-  /*position: absolute;
-  top: 100px;
-  left: 300px;*/
-}
-
 .searchBar {
-  /*background-color: rgba(0, 0, 0, 0.7);*/
-  /*background-color: blue;*/
   position: absolute;
-  top: 48px;
-  left: 300px;
+  top: 70px;
+  left: 220px;
   width: 400px;
-  border-radius: 5px;
+  border-radius: 3px;
   background: #76b52d; /* Old browsers */
-  background: -moz-linear-gradient(top,  #76b52d 0%, #c3dc90 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top,  #76b52d 0%,#c3dc90 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom,  #76b52d 0%,#c3dc90 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#76b52d', endColorstr='#c3dc90',GradientType=0 ); /* IE6-9 */
   box-shadow: 1px 1px 10px 4px #999998;
   z-index: 5;
   font-family: 'Questrial', sans-serif;
@@ -89,8 +76,6 @@ html, body {
 }
 
 #pac-input {
-  top: 48px;
-  background-color: #fff;
   font-family: Roboto;
   font-size: 15px;
   font-weight: 300;

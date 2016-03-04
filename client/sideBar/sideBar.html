@@ -5,7 +5,10 @@
 
     <div ng-if="privileges">
       <h2> Admin</h2>
-      <button ng-model="privileges" ng-click="toggleAddRuleMenu()">Add Rule</button>
+      <button class="menuBtn" ng-model="privileges" ng-click="toggleAddRuleMenu()">
+        <img src="../assets/images/edit.png">
+        <span class="layer-text">Add Rule</span>
+      </button>
 
       <div class="ruleBox" ng-if="ShowAddRuleOnClick" ng-model="ShowAddRuleOnClick">
         <h2>Add Rule</h2>
@@ -16,41 +19,89 @@
         <span>endTime</span><input type="text" ng-model="rule.endTime" placeholder="19:00">
         <span>costPerHour</span><input type="text" ng-model="rule.costPerHour" placeholder="2.00">
         <span>color</span><input type="text" ng-model="rule.color" placeholder="128,0,255">
-        <button ng-click="addRule()">Add Rule to Selected Feature</button>
+        <button class="submitButton" ng-click="addRule()">Add Rule to Selected Feature</button>
       </div>
 
-      <button class="{{style.addNewFeature}}" ng-click="showOnly('addNewFeature')">Add New Polygon</button>
+      <button class="{{style.addNewFeature}} menuBtn" ng-click="showOnly('addNewFeature')">
+        <img src="../assets/images/edit.png">
+        <span class="layer-text">Add New Polygon</span>
+      </button>
       <div class="addBox" ng-show="ShowAddFeatureMenu">
         <p>Click on the map to define a new feature</p>
-        <button type="button" ng-Click="savePolygon()">Save New Polygon</button>
-        <button type="button" ng-Click="erasePolygon()">Erase New Polygon</button>
+        <button type="button" class="submitButton" ng-Click="savePolygon()">
+          <span>Save New Polygon</span>
+        </button>
+        <button type="button" class="submitButton" ng-Click="erasePolygon()">
+          <span>Erase New Polygon</span>
+        </button>
       </div>
     </div>
 
     <h2> View </h2>
 
-    <button class="{{style.grid}}" ng-click="showOnly('grid')">Hide All</button>
-    <button class="{{style.permit}}" ng-click="showOnly('permit')">Show Only Permit Zones</button>
-    <button class="{{style.meter}}" ng-click="showOnly('meter')">Show Only Meter Zones</button>
-    <button class="{{style.sweep}}" ng-click="showOnly('sweep')">Show Only Street Sweeping</button>
-    <button class="{{style.mobile}}" ng-click="showOnly('mobile')">Mobile Preview</button>
+    <button class="{{style.grid}} menuBtn" ng-click="showOnly('grid')">
+      <img src="../assets/images/layers.png">
+      <span class="layer-text">Hide All</span>
+    </button>
+    <button class="{{style.permit}} menuBtn" ng-click="showOnly('permit')">
+      <img src="../assets/images/layers.png">
+      <span class="layer-text">Show Permit Zones</span>
+    </button>
+    <button class="{{style.meter}} menuBtn" ng-click="showOnly('meter')">
+      <img src="../assets/images/layers.png">
+      <span class="layer-text">Show Meter Zones</span>
+    </button>
+    <button class="{{style.sweep}} menuBtn" ng-click="showOnly('sweep')">
+      <img src="../assets/images/layers.png">
+      <span class="layer-text">Show Street Sweeping</span>
+    </button>
+    <button class="{{style.mobile}} menuBtn" ng-click="showOnly('mobile')">
+      <img src="../assets/images/layers.png">
+      <span class="layer-text">Show Parking Avail</span>
+    </button>
 
     <div class="mobilePreviewFields" ng-show="showMobilePreview">
       <form>
         <div class="previewDate">
-          <span>Date:</span><input type="date" ng-model="constraints.date" placeholder="some date" required>
-        </div>
-        <div class="previewTime">
-          <span>Time:</span><input type="text" ng-model="constraints.time" placeholder="some time" required>
-        </div>
-        <div class="previewDuration">
-          <span>Duration (in hours):</span><input type="text" ng-model="constraints.duration" placeholder="2">
+          <span>Date</span><input type="date" ng-model="constraints.date" placeholder="some date" required>
         </div>
 
+        <div class="previewTimeDuration">
+          <div class="inlinePreview">
+            <div>Time</div>
+            <input type="text" ng-model="constraints.time" placeholder="some time" required>
+          </div>
+          <div class="inlinePreview">
+            <div>Duration</div>
+            <input type="text" ng-model="constraints.duration" placeholder="2">
+          </div>
+        </div>
 
-        <input class="submitAction" type="submit" ng-click="showPreview()" value="Submit"/>
+        <input class="submitButton" type="submit" ng-click="showPreview()" value="Submit"/>
     </form>
    </div>
 
   </div>
+</div>
+
+
+<div class="legend" ng-show="showMobilePreview">
+  <ul>
+    <li title="open parking">
+      <div class="square green"></div>
+      <img src="../assets/images/happy.png">
+    </li>
+    <li title="time restricted parking">
+      <div class="square yellow"></div>
+      <img src="../assets/images/time.png">
+    </li>
+    <li title="time restricted parking with cost">
+      <div class="square orange"></div>
+      <img src="../assets/images/time.png"><img src="../assets/images/plus.png"><img src="../assets/images/money.png">
+    </li>
+    <li title="no parking information">
+      <div class="square black"></div>
+      <img src="../assets/images/no-info.png">
+    </li>
+  </ul>
 </div>

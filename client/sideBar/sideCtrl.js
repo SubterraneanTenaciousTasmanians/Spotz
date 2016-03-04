@@ -93,7 +93,7 @@ angular.module('spotz.side', ['MapServices'])
       //set the newMode
       $scope.style[newMode] = style[mode[newMode]];
 
-      if (newMode === 'mobile' && !$scope.showMobilePreview) {
+      if (newMode === 'mobile') {
         //only run mode if mobile preview is not already clicked
         $scope.showMobilePreview = true;
         $scope.ShowAddFeatureMenu = false;
