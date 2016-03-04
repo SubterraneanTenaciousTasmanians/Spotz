@@ -61,6 +61,7 @@
   border: none;
   border-bottom: 1px solid #CBC6BF;
   cursor:pointer;
+  color:#7C7C7C;
 }
 
 .menuBtn:hover{
@@ -95,7 +96,7 @@
 
 .previewDate input {
   padding: 4px;
-  font-size: 17px;
+  font-size: 16px;
   width: 94%;
   display: block;
   border-radius: 3px;
