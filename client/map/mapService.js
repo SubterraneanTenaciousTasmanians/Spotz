@@ -442,10 +442,7 @@ angular.module('MapServices')
         url += '&libraries=places';
         url += '&callback=JSON_CALLBACK';
 
-        $http.jsonp(url).then(setupMap).then(callback)
-        .catch(function (data) {
-          console.log('map load failed', data);
-        });
+        $http.jsonp(url).then(setupMap).then(callback);
       } else {
         //dont hit the google api, just setup the map
         setupMap().then(callback);

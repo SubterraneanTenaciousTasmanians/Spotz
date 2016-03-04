@@ -72,8 +72,6 @@ angular.module('MapServices')
               SelectedFeatureFactory.clear();
 
               googleObj.tooltip.close();
-            } else {
-              console.log('delete failed');
             }
           });
         }
@@ -122,7 +120,6 @@ angular.module('MapServices')
       var numOfRules;
 
       if (!event) {
-        console.log('failed to create the tooltip, no event given');
         return;
       }
 
