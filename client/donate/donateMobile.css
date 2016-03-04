@@ -73,11 +73,9 @@
 }
 
 .close{
-  font-size: 40px;
-  position: absolute;
-  right: 10px;
   cursor: pointer;
-  color:#343030;
+  color: #7FB648;
+  text-align: right;
 }
 
 .server-msg {

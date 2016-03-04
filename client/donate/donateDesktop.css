@@ -60,27 +60,17 @@
   cursor: pointer;
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#76b52d+0,8ab66b+44,398235+100 */
   background: #76b52d; /* Old browsers */
-  background: -moz-linear-gradient(top,  #76b52d 0%, #8ab66b 44%, #398235 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top,  #76b52d 0%,#8ab66b 44%,#398235 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom,  #76b52d 0%,#8ab66b 44%,#398235 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#76b52d', endColorstr='#398235',GradientType=0 ); /* IE6-9 */
 }
 
 .stripeForm .submit:active{
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#398235+0,8ab66b+56,76b52d+100 */
   background: #398235; /* Old browsers */
-  background: -moz-linear-gradient(top,  #398235 0%, #8ab66b 56%, #76b52d 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top,  #398235 0%,#8ab66b 56%,#76b52d 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom,  #398235 0%,#8ab66b 56%,#76b52d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#398235', endColorstr='#76b52d',GradientType=0 ); /* IE6-9 */
 }
 
 .close{
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
   cursor: pointer;
-  color:#f00;
+  color: #7FB648;
+  text-align: right;
 }
 
 .server-msg {

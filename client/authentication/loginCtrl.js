@@ -10,6 +10,14 @@ angular.module('spotz.login', ['LoginService'])
   'LoginFactory',
   function ($rootScope, $scope, $state, $cookies, LoginFactory) {
 
+
+
+    LoginFactory.checkCredentials().then(function (loggedIn) {
+      if (loggedIn) {
+        $state.go('main');
+      }
+    });
+
     //=====================================================
     //$scope properties
 
@@ -18,6 +26,7 @@ angular.module('spotz.login', ['LoginService'])
       showServerMsg: false,
       serverMsg: '',
       activeLoginState: false,
+      showPreviewModal: false,
     });
 
     //=====================================================
@@ -76,12 +85,6 @@ angular.module('spotz.login', ['LoginService'])
     //===================================================
     //exposed functions
 
-    LoginFactory.checkCredentials().then(function (loggedIn) {
-      if (loggedIn) {
-        $state.go('main');
-      }
-    });
-
     $scope.signInOrSignUp = function () {
       if ($scope.activeLoginState === loginStates.signIn) {
         signin($scope.userinfo);
@@ -98,6 +101,10 @@ angular.module('spotz.login', ['LoginService'])
         $scope.activeLoginState = loginStates.signIn;
       }
 
+    };
+
+    $scope.toggleModal = function () {
+      $scope.showPreviewModal = !$scope.showPreviewModal;
     };
 
     //===================================================
