@@ -25,6 +25,7 @@
   left: 45px;
   position: relative;
   color: whitesmoke;
+  display: inline;
 }
 
 .navList{
