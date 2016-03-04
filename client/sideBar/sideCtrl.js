@@ -164,7 +164,6 @@ angular.module('spotz.side', ['MapServices'])
       DrawingFactory.savePolygon().then(function (result) {
         if (result) {
           //turn off drawing mode
-          console.log('turning off drawing mode');
           $scope.ShowAddFeatureMenu = false;
           DrawingFactory.addPolygonOnClick(false);
           $scope.style.addNewFeature = '';
@@ -224,9 +223,6 @@ angular.module('spotz.side', ['MapServices'])
 
           TooltipFactory.create(feature);
 
-        })
-        .catch(function (err) {
-          console.log('saved failed', err);
         });
       }
     };
