@@ -28,6 +28,10 @@ angular.module('MapServices', [])
       privileges = true;
     });
 
+    $rootScope.$on('logOut', function () {
+      privileges = false;
+    });
+
     //=====================================================
     //private functions
 
