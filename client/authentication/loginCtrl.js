@@ -22,7 +22,7 @@ angular.module('spotz.login', ['LoginService'])
     //$scope properties
 
     angular.extend($scope, {
-      userinfo: {},
+      userinfo: {username: 'demo-user', password: 'demo123'},
       showServerMsg: false,
       serverMsg: '',
       activeLoginState: false,
@@ -110,7 +110,7 @@ angular.module('spotz.login', ['LoginService'])
     //===================================================
     //init
 
-    $scope.activeLoginState = loginStates.signUp;
+    $scope.activeLoginState = loginStates.signIn;
 
   },
 ]);
