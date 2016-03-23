@@ -8,7 +8,7 @@ angular.module('spotz', [
 'spotz.login',
 'spotz.nav',
 'spotz.side',
-'spotz.donate',
+'spotz.donate'
 ])
 
 .config(function ($stateProvider, $urlRouterProvider) {
@@ -29,7 +29,6 @@ angular.module('spotz', [
           'donate@main': { templateUrl: '/donate/donate.html', controller:'donateCtrl' },
         },
       })
-
   .state('login', {
     url: '/login',
     templateUrl: '/authentication/login.html',

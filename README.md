@@ -1,6 +1,6 @@
 # Spotz
 
-Spotz is an web + mobile app designed to make street parking easier and avoid unnecessary tickets. It does so by displaying parking permit, meter and street sweeping data on a map, allowing a user to quickly identify where to search for a parking spot given time and monetary constraints.  Features on the map are colored based on the parking data so that a user can quickly identify where to search.
+Spotz is a web + mobile app designed to help street parking easier and avoid unnecessary tickets. It does so by displaying permitted, metered areas and street sweeping data on a map, allowing a user to quickly identify where to search for a parking spot given time and monetary constraints.  Features on the map are colored based on the parking data so that a user can quickly identify where to search.
   
 ![Spotz App](readme_images/spotz.png)
 
